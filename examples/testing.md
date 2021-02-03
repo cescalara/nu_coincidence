@@ -20,6 +20,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from popsynth.distributions.cosmological_distribution import SFRDistribution
 from popsynth.distributions.pareto_distribution import ParetoDistribution
+from popsynth.distributions.schechter_distribution import SchechterDistribution
 from popsynth.populations import ParetoSFRPopulation
 ```
 
@@ -50,6 +51,25 @@ ax.set_yscale("log")
 ```
 
 ```python
+# Schecter LF
+lf = SchechterDistribution()
+lf.Lmin = 5e48
+lf.alpha = 0
+L = 10**np.linspace(43, 50)
+
+fig, ax = plt.subplots()
+ax.plot(L, lf.phi(L))
+ax.set_xscale("log")
+ax.set_yscale("log")
+```
+
+```python
+
+fig, ax = plt.subplots()
+ax.hist(lf.draw_luminosity(size=1000))
+```
+
+```python
 pop_sfr = ParetoSFRPopulation(r0=1, rise=2, decay=3, peak=1, Lmin=1e47, alpha=1, 
                               is_rate=False)
 ```
@@ -67,7 +87,7 @@ _ = my_pop.display_fluxes()
 ```
 
 ```python
-_ = my_pop.display_flux_sphere()
+#_ = my_pop.display_flux_sphere()
 ```
 
 ```python
