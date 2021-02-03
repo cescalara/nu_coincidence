@@ -16,49 +16,58 @@ jupyter:
 # Testing
 
 ```python
-import popsynth
-import networkx as nx
+import numpy as np
+from matplotlib import pyplot as plt
+from popsynth.distributions.cosmological_distribution import SFRDistribution
+from popsynth.distributions.pareto_distribution import ParetoDistribution
+from popsynth.populations import ParetoSFRPopulation
 ```
 
 ```python
-homo_pareto_synth = popsynth.populations.ParetoHomogeneousSphericalPopulation(
-    Lambda=0.25, 
-    Lmin=1, 
-    alpha=2.0  
-) 
-homo_pareto_synth.display()
+# SFR-like evolution
+sfr = SFRDistribution()
+sfr.r0 = 100
+sfr.rise = 2
+sfr.decay = 3
+sfr.peak = 1
+
+z = np.linspace(0, 5)
+fig, ax = plt.subplots()
+ax.plot(z, sfr.dNdV(z))
 ```
 
 ```python
-# we can also display a graph of the object
+# Power law LF
+lf = ParetoDistribution()
+lf.Lmin = 1e47
+lf.alpha = 2
 
-
-options = {"node_color": "g", "node_size": 2000, "width": 0.5}
-
-# pos = nx.spring_layout(g,k=5, iterations=300)
+L = 10**np.linspace(47, 50)
+fig, ax = plt.subplots()
+ax.plot(L, lf.phi(L))
+ax.set_xscale("log")
+ax.set_yscale("log")
 ```
 
 ```python
-pos = nx.drawing.nx_agraph.graphviz_layout(homo_pareto_synth.graph, prog="dot")
-
-nx.draw(homo_pareto_synth.graph, with_labels=True, pos=pos, **options)
+pop_sfr = ParetoSFRPopulation(r0=1, rise=2, decay=3, peak=1, Lmin=1e47, alpha=1, 
+                              is_rate=False)
 ```
 
 ```python
-population = homo_pareto_synth.draw_survey(boundary=1e-2, hard_cut=True, 
-                                           flux_sigma=0.1)
+my_pop = pop_sfr.draw_survey(boundary=1e2, no_selection=True)
 ```
 
 ```python
-population.display_fluxes(obs_color="g", true_color="r")
+_ = my_pop.display_distances()
 ```
 
 ```python
-#population.display_obs_fluxes_sphere();
+_ = my_pop.display_fluxes()
 ```
 
 ```python
-population.writeto("output/saved_pop.h5")
+_ = my_pop.display_flux_sphere()
 ```
 
 ```python
