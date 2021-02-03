@@ -141,7 +141,7 @@ cython_debug/
 *.ipynb
 
 # HDF5 files
-.h5
+*.h5
 
 # MacOS
 # General
