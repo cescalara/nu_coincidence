@@ -137,6 +137,13 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+# As using jupytext
+*.ipynb
+
+# HDF5 files
+.h5
+
+# MacOS
 # General
 .DS_Store
 .AppleDouble
