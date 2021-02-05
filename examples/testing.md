@@ -22,10 +22,28 @@ from matplotlib import pyplot as plt
 import sys
 sys.path.append("../")
 from cosmic_coincidence.populations.blazars import ToyBLLacPopulation
+from cosmic_coincidence.distributions.sbpl_distribution import SBPLDistribution, sbpl
 
 from popsynth.distributions.cosmological_distribution import SFRDistribution
 from popsynth.distributions.bpl_distribution import BPLDistribution
 from popsynth.populations.pareto_populations import ParetoSFRPopulation
+```
+
+```python
+# SBPL LF
+lf = SBPLDistribution()
+lf.Lmin = 1e43
+lf.Lbreak = 1e47
+lf.Lmax = 1e49
+lf.alpha = 1.5
+lf.beta = 2.7
+
+L = 10**np.linspace(np.log10(lf.Lmin), np.log10(lf.Lmax))
+fig, ax = plt.subplots()
+ax.plot(L, lf.phi(L))
+ax.hist(lf.draw_luminosity(size=10000), bins=L, density=True)
+ax.set_xscale("log")
+ax.set_yscale("log")
 ```
 
 ```python
@@ -55,8 +73,8 @@ lf.beta = -2.1
 
 L = 10**np.linspace(44, 50)
 fig, ax = plt.subplots()
-#ax.plot(L, lf.phi(L))
-ax.hist(lf.draw_luminosity(size=10000), bins=L, )
+ax.plot(L, lf.phi(L))
+ax.hist(lf.draw_luminosity(size=10000), bins=L, density=True)
 ax.set_xscale("log")
 ax.set_yscale("log")
 ```
@@ -91,8 +109,4 @@ fig, ax = plt.subplots()
 ax.hist(my_pop.luminosities_latent, bins=10**np.linspace(44, 50))
 ax.set_xscale("log")
 ax.set_yscale("log")
-```
-
-```python
-
 ```
