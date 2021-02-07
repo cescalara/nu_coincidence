@@ -1,5 +1,5 @@
 import numpy as np
-from scipy import stats, integrate, interpolate
+from scipy import stats, interpolate
 from popsynth.distribution import LuminosityDistribution, DistributionParameter
 
 

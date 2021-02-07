@@ -42,7 +42,7 @@ class ToyBLLacPopulation(BPLSFRPopulation):
         )
 
 
-class BLLacPopulation(BPLSFRPopulation):
+class PDEBlazarPopulation(BPLSFRPopulation):
     """
     A BL Lac-like population based on the
     results for the "luminosity-dependent
@@ -56,6 +56,10 @@ class BLLacPopulation(BPLSFRPopulation):
 
 
 class FSRQPopulation:
+    """
+    Ajello et al. 2012.
+    """
+
     def __init__(self):
 
         pass
