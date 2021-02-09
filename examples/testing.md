@@ -79,6 +79,7 @@ ldde.sigma = 0.26
 z = np.linspace(ldde.zmin, ldde.zmax)
 fig, ax = plt.subplots()
 ax.plot(z, ldde.dNdV(z))
+ax.plot(z, ldde.dNdV(z, approx=True))
 ax.set_yscale("log")
 ```
 
@@ -86,73 +87,9 @@ ax.set_yscale("log")
 L = 10**np.linspace(np.log10(ldde.Lmin), np.log10(ldde.Lmax))
 fig, ax = plt.subplots()
 ax.plot(L, ldde.dNdL(L))
+ax.plot(L, ldde.dNdL(L, approx=True))
 ax.set_xscale("log")
 ax.set_yscale("log")
-```
-
-```python
-# dNdV
-L = 10**np.linspace(np.log10(ldde.Lmin), np.log10(ldde.Lmax), 1000)
-G = np.linspace(ldde.Gmin, ldde.Gmax, 1000)
-zs = np.linspace(ldde.zmin, ldde.zmax)
-
-out = []
-for z in zs:
-    f = ldde.Phi(L[:,None], z, G) * 1e-13
-    out.append(integrate.simps(integrate.simps(f, G), L))
-```
-
-```python
-def wrap_func(z, A, p):
-    return A*np.power(1+z, -p)
-popt, pcov = curve_fit(wrap_func, zs, out, p0=(6e-7, 6))
-popt
-```
-
-```python
-fig, ax = plt.subplots()
-ax.plot(zs, out)
-ax.plot(zs, 6e-7*np.power(1+zs, -6.0))
-ax.plot(zs, wrap_func(zs, *popt))
-ax.set_yscale("log")
-ax.set_ylabel("dN/dV [Mpc^-3]")
-ax.set_xlabel("z")
-```
-
-```python
-# dN/dL
-z = np.linspace(ldde.zmin, ldde.zmax, 1000)
-G = np.linspace(ldde.Gmin, ldde.Gmax, 1000)
-Ls = 10**np.linspace(np.log10(ldde.Lmin), np.log10(ldde.Lmax))
-
-out = []
-for L in Ls:
-    f = ldde.Phi(L, z[:,None], G) * 1e-13
-    out.append(integrate.simps(integrate.simps(f, G), z))
-```
-
-```python
-from cosmic_coincidence.distributions.sbpl_distribution import sbpl
-from scipy.optimize import curve_fit
-```
-
-```python
-def wrap_func(L, A, Lbreak, a1, a2):
-    return A*sbpl(L, ldde.Lmin, Lbreak, ldde.Lmax, a1, a2, limit=True)
-p0 = (1, 3e47, 1.6, 2.8)
-bounds = ([1e-1, 1e47, 1.0, 2.0], [10, 5e48, 2.0, 3.0])
-popt, pcov = curve_fit(wrap_func, Ls, 1e57*np.array(out), p0=p0, bounds=bounds)
-popt
-```
-
-```python
-fig, ax = plt.subplots()
-ax.plot(Ls, 1e57*np.array(out))
-ax.plot(Ls, sbpl(Ls, ldde.Lmin, 3e47, ldde.Lmax, 1.6, 2.8))
-ax.plot(Ls, wrap_func(Ls, *popt))
-ax.set_xscale("log")
-ax.set_yscale("log")
-#ax.set_ylim(1e-5)
 ```
 
 ```python

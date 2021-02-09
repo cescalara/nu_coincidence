@@ -5,6 +5,7 @@ from astropy import units as u
 
 from popsynth.distribution import Distribution, DistributionParameter
 from cosmic_coincidence.populations.sbpl_population import SBPLZPowExpCosmoPopulation
+from cosmic_coincidence.distributions.sbpl_distribution import sbpl
 
 
 class FermiModel(Distribution):
@@ -211,32 +212,55 @@ class Ajello14LDDEModel(FermiModel):
         If approx, show appromximated version.
         """
 
-        integral = np.zeros_like(z)
+        if approx:
 
-        L = 10 ** np.linspace(np.log10(self.Lmin), np.log10(self.Lmax), 1000)
-        G = np.linspace(self.Gmin, self.Gmax, 1000)
+            self._get_dNdV_params()
 
-        for i, z in enumerate(z):
-            f = self.Phi(L[:, None], z, G) * 1e-13  # Mpc^-3 erg^-1 s
-            integral[i] = integrate.simps(integrate.simps(f, G), L)
+            return _wrap_func_dNdV(z, self._Lambda, self._delta)
 
-        return integral
+        else:
+
+            integral = np.zeros_like(z)
+
+            L = 10 ** np.linspace(np.log10(self.Lmin), np.log10(self.Lmax), 1000)
+            G = np.linspace(self.Gmin, self.Gmax, 1000)
+
+            for i, z in enumerate(z):
+                f = self.Phi(L[:, None], z, G) * 1e-13  # Mpc^-3 erg^-1 s
+                integral[i] = integrate.simps(integrate.simps(f, G), L)
+
+            return integral
 
     def dNdL(self, L, approx=False):
         """
         Integrate Phi over z and G.
         If approx, show approximated version.
         """
-        integral = np.zeros_like(L)
 
-        z = np.linspace(self.zmin, self.zmax, 1000)
-        G = np.linspace(self.Gmin, self.Gmax, 1000)
+        if approx:
 
-        for i, L in enumerate(L):
-            f = self.Phi(L, z[:, None], G) * 1e-13  # Mpc^-3 erg^-1 s
-            integral[i] = integrate.simps(integrate.simps(f, G), z)
+            self._get_dNdL_params()
 
-        return integral
+            return _wrap_func_dNdL(
+                L,
+                self._LA,
+                self._Lbreak,
+                self._Lalpha,
+                self._Lbeta,
+            )
+
+        else:
+
+            integral = np.zeros_like(L)
+
+            z = np.linspace(self.zmin, self.zmax, 1000)
+            G = np.linspace(self.Gmin, self.Gmax, 1000)
+
+            for i, L in enumerate(L):
+                f = self.Phi(L, z[:, None], G) * 1e-13  # Mpc^-3 erg^-1 s
+                integral[i] = integrate.simps(integrate.simps(f, G), z)
+
+            return integral
 
     def popsynth(self):
 
@@ -248,7 +272,22 @@ class Ajello14LDDEModel(FermiModel):
         a ZPowCosmoDistribution.
         """
 
-        pass
+        z = np.linspace(self.zmin, self.zmax)
+        dNdV = self.dNdV(z)
+
+        p0 = (max(dNdV), -5)
+        bounds = ([0, -10], [1, 0])
+
+        popt, pcov = optimize.curve_fit(
+            _wrap_func_dNdV,
+            z,
+            dNdV,
+            p0=p0,
+            bounds=bounds,
+        )
+
+        self._Lambda = popt[0]
+        self._delta = popt[1]
 
     def _get_dNdL_params(self):
         """
@@ -256,4 +295,38 @@ class Ajello14LDDEModel(FermiModel):
         an SBPLDistribution.
         """
 
-        pass
+        L = 10 ** np.linspace(np.log10(self.Lmin), np.log10(self.Lmax))
+        dNdL = self.dNdL(L)
+
+        p0 = (1, 1e47, 1.5, 2.5)
+        bounds = ([1e-1, 1e47, 1.0, 2.0], [10, 5e48, 2.0, 3.0])
+
+        popt, pcov = optimize.curve_fit(
+            _wrap_func_dNdL,
+            L,
+            1e57 * dNdL,
+            p0=p0,
+            bounds=bounds,
+        )
+
+        self._LA = popt[0] / 1e57
+        self._Lbreak = popt[1]
+        self._Lalpha = popt[2]
+        self._Lbeta = popt[3]
+
+
+def _wrap_func_dNdV(z, Lambda, delta):
+
+    return Lambda * np.power(1 + z, delta)
+
+
+def _wrap_func_dNdL(L, A, Lbreak, a1, a2):
+
+    return A * sbpl(
+        L,
+        7e43,
+        Lbreak,
+        1e52,
+        a1,
+        a2,
+    )
