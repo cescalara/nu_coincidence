@@ -1,6 +1,6 @@
 from abc import abstractmethod
 import numpy as np
-from scipy import integrate
+from scipy import integrate, optimize
 from astropy import units as u
 
 from popsynth.distribution import Distribution, DistributionParameter
@@ -11,6 +11,21 @@ class FermiModel(Distribution):
     """
     Base class for models from Fermi papers.
     """
+
+    # 1e-13 Mpc^-3 erg^-1 s
+    A = DistributionParameter(default=1, vmin=0)
+
+    # erg s^-1
+    Lstar = DistributionParameter(vmin=0)
+
+    gamma1 = DistributionParameter()
+    gamma2 = DistributionParameter()
+
+    tau = DistributionParameter(default=0)
+
+    mustar = DistributionParameter()
+    beta = DistributionParameter(default=0)
+    sigma = DistributionParameter(vmin=0)
 
     # erg s^-1
     Lmin = DistributionParameter(default=7e43, vmin=0)
@@ -35,14 +50,6 @@ class FermiModel(Distribution):
         pass
 
     @abstractmethod
-    def local_density(self):
-        """
-        dV / dV at z=0 in Gpc^-3
-        """
-
-        pass
-
-    @abstractmethod
     def popsynth(self):
         """
         Return equivalent popsynth model.
@@ -54,22 +61,8 @@ class Ajello14PDEModel(FermiModel):
     PDE model from Ajello+2014.
     """
 
-    # 1e-13 Mpc^-3 erg^-1 s
-    A = DistributionParameter(default=1, vmin=0)
-
-    # erg s^-1
-    Lstar = DistributionParameter(vmin=0)
-
-    gamma1 = DistributionParameter()
-    gamma2 = DistributionParameter()
-
     kstar = DistributionParameter(vmin=0)
-    tau = DistributionParameter(default=0)
     xi = DistributionParameter()
-
-    mustar = DistributionParameter()
-    beta = DistributionParameter(default=0)
-    sigma = DistributionParameter(vmin=0)
 
     def __init__(self):
 
@@ -158,3 +151,109 @@ class Ajello14PDEModel(FermiModel):
         else:
 
             raise NotImplementedError
+
+
+class Ajello14LDDEModel(FermiModel):
+    """
+    LDDE model from Ajello+14.
+    """
+
+    zcstar = DistributionParameter(vmin=0)
+    alpha = DistributionParameter()
+    p1star = DistributionParameter()
+    p2 = DistributionParameter()
+
+    def __init__(self):
+
+        super(Ajello14LDDEModel, self).__init__(
+            name="Ajello14LDDE",
+        )
+
+    def phi_L(self, L):
+
+        f1 = self.A / (np.log(10) * L)
+
+        f2 = np.power(
+            (L / self.Lstar) ** self.gamma1 + (L / self.Lstar) ** self.gamma2, -1
+        )
+
+        return f1 * f2
+
+    def phi_G(self, G, L):
+
+        if self.beta == 0:
+
+            mu = self.mustar
+
+        else:
+
+            mu = self.mustar + self.beta * (np.log10(L) - 46)
+
+        return np.exp(-((G - mu) ** 2) / (2 * self.sigma ** 2))
+
+    def phi_z(self, z, L):
+
+        zc = self.zcstar * np.power(L / 1e48, self.alpha)
+
+        p1 = self.p1star + self.tau * (np.log10(L) - 46)
+
+        inner = (1 + z) / (1 + zc)
+
+        return np.power(inner ** -p1 + inner ** -self.p2, -1)
+
+    def Phi(self, L, z, G):
+
+        return self.phi_L(L) * self.phi_G(G, L) * self.phi_z(z, L)
+
+    def dNdV(self, z, approx=False):
+        """
+        Integrate Phi over L and G. In units of Mpc^-3.
+        If approx, show appromximated version.
+        """
+
+        integral = np.zeros_like(z)
+
+        L = 10 ** np.linspace(np.log10(self.Lmin), np.log10(self.Lmax), 1000)
+        G = np.linspace(self.Gmin, self.Gmax, 1000)
+
+        for i, z in enumerate(z):
+            f = self.Phi(L[:, None], z, G) * 1e-13  # Mpc^-3 erg^-1 s
+            integral[i] = integrate.simps(integrate.simps(f, G), L)
+
+        return integral
+
+    def dNdL(self, L, approx=False):
+        """
+        Integrate Phi over z and G.
+        If approx, show approximated version.
+        """
+        integral = np.zeros_like(L)
+
+        z = np.linspace(self.zmin, self.zmax, 1000)
+        G = np.linspace(self.Gmin, self.Gmax, 1000)
+
+        for i, L in enumerate(L):
+            f = self.Phi(L, z[:, None], G) * 1e-13  # Mpc^-3 erg^-1 s
+            integral[i] = integrate.simps(integrate.simps(f, G), z)
+
+        return integral
+
+    def popsynth(self):
+
+        pass
+
+    def _get_dNdV_params(self):
+        """
+        Find params to approximate dNdV with
+        a ZPowCosmoDistribution.
+        """
+
+        pass
+
+    def _get_dNdL_params(self):
+        """
+        Find params to approximate dNdL with
+        an SBPLDistribution.
+        """
+
+        pass
