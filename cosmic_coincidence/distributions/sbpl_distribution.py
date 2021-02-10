@@ -76,7 +76,7 @@ def sample_sbpl(u, x0, x1, x2, a1, a2, size=1):
             "Range (x0, x2) is too large to be sampled accurately without taking forever"
         )
 
-    N = max(int(1e3), 10 ** int(log10_diff))
+    N = max(int(1e3), 10 ** (int(log10_diff) + 1))
 
     x = np.linspace(x0, x2, N)
 
@@ -85,7 +85,12 @@ def sample_sbpl(u, x0, x1, x2, a1, a2, size=1):
     cdf = np.cumsum(y)
     cdf = cdf / cdf.max()
 
-    inv_cdf = interpolate.interp1d(cdf, x, fill_value="extrapolate")
+    inv_cdf = interpolate.interp1d(
+        cdf,
+        x,
+        fill_value="extrapolate",
+        bounds_error=False,
+    )
 
     return inv_cdf(u)
 
