@@ -1,5 +1,39 @@
+from popsynth.populations.spatial_populations import ZPowerCosmoPopulation
+
 from .spatial_populations import ZPowExpCosmoPopulation
 from ..distributions.sbpl_distribution import SBPLDistribution
+
+
+class SBPLZPowerCosmoPopulation(ZPowerCosmoPopulation):
+    def __init__(
+        self,
+        Lambda,
+        delta,
+        Lmin,
+        alpha,
+        Lbreak,
+        beta,
+        Lmax,
+        r_max=5,
+        seed=1234,
+        is_rate=True,
+    ):
+
+        luminosity_distribution = SBPLDistribution()
+        luminosity_distribution.Lmin = Lmin
+        luminosity_distribution.alpha = alpha
+        luminosity_distribution.Lbreak = Lbreak
+        luminosity_distribution.beta = beta
+        luminosity_distribution.Lmax = Lmax
+
+        super(SBPLZPowerCosmoPopulation, self).__init__(
+            Lambda=Lambda,
+            delta=delta,
+            r_max=r_max,
+            seed=seed,
+            luminosity_distribution=luminosity_distribution,
+            is_rate=is_rate,
+        )
 
 
 class SBPLZPowExpCosmoPopulation(ZPowExpCosmoPopulation):
@@ -15,6 +49,7 @@ class SBPLZPowExpCosmoPopulation(ZPowExpCosmoPopulation):
         Lmax,
         r_max=5,
         seed=1234,
+        is_rate=True,
     ):
 
         luminosity_distribution = SBPLDistribution()
@@ -31,4 +66,5 @@ class SBPLZPowExpCosmoPopulation(ZPowExpCosmoPopulation):
             r_max=r_max,
             seed=seed,
             luminosity_distribution=luminosity_distribution,
+            is_rate=is_rate,
         )

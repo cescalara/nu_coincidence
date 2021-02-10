@@ -12,6 +12,7 @@ class ZPowExpCosmoPopulation(PopulationSynth):
         r_max=5.0,
         seed=1234,
         luminosity_distribution=None,
+        is_rate=True,
     ):
         """
         :param Lambda:
@@ -19,7 +20,10 @@ class ZPowExpCosmoPopulation(PopulationSynth):
         :param xi:
         """
 
-        spatial_distribution = ZPowExpCosmoDistribution(seed=seed)
+        spatial_distribution = ZPowExpCosmoDistribution(
+            seed=seed,
+            is_rate=is_rate,
+        )
         spatial_distribution.r0 = r0
         spatial_distribution.k = k
         spatial_distribution.xi = xi
