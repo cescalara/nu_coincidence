@@ -7,7 +7,7 @@ from popsynth.distributions.cosmological_distribution import CosmologicalDistrib
 class ZPowExpCosmoDistribution(CosmologicalDistribution):
 
     r0 = DistributionParameter(default=1, vmin=0)
-    k = DistributionParameter(vmin=0)
+    k = DistributionParameter()
     xi = DistributionParameter()
 
     def __init__(self, seed=1234, name="zpowexp_cosmo", is_rate=True):

@@ -5,6 +5,7 @@ from astropy import units as u
 
 from popsynth.distribution import Distribution, DistributionParameter
 from cosmic_coincidence.populations.sbpl_population import SBPLZPowExpCosmoPopulation
+from cosmic_coincidence.populations.sbpl_population import SBPLZPowerCosmoPopulation
 from cosmic_coincidence.distributions.sbpl_distribution import sbpl
 
 
@@ -62,7 +63,7 @@ class Ajello14PDEModel(FermiModel):
     PDE model from Ajello+2014.
     """
 
-    kstar = DistributionParameter(vmin=0)
+    kstar = DistributionParameter()
     xi = DistributionParameter()
 
     def __init__(self):
@@ -133,7 +134,7 @@ class Ajello14PDEModel(FermiModel):
 
         if self.beta == 0 and self.tau == 0:
 
-            r0 = self.local_density()
+            r0 = self.local_density() * 4 * np.pi
 
             pop = SBPLZPowExpCosmoPopulation(
                 r0=r0,
@@ -145,6 +146,7 @@ class Ajello14PDEModel(FermiModel):
                 beta=-self.gamma2,
                 Lmax=self.Lmax,
                 r_max=self.zmax,
+                is_rate=False,
             )
 
             return pop
@@ -264,7 +266,25 @@ class Ajello14LDDEModel(FermiModel):
 
     def popsynth(self):
 
-        pass
+        self._get_dNdV_params()
+        self._get_dNdL_params()
+
+        Lambda = self._Lambda * (1 / u.Mpc ** 3)
+        Lambda = Lambda.to(1 / u.Gpc ** 3).value * 4 * np.pi
+
+        pop = SBPLZPowerCosmoPopulation(
+            Lambda=Lambda,
+            delta=self._delta,
+            Lmin=self.Lmin,
+            alpha=self._Lalpha,
+            Lbreak=self._Lbreak,
+            beta=self._Lbeta,
+            Lmax=self.Lmax,
+            r_max=self.zmax,
+            is_rate=False,
+        )
+
+        return pop
 
     def _get_dNdV_params(self):
         """

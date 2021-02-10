@@ -50,11 +50,16 @@ pop = pde.popsynth()
 ```python
 z = np.linspace(0, 6)
 fig, ax = plt.subplots()
-ax.plot(z, pop.spatial_distribution.dNdV(z) * pop.spatial_distribution.differential_volume(z) / pop.spatial_distribution.time_adjustment(z))
+ax.plot(z, pop.spatial_distribution.dNdV(z) * pop.spatial_distribution.differential_volume(z) )
 ```
 
 ```python
-pop.draw_survey(boundary=1e2, no_selection=True)
+pde.local_density()
+```
+
+```python
+# Expects like 2e6 objects!?
+#pop.draw_survey(boundary=1e2, no_selection=True)
 ```
 
 ## LDDE
@@ -90,6 +95,55 @@ ax.plot(L, ldde.dNdL(L))
 ax.plot(L, ldde.dNdL(L, approx=True))
 ax.set_xscale("log")
 ax.set_yscale("log")
+```
+
+```python
+# For popsynth
+ldde.Lmax = 1e50
+pop = ldde.popsynth()
+```
+
+```python
+pop.draw_survey(boundary=1e2, no_selection=True)
+```
+
+## Testing SBPL
+
+```python
+import numpy as np
+from matplotlib import pyplot as plt
+
+import sys
+sys.path.append("../")
+from cosmic_coincidence.populations.sbpl_population import SBPLZPowExpCosmoPopulation
+from cosmic_coincidence.distributions.sbpl_distribution import SBPLDistribution
+```
+
+```python
+sbpl = SBPLDistribution(seed=124)
+sbpl.Lmin = pop.luminosity_distribution.Lmin
+sbpl.Lmax = pop.luminosity_distribution.Lmax
+sbpl.Lbreak = pop.luminosity_distribution.Lbreak
+sbpl.alpha = pop.luminosity_distribution.alpha
+sbpl.beta = pop.luminosity_distribution.beta
+```
+
+```python
+L = 10**np.linspace(np.log10(pop.luminosity_distribution.Lmin), 
+                    np.log10(pop.luminosity_distribution.Lmax))
+fig, ax = plt.subplots()
+ax.plot(L, sbpl.phi(L))
+ax.hist(abs(sbpl.draw_luminosity(10000)), bins=L, density=True)
+ax.set_xscale("log")
+ax.set_yscale("log")
+```
+
+```python
+A = sbpl.draw_luminosity(10000)
+```
+
+```python
+len(A[A<0])
 ```
 
 ```python
