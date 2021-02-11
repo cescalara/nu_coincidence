@@ -24,6 +24,7 @@ sys.path.append("../")
 from cosmic_coincidence.populations.sbpl_population import SBPLZPowExpCosmoPopulation
 from cosmic_coincidence.distributions.sbpl_distribution import SBPLDistribution
 from cosmic_coincidence.utils.interface import Ajello14PDEModel, BLLacLDDEModel
+from cosmic_coincidence.utils.interface import FSRQLDDEModel
 ```
 
 ## PDE
@@ -104,13 +105,13 @@ pop = ldde.popsynth()
 ```
 
 ```python
-pop.draw_survey(boundary=1e2, no_selection=True)
+pop.draw_survey(boundary=1e2, no_selection=True)d
 ```
 
 ## Testing FSRQs
 
 ```python
-ldde = Ajello14LDDEModel()
+ldde = FSRQLDDEModel()
 ldde.A = 3.06e4
 ldde.gamma1 = 0.21
 ldde.Lstar = 0.84e48
@@ -124,14 +125,19 @@ ldde.mustar = 2.44
 ldde.beta = 0
 ldde.sigma = 0.18
 
-ldde.Lmax=1e50
+#ldde.Lmax=1e50
+```
+
+```python
+from cosmic_coincidence.utils.interface import _zpowerexp, _sfr, _sbpl
+from scipy.optimize import curve_fit
 ```
 
 ```python
 z = np.linspace(0, ldde.zmax)
 fig, ax = plt.subplots()
 ax.plot(z, ldde.dNdV(z))
-#ax.plot(z, ldde.dNdV(z, approx=True))
+ax.plot(z, ldde.dNdV(z, approx=True))
 ax.set_yscale("log")
 ```
 
@@ -142,6 +148,16 @@ ax.plot(L, ldde.dNdL(L))
 ax.plot(L, ldde.dNdL(L, approx=True))
 ax.set_xscale("log")
 ax.set_yscale("log")
+```
+
+```python
+# For popsynth
+ldde.Lmax = 1e50
+pop = ldde.popsynth()
+```
+
+```python
+pop.draw_survey(boundary=1e2, no_selection=True)
 ```
 
 ## Testing SBPL

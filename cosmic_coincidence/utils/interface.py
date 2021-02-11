@@ -4,8 +4,11 @@ from scipy import integrate, optimize
 from astropy import units as u
 
 from popsynth.distribution import Distribution, DistributionParameter
-from cosmic_coincidence.populations.sbpl_population import SBPLZPowExpCosmoPopulation
-from cosmic_coincidence.populations.sbpl_population import SBPLZPowerCosmoPopulation
+from cosmic_coincidence.populations.sbpl_population import (
+    SBPLZPowExpCosmoPopulation,
+    SBPLZPowerCosmoPopulation,
+    SBPLSFRPopulation,
+)
 from cosmic_coincidence.distributions.sbpl_distribution import sbpl
 
 
@@ -365,14 +368,97 @@ class BLLacLDDEModel(LDDEFermiModel):
         return _sbpl(L, A, Lbreak, a1, a2)
 
 
+class FSRQLDDEModel(LDDEFermiModel):
+    """
+    FSRQ LDDE model from Ajello+2012.
+    """
+
+    def __init__(self, name="fsrq_ldde_fermi"):
+
+        super(FSRQLDDEModel, self).__init__(name=name)
+
+    def popsynth(self):
+
+        self._get_dNdV_params()
+        self._get_dNdL_params()
+
+        r0 = self._popt_dNdV[0] * (1 / u.Mpc ** 3)
+        r0 = r0.to(1 / u.Gpc ** 3).value * 4 * np.pi
+
+        pop = SBPLSFRPopulation(
+            r0=r0,
+            rise=self._popt_dNdV[1],
+            decay=self._popt_dNdV[2],
+            peak=self._popt_dNdV[3],
+            Lmin=self.Lmin,
+            alpha=self._popt_dNdL[2],
+            Lbreak=self._popt_dNdL[1],
+            beta=self._popt_dNdL[3],
+            Lmax=self.Lmax,
+            r_max=self.zmax,
+            is_rate=False,
+        )
+
+        return pop
+
+    def _get_dNdV_params(self):
+
+        z = np.linspace(self.zmin, self.zmax)
+        dNdV = self.dNdV(z)
+
+        p0 = (1.9e-9, 8.5, 3.3, 0.5)
+        bounds = ([5e-10, 0, 0, 0.01], [1e-8, 100, 100, 2])
+
+        popt, pcov = optimize.curve_fit(
+            self._wrap_func_dNdV, z, dNdV, p0=p0, bounds=bounds
+        )
+
+        self._popt_dNdV = popt
+
+    def _get_dNdL_params(self):
+
+        L = 10 ** np.linspace(np.log10(self.Lmin), np.log10(self.Lmax))
+        dNdL = self.dNdL(L)
+
+        p0 = (5, 1e48, 1.1, 2.5)
+        bounds = ([0.1, 1e48, 1.0, 2.2], [10, 5e48, 1.5, 2.7])
+
+        popt, pcov = optimize.curve_fit(
+            self._wrap_func_dNdL,
+            L,
+            1e58 * dNdL,
+            p0=p0,
+            bounds=bounds,
+        )
+
+        popt[0] = popt[0] / 1e58
+        self._popt_dNdL = popt
+
+    def _wrap_func_dNdV(self, z, r0, rise, decay, peak):
+
+        return _sfr(z, r0, rise, decay, peak)
+
+    def _wrap_func_dNdL(self, L, A, Lbreak, a1, a2):
+
+        return _sbpl(L, A, Lbreak, a1, a2)
+
+
 def _zpower(z, Lambda, delta):
 
     return Lambda * np.power(1 + z, delta)
 
 
-def _sfr(z, r0, rise, decay, peak):
+def _sfr(z, r0, r, d, p):
 
-    pass
+    top = 1 + r * z
+    bottom = 1 + np.power(z / p, d)
+
+    return r0 * top / bottom
+
+
+def _zpowerexp(z, r0, k, xi):
+
+    return r0 * np.power(1 + z, k) * np.exp(z / xi)
 
 
 def _sbpl(L, A, Lbreak, a1, a2):
