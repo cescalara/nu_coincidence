@@ -406,12 +406,7 @@ class FSRQLDDEModel(LDDEFermiModel):
         z = np.linspace(self.zmin, self.zmax)
         dNdV = self.dNdV(z)
 
-        p0 = (1.9e-9, 8.5, 3.3, 0.5)
-        bounds = ([5e-10, 0, 0, 0.01], [1e-8, 100, 100, 2])
-
-        popt, pcov = optimize.curve_fit(
-            self._wrap_func_dNdV, z, dNdV, p0=p0, bounds=bounds
-        )
+        popt, pcov = optimize.curve_fit(self._wrap_func_dNdV, z, dNdV)
 
         self._popt_dNdV = popt
 

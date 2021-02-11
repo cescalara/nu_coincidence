@@ -101,11 +101,41 @@ ax.set_yscale("log")
 ```python
 # For popsynth
 ldde.Lmax = 1e50
-pop = ldde.popsynth()
+popsynth = ldde.popsynth()
 ```
 
 ```python
-pop.draw_survey(boundary=1e2, no_selection=True)d
+pop = popsynth.draw_survey(boundary=4e-12, hard_cut=True)
+#pop = popsynth.draw_survey(boundary=1e2, no_selection=True)
+```
+
+```python
+pop.n_detections
+```
+
+```python
+bins = 10**np.linspace(-18, -6)
+fig, ax = plt.subplots()
+ax.hist(pop.fluxes_latent, bins=bins, alpha=0.5);
+ax.hist(pop.selected_fluxes_latent, bins=bins, alpha=0.5)
+ax.set_xscale("log")
+```
+
+```python
+fig, ax = plt.subplots()
+ax.scatter(pop.distances, pop.luminosities_latent, alpha=0.1)
+ax.scatter(pop.selected_distances, pop.luminosities_latent[pop.selection], alpha=0.1)
+ax.set_yscale("log")
+ax.set_xscale("log")
+ax.set_xlim(0.01, 6)
+ax.set_ylim(1e44, 1e50)
+```
+
+```python
+bins=10**np.linspace(44, 52)
+fig, ax = plt.subplots()
+ax.hist(pop.luminosities_latent[pop.selection], bins=bins);
+ax.set_xscale("log")
 ```
 
 ## Testing FSRQs
@@ -153,11 +183,40 @@ ax.set_yscale("log")
 ```python
 # For popsynth
 ldde.Lmax = 1e50
-pop = ldde.popsynth()
+popsynth = ldde.popsynth()
 ```
 
 ```python
-pop.draw_survey(boundary=1e2, no_selection=True)
+pop = popsynth.draw_survey(boundary=4e-12, hard_cut=True)
+```
+
+```python
+pop.n_detections
+```
+
+```python
+bins = 10**np.linspace(-18, -6)
+fig, ax = plt.subplots()
+ax.hist(pop.fluxes_latent, bins=bins, alpha=0.5);
+ax.hist(pop.selected_fluxes_latent, bins=bins, alpha=0.5)
+ax.set_xscale("log")
+```
+
+```python
+fig, ax = plt.subplots()
+ax.scatter(pop.distances, pop.luminosities_latent, alpha=0.3)
+ax.scatter(pop.selected_distances, pop.luminosities_latent[pop.selection], alpha=0.3)
+ax.set_yscale("log")
+ax.set_xscale("log")
+ax.set_xlim(0.01, 10)
+ax.set_ylim(1e44, 1e50)
+```
+
+```python
+bins=10**np.linspace(44, 52)
+fig, ax = plt.subplots()
+ax.hist(pop.luminosities_latent[pop.selection], bins=bins);
+ax.set_xscale("log")
 ```
 
 ## Testing SBPL
