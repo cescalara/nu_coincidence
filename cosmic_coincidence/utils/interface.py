@@ -10,6 +10,7 @@ from cosmic_coincidence.populations.sbpl_population import (
     SBPLSFRPopulation,
 )
 from cosmic_coincidence.distributions.sbpl_distribution import sbpl
+from popsynth.utils.cosmology import cosmology
 
 
 class FermiModel(Distribution):
@@ -158,6 +159,7 @@ class LDDEFermiModel(FermiModel):
 
             for i, L in enumerate(L):
                 f = self.Phi(L, z[:, None], G) * 1e-13  # Mpc^-3 erg^-1 s
+                # f = f * cosmology.differential_comoving_volume(z) * 1e9
                 integral[i] = integrate.simps(integrate.simps(f, G), z)
 
             return integral
