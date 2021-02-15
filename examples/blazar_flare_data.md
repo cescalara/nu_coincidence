@@ -17,6 +17,7 @@ jupyter:
 import numpy as np
 from matplotlib import pyplot as plt
 from astropy.io import fits
+from astropy import units as u
 from scipy import stats
 ```
 
@@ -29,9 +30,15 @@ hdul.info()
 # Get flare duration for different categories
 N = len(hdul[1].data)
 
-duration_bll = []
-duration_fsrq = []
-duration_bcu = []
+duration = {}
+duration['bll'] = []
+duration['fsrq'] = []
+duration['bcu'] = []
+
+n_flares = {}
+n_flares['bll'] = []
+n_flares['fsrq'] = []
+n_flares['bcu'] = []
 
 # Loop over sources
 for i in range(N):
@@ -39,9 +46,15 @@ for i in range(N):
     c = hdul[1].data['CLASS'][i]
     
     # Get flare times corresponding to this source
-    selection = np.where(hdul[2].data['FAVASRC']==i+1)[0]    
-    tstart = hdul[2].data['TSTART'][selection].astype(int)
-    tstop = hdul[2].data['TSTOP'][selection].astype(int)
+    selection = np.where(hdul[2].data['FAVASRC']==i+1)[0]   
+    sig_le = hdul[2].data['LESIGNIF'][selection]
+    sig_he = hdul[2].data['HESIGNIF'][selection]
+    condition = ((sig_le < -4) & (sig_he < -4)) | ((sig_he < -6) | (sig_le < -6))
+    
+    # Get non-negative flares
+    non_neg_sel = selection #np.where(~condition)[0]
+    tstart = hdul[2].data['TSTART'][non_neg_sel].astype(int)
+    tstop = hdul[2].data['TSTOP'][non_neg_sel].astype(int)     
     
     # Merge adjacent flare periods
     eq_ind = np.where(np.equal(tstart[1:], tstop[:-1]))[0]
@@ -50,23 +63,69 @@ for i in range(N):
     d = (b-a) / 604800 # duration in weeks
     
     if c == 'bll':
-        duration_bll.extend(d)
+        duration['bll'].extend(d)
+        n_flares['bll'].append(len(d))
+        
     elif c == 'fsrq':
-        duration_fsrq.extend(d)
+        duration['fsrq'].extend(d)
+        n_flares['fsrq'].append(len(d))
+        
     elif c == 'bcu':
-        duration_bcu.extend(d)
+        duration['bcu'].extend(d)
+        n_flares['bcu'].append(len(d))
 ```
 
 ```python
 fig, ax = plt.subplots()
 bins=np.linspace(1, 110)
-ax.hist(duration_fsrq, label='fsrq', alpha=0.7, bins=bins, density=True)
-ax.hist(duration_bll, label='bll', alpha=0.7, bins=bins, density=True)
-ax.hist(duration_bcu, label='bcu', alpha=0.7, bins=bins, density=True);
+ax.hist(duration['fsrq'], label='fsrq', alpha=0.7, bins=bins, density=True)
+ax.hist(duration['bll'], label='bll', alpha=0.7, bins=bins, density=True)
+ax.hist(duration['bcu'], label='bcu', alpha=0.7, bins=bins, density=True);
 ax.plot(bins, stats.pareto(1.5).pdf(bins), alpha=0.7, color='k', 
         label='pareto approx');
 ax.set_yscale('log')
 ax.legend()
+```
+
+```python
+# Rates
+time = (473615018 - 239557418) * u.s
+time = time.to(u.year)
+
+bins = np.linspace(0, 10)
+fig, ax = plt.subplots()
+for key, value in n_flares.items():
+    ax.hist((value/time.value), label=key, alpha=0.7, density=True, bins=bins)
+#ax.plot(bins, stats.pareto(0.1).pdf(bins), color='k', label='pareto approx')
+ax.plot(bins, stats.cauchy(0, 0.2).pdf(bins), color='r')
+ax.legend()
+ax.set_yscale('log')
+```
+
+```python
+sum(hdul[1].data['FLARES'])
+```
+
+```python
+# Finding negative flares
+total_neg = 0
+for i in range(N):
+    selection = np.where(hdul[2].data['FAVASRC'] == i+1)[0]
+    N_neg = 0
+    for s in selection:
+        sig_le = hdul[2].data['LESIGNIF'][s]
+        sig_he = hdul[2].data['HESIGNIF'][s]
+
+        if ((sig_he <= -6) or (sig_le <= -6)) or ((sig_he <= -4) and (sig_le <= -4)):
+            N_neg += 1
+            
+    if N_neg != hdul[1].data['NEGFLR'][i]:
+        print(N_neg, hdul[1].data['NEGFLR'][i])
+    total_neg += N_neg
+```
+
+```python
+total_neg - sum(hdul[1].data['NEGFLR'])
 ```
 
 ```python
