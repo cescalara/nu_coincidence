@@ -85,5 +85,38 @@ class FlareNumAuxSampler(ParetoAuxSampler):
 
 
 class FlareTimeAuxSampler(AuxiliarySampler):
+    """
+    Sample flare times for each source give
+    rate and total number of flares.
+    """
+
+    obs_time = AuxiliaryParameter(vmin=0, default=1)
+
+    def __init__(self, name="flare_times", observed=False):
+
+        super(FlareTimeAuxSampler, self).__init__(name=name, observed=observed)
+
+    def true_sampler(self, size):
+
+        times = np.empty((size,), dtype=object)
+
+        rate = self._secondary_samplers["flare_rate"].true_values
+
+        for i, _ in enumerate(times):
+
+            if rate[i] == 0:
+
+                times[i] = []
+
+            else:
+
+                wait_times = stats.expon(scale=1 / rate[i]).rvs(200)
+                ts = np.cumsum(wait_times)
+                times[i] = list(ts[ts < self.obs_time])
+
+        self._true_values = times
+
+
+class FlareDurationAuxSampler(ParetoAuxSampler):
 
     pass

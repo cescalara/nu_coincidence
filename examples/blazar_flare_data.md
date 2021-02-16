@@ -89,6 +89,10 @@ ax.legend()
 ```
 
 ```python
+print(sum(n_flares['bll']), sum(n_flares['fsrq']))
+```
+
+```python
 # Rates
 time = (473615018 - 239557418) * u.s
 time = time.to(u.year)

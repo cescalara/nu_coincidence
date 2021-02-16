@@ -107,24 +107,24 @@ popsynth = ldde.popsynth()
 ```python
 from cosmic_coincidence.populations.aux_samplers import (VariabilityAuxSampler, 
                                                          FlareRateAuxSampler, 
-                                                         FlareNumAuxSampler)
+                                                         FlareTimeAuxSampler)
 ```
 
 ```python
 variability = VariabilityAuxSampler()
-variability.weight = 0.4
+variability.weight = 0.35
 
 flare_rate = FlareRateAuxSampler()
-flare_rate.xmin = 1e-1
+flare_rate.xmin = 2e-2
 flare_rate.index = 1.7
 
-flare_num = FlareNumAuxSampler()
-flare_num.obs_time = 3 # years
+flare_times = FlareTimeAuxSampler()
+flare_times.obs_time = 7.5 # years
 
 flare_rate.set_secondary_sampler(variability)
-flare_num.set_secondary_sampler(flare_rate)
+flare_times.set_secondary_sampler(flare_rate)
 
-popsynth.add_observed_quantity(flare_num)
+popsynth.add_observed_quantity(flare_times)
 ```
 
 ```python
@@ -133,12 +133,40 @@ pop = popsynth.draw_survey(boundary=4e-12, hard_cut=True)
 ```
 
 ```python
-np.max(pop.flare_num)
+N = [len(_) for _ in pop.flare_times]
+N_sel = [len(_) for _ in pop.flare_times_selected]
 ```
 
 ```python
 fig, ax = plt.subplots()
-ax.hist(pop.flare_rate, bins=10**np.linspace(-1, 2))
+bins = np.linspace(0, 140)
+ax.hist(N);
+ax.hist(N_sel)
+ax.set_yscale("log")
+```
+
+```python
+sum(N_sel)
+```
+
+```python
+from scipy import stats
+```
+
+```python
+fig, ax = plt.subplots()
+x = np.linspace(0, 3)
+ax.plot(x, stats.expon(scale=1/3).pdf(x))
+```
+
+```python
+t_wait = stats.expon(scale=1/3).rvs(10)
+np.cumsum(t_wait)
+```
+
+```python
+fig, ax = plt.subplots()
+ax.hist(pop.flare_rate, bins=10**np.linspace(-1, ))
 ax.set_xscale("log")
 ax.set_yscale("log")
 ```
