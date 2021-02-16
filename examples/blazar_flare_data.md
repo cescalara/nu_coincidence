@@ -83,6 +83,7 @@ ax.hist(duration['bll'], label='bll', alpha=0.7, bins=bins, density=True)
 ax.hist(duration['bcu'], label='bcu', alpha=0.7, bins=bins, density=True);
 ax.plot(bins, stats.pareto(1.5).pdf(bins), alpha=0.7, color='k', 
         label='pareto approx');
+ax.plot(bins, stats.lognorm(2.5, 0, 1e-1).pdf(bins), color='k', linestyle=':')
 ax.set_yscale('log')
 ax.legend()
 ```
@@ -92,14 +93,42 @@ ax.legend()
 time = (473615018 - 239557418) * u.s
 time = time.to(u.year)
 
-bins = np.linspace(0, 10)
+bins = 10**np.linspace(-1, 2)
 fig, ax = plt.subplots()
 for key, value in n_flares.items():
+    print(key, min((value/time.value)))
     ax.hist((value/time.value), label=key, alpha=0.7, density=True, bins=bins)
+
+ax.hist(stats.pareto(1.5).rvs(10000) * 0.1, alpha=0.5, color='k', bins=bins, 
+        density=True)
 #ax.plot(bins, stats.pareto(0.1).pdf(bins), color='k', label='pareto approx')
 ax.plot(bins, stats.cauchy(0, 0.2).pdf(bins), color='r')
+ax.plot(bins, stats.lognorm(2, 0, 1e-1).pdf(bins), color='k', linestyle=':')
 ax.legend()
 ax.set_yscale('log')
+ax.set_xscale('log')
+```
+
+```python
+max(n_flares[''])
+```
+
+```python
+fig, ax = plt.subplots()
+x = np.linspace(0.1, 4)
+#ax.plot(x, stats.pareto(1).pdf(x))
+ax.hist(stats.pareto(0.1).rvs(10000) * 0.1, bins=x)
+ax.hist((np.random.pareto(0.1, 10000) + 1) * 0.1, bins=x)
+ax.set_xscale('log')
+ax.set_yscale('log')
+```
+
+```python
+min(stats.pareto(1).rvs(10000))
+```
+
+```python
+np.random.choice([True, False], p=[0.8, 0.2])
 ```
 
 ```python

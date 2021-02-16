@@ -105,12 +105,42 @@ popsynth = ldde.popsynth()
 ```
 
 ```python
+from cosmic_coincidence.populations.aux_samplers import (VariabilityAuxSampler, 
+                                                         FlareRateAuxSampler, 
+                                                         FlareNumAuxSampler)
+```
+
+```python
+variability = VariabilityAuxSampler()
+variability.weight = 0.4
+
+flare_rate = FlareRateAuxSampler()
+flare_rate.xmin = 1e-1
+flare_rate.index = 1.7
+
+flare_num = FlareNumAuxSampler()
+flare_num.obs_time = 3 # years
+
+flare_rate.set_secondary_sampler(variability)
+flare_num.set_secondary_sampler(flare_rate)
+
+popsynth.add_observed_quantity(flare_num)
+```
+
+```python
 pop = popsynth.draw_survey(boundary=4e-12, hard_cut=True)
 #pop = popsynth.draw_survey(boundary=1e2, no_selection=True)
 ```
 
 ```python
-pop.n_detections
+np.max(pop.flare_num)
+```
+
+```python
+fig, ax = plt.subplots()
+ax.hist(pop.flare_rate, bins=10**np.linspace(-1, 2))
+ax.set_xscale("log")
+ax.set_yscale("log")
 ```
 
 ```python
