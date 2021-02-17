@@ -166,8 +166,13 @@ n/7446
 d = []
 for i, _ in enumerate(pop.flare_durations):
     d.extend(_)
+    #print(_)
 fig, ax = plt.subplots()
 ax.hist(d)
+```
+
+```python
+list(np.random.uniform(0, [1, 2, 3]))
 ```
 
 ```python

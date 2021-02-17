@@ -140,7 +140,7 @@ class FlareDurationAuxSampler(AuxiliarySampler):
 
             if times[i] == []:
 
-                durations[i] == []
+                durations[i] = []
 
             else:
 
