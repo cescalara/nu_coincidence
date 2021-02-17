@@ -117,6 +117,36 @@ class FlareTimeAuxSampler(AuxiliarySampler):
         self._true_values = times
 
 
-class FlareDurationAuxSampler(ParetoAuxSampler):
+class FlareDurationAuxSampler(AuxiliarySampler):
+    """
+    Sample flare durations given flare times
+    """
 
-    pass
+    def __init__(self, name="flare_durations", observed=False):
+
+        super(FlareDurationAuxSampler, self).__init__(name=name, observed=observed)
+
+    def true_sampler(self, size):
+
+        durations = np.empty((size,), dtype=object)
+
+        times = self._secondary_samplers["flare_times"].true_values
+
+        obs_time = self._secondary_samplers["flare_times"].obs_time
+
+        super(FlareDurationAuxSampler, self).true_sampler(size)
+
+        for i, _ in enumerate(durations):
+
+            if times[i] == []:
+
+                durations[i] == []
+
+            else:
+
+                max_durations = np.array(times[i][1:]) - np.array(times[i][:-1])
+                max_durations = np.append(max_durations, obs_time - times[i][-1])
+
+                durations[i] = list(np.random.uniform(low=0, high=max_durations))
+
+        self._true_values = durations
