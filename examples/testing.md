@@ -102,6 +102,10 @@ pop.n_detections
 ```
 
 ```python
+#pop.display_flux_sphere()
+```
+
+```python
 N_flares = [len(_) for _ in pop.flare_times]
 N_flares_det = [len(_) for _ in pop.flare_times_selected]
 N_assoc = len([_ for _ in pop.flare_times_selected if _ != []])
@@ -277,6 +281,55 @@ bins=10**np.linspace(44, 52)
 fig, ax = plt.subplots()
 ax.hist(pop.luminosities_latent[pop.selection], bins=bins);
 ax.set_xscale("log")
+```
+
+## Compare with nu
+
+```python
+from popsynth.utils.spherical_geometry import sample_theta_phi
+import ligo.skymap.plot
+from astropy import units as u
+
+from cosmic_coincidence.utils.plotting import SphericalCircle
+```
+
+```python
+obs_time = 7.5
+```
+
+```python
+N_nu = np.random.poisson(7.1 * obs_time) 
+theta, phi = sample_theta_phi(N_nu)
+ra = np.rad2deg(phi)
+dec = np.rad2deg(theta) - 90
+nu_times = np.random.uniform(0, obs_time, N_nu)
+```
+
+```python
+fig, ax = plt.subplots(subplot_kw={"projection": "astro degrees mollweide"})
+fig.set_size_inches((7,5))
+ax.scatter(pop.ra[pop.selection], pop.dec[pop.selection], 
+           transform=ax.get_transform("icrs"), alpha=0.1)
+for pop_r, pop_d in zip(pop.ra[pop.selection], pop.dec[pop.selection]):
+    for r, d in zip(ra, dec):
+        circle = SphericalCircle((r*u.deg, d*u.deg), 2.0*u.deg, color='r', alpha=0.5,
+                             transform=ax.get_transform("icrs"))
+        ax.add_patch(circle)
+        if circle.contains_point((pop_r, pop_d)):
+            print("woo")
+#ax.scatter(ra, dec, transform=ax.get_transform("icrs"))
+```
+
+```python
+fig, ax = plt.subplots()
+i = 0
+for fts, ds in zip(pop.flare_times_selected, pop.flare_durations_selected):
+    if fts != []:
+        for ft, d in zip(fts, ds):
+            ax.plot([ft, ft+d], [i, i], color='k')
+        i += 1
+ax.set_xlabel("time [years]")
+ax.vlines(nu_times, 0, 70, color='r')
 ```
 
 ## PDE
