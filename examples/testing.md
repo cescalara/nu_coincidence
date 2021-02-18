@@ -73,7 +73,7 @@ ldde.Lmax = 1e50
 popsynth = ldde.popsynth()
 
 variability = VariabilityAuxSampler()
-variability.weight = 0.03
+variability.weight = 0.05
 
 flare_rate = FlareRateAuxSampler()
 flare_rate.xmin = 1/7.5
@@ -102,20 +102,18 @@ pop.n_detections
 ```
 
 ```python
-N = [len(_) for _ in pop.flare_times]
-N_sel = [len(_) for _ in pop.flare_times_selected]
-```
-
-```python
+N_flares = [len(_) for _ in pop.flare_times]
+N_flares_det = [len(_) for _ in pop.flare_times_selected]
+N_assoc = len([_ for _ in pop.flare_times_selected if _ != []])
 fig, ax = plt.subplots()
-bins = np.linspace(0, 140)
-ax.hist(N);
-ax.hist(N_sel)
+bins = np.linspace(0, 80)
+ax.hist(N_flares, bins=bins, alpha=0.7, label="All")
+ax.hist(N_flares_det, bins=bins, alpha=0.7, label="Detected")
 ax.set_yscale("log")
-```
-
-```python
-sum(N_sel)
+ax.set_xlabel("Total number of flares")
+ax.legend();
+print("N detected flares:", sum(N_flares_det))
+print("N associated sources:", N_assoc)
 ```
 
 ```python
