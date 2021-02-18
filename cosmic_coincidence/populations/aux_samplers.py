@@ -171,7 +171,6 @@ class FlareDurationAuxSampler(AuxiliarySampler):
                 )
                 max_durations = max_durations - 1 / 52
 
-                # for j, md in enumerate(max_durations):
                 durations[i] = [
                     bounded_pl_inv_cdf(np.random.uniform(0, 1), 1 / 52, md, 1.5)
                     for md in max_durations

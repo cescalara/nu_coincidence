@@ -176,11 +176,6 @@ ldde.sigma = 0.18
 ```
 
 ```python
-from cosmic_coincidence.utils.interface import _zpowerexp, _sfr, _sbpl
-from scipy.optimize import curve_fit
-```
-
-```python
 z = np.linspace(0, ldde.zmax)
 fig, ax = plt.subplots()
 ax.plot(z, ldde.dNdV(z))
@@ -201,6 +196,25 @@ ax.set_yscale("log")
 # For popsynth
 ldde.Lmax = 1e50
 popsynth = ldde.popsynth()
+
+variability = VariabilityAuxSampler()
+variability.weight = 0.4
+
+flare_rate = FlareRateAuxSampler()
+flare_rate.xmin = 1/7.5
+flare_rate.xmax = 15
+flare_rate.index = 1.5
+
+flare_times = FlareTimeAuxSampler()
+flare_times.obs_time = 7.5 # years
+
+flare_durations = FlareDurationAuxSampler()
+
+flare_rate.set_secondary_sampler(variability)
+flare_times.set_secondary_sampler(flare_rate)
+flare_durations.set_secondary_sampler(flare_times)
+
+popsynth.add_observed_quantity(flare_durations)
 ```
 
 ```python
@@ -209,6 +223,35 @@ pop = popsynth.draw_survey(boundary=4e-12, hard_cut=True)
 
 ```python
 pop.n_detections
+```
+
+```python
+N_flares = [len(_) for _ in pop.flare_times]
+N_flares_det = [len(_) for _ in pop.flare_times_selected]
+N_assoc = len([_ for _ in pop.flare_times_selected if _ != []])
+fig, ax = plt.subplots()
+bins = np.linspace(0, 80)
+ax.hist(N_flares, bins=bins, alpha=0.7, label="All")
+ax.hist(N_flares_det, bins=bins, alpha=0.7, label="Detected")
+ax.set_yscale("log")
+ax.set_xlabel("Total number of flares")
+ax.legend();
+print("N detected flares:", sum(N_flares_det))
+print("N associated sources:", N_assoc)
+```
+
+```python
+d = []
+for i, _ in enumerate(pop.flare_durations):
+    d.extend(_)
+d = np.array(d) * 52 # weeks
+bins=np.linspace(min(d), max(d))
+fig, ax = plt.subplots()
+ax.hist(d, bins=bins, density=True)
+ax.plot(bins, stats.pareto(1.5).pdf(bins), alpha=0.7, color='k', 
+        label='pareto approx');
+ax.set_yscale("log")
+ax.set_xlabel("Flare duration (weeks)")
 ```
 
 ```python
