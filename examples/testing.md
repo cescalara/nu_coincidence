@@ -116,8 +116,9 @@ variability = VariabilityAuxSampler()
 variability.weight = 0.35
 
 flare_rate = FlareRateAuxSampler()
-flare_rate.xmin = 1e-1
-flare_rate.index = 1.7
+flare_rate.xmin = 1/52
+flare_rate.xmax = 52/2
+flare_rate.index = 1.5
 
 flare_times = FlareTimeAuxSampler()
 flare_times.obs_time = 7.5 # years
@@ -134,6 +135,20 @@ popsynth.add_observed_quantity(flare_durations)
 ```python
 pop = popsynth.draw_survey(boundary=4e-12, hard_cut=True)
 #pop = popsynth.draw_survey(boundary=1e2, no_selection=True)
+```
+
+```python
+len(pop.variability[pop.variability==True]) / len(pop.variability)
+```
+
+```python
+len(pop.flare_rate[pop.flare_rate!=0]) / len(pop.flare_rate)
+```
+
+```python
+fig, ax = plt.subplots()
+ax.hist(pop.flare_rate[pop.flare_rate!=0])
+ax.set_yscale("log")
 ```
 
 ```python
@@ -172,7 +187,7 @@ ax.hist(d)
 ```
 
 ```python
-list(np.random.uniform(0, [1, 2, 3]))
+min(d)
 ```
 
 ```python

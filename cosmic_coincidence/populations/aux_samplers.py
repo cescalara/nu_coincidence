@@ -21,6 +21,28 @@ class ParetoAuxSampler(AuxiliarySampler):
         self._true_values = stats.pareto(self.index).rvs(size) * self.xmin
 
 
+class BoundedPowerLawAuxSampler(AuxiliarySampler):
+    """
+    Sample from a bounded power law.
+    """
+
+    xmin = AuxiliaryParameter(vmin=0)
+    xmax = AuxiliaryParameter()
+    index = AuxiliaryParameter(default=1)
+
+    def __init__(self, name: str, observed: bool = False):
+
+        super(BoundedPowerLawAuxSampler, self).__init__(name=name, observed=observed)
+
+    def true_sampler(self, size):
+
+        uniform_samples = np.random.uniform(0, 1, size)
+
+        self._true_values = bounded_pl_inv_cdf(
+            uniform_samples, self.xmin, self.xmax, self.index
+        )
+
+
 class VariabilityAuxSampler(AuxiliarySampler):
     """
     Sample whether a source is variable or not.
@@ -42,7 +64,7 @@ class VariabilityAuxSampler(AuxiliarySampler):
         )
 
 
-class FlareRateAuxSampler(ParetoAuxSampler):
+class FlareRateAuxSampler(BoundedPowerLawAuxSampler):
     """
     Sample source flare rate given its variability.
     """
@@ -110,7 +132,8 @@ class FlareTimeAuxSampler(AuxiliarySampler):
 
             else:
 
-                wait_times = stats.expon(scale=1 / rate[i]).rvs(200)
+                max_nflares = int(rate[i] * self.obs_time * 10)
+                wait_times = stats.expon(scale=1 / rate[i]).rvs(max_nflares)
                 ts = np.cumsum(wait_times)
                 times[i] = list(ts[ts < self.obs_time])
 
@@ -150,3 +173,26 @@ class FlareDurationAuxSampler(AuxiliarySampler):
                 durations[i] = list(np.random.uniform(low=0, high=max_durations))
 
         self._true_values = durations
+
+
+def bounded_pl_inv_cdf(x, xmin, xmax, index):
+    """
+    Bounded power law inverse CDF.
+    """
+
+    if index != 1.0:
+
+        int_index = 1 - index
+        norm = 1 / int_index * (xmax ** int_index - xmin ** int_index)
+        norm = 1 / norm
+
+        inv_cdf_factor = norm ** (-1) * int_index
+        inv_cdf_const = xmin ** int_index
+        inv_cdf_index = 1.0 / int_index
+
+        return np.power((x * inv_cdf_factor) + inv_cdf_const, inv_cdf_index)
+
+    else:
+
+        norm = 1.0 / np.log(xmax / xmin)
+        return xmin * np.exp(x / norm)
