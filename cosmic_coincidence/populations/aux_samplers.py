@@ -133,7 +133,7 @@ class FlareTimeAuxSampler(AuxiliarySampler):
             else:
 
                 max_nflares = int(rate[i] * self.obs_time * 10)
-                wait_times = stats.expon(scale=1 / rate[i]).rvs(max_nflares)
+                wait_times = stats.expon(loc=2 / 52, scale=1 / rate[i]).rvs(max_nflares)
                 ts = np.cumsum(wait_times)
                 times[i] = list(ts[ts < self.obs_time])
 
@@ -157,8 +157,6 @@ class FlareDurationAuxSampler(AuxiliarySampler):
 
         obs_time = self._secondary_samplers["flare_times"].obs_time
 
-        super(FlareDurationAuxSampler, self).true_sampler(size)
-
         for i, _ in enumerate(durations):
 
             if times[i] == []:
@@ -168,9 +166,17 @@ class FlareDurationAuxSampler(AuxiliarySampler):
             else:
 
                 max_durations = np.array(times[i][1:]) - np.array(times[i][:-1])
-                max_durations = np.append(max_durations, obs_time - times[i][-1])
+                max_durations = np.append(
+                    max_durations, np.max([obs_time - times[i][-1], 2 / 52])
+                )
+                max_durations = max_durations - 1 / 52
 
-                durations[i] = list(np.random.uniform(low=0, high=max_durations))
+                # for j, md in enumerate(max_durations):
+                durations[i] = [
+                    bounded_pl_inv_cdf(np.random.uniform(0, 1), 1 / 52, md, 1.5)
+                    for md in max_durations
+                ]
+                # durations[i] = list(np.random.uniform(low=1 / 52, high=max_durations))
 
         self._true_values = durations
 

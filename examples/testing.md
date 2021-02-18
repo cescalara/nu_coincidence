@@ -17,6 +17,7 @@ jupyter:
 
 ```python
 import numpy as np
+from scipy import stats
 from matplotlib import pyplot as plt
 
 import sys
@@ -25,42 +26,10 @@ from cosmic_coincidence.populations.sbpl_population import SBPLZPowExpCosmoPopul
 from cosmic_coincidence.distributions.sbpl_distribution import SBPLDistribution
 from cosmic_coincidence.utils.interface import Ajello14PDEModel, BLLacLDDEModel
 from cosmic_coincidence.utils.interface import FSRQLDDEModel
-```
-
-## PDE
-
-```python
-pde = Ajello14PDEModel()
-pde.A = 78.53 # 1e-13 Mpc^-3 erg^-1 s
-pde.Lstar = 0.58e48 # erg s^-1
-pde.gamma1 = 1.32
-pde.gamma2 = 1.25
-pde.kstar = 11.47
-pde.xi = -0.21
-pde.mustar = 2.15
-pde.sigma = 0.27
-
-# For SBPL
-pde.Lmax = 1e50
-```
-
-```python
-pop = pde.popsynth()
-```
-
-```python
-z = np.linspace(0, 6)
-fig, ax = plt.subplots()
-ax.plot(z, pop.spatial_distribution.dNdV(z) * pop.spatial_distribution.differential_volume(z) )
-```
-
-```python
-pde.local_density()
-```
-
-```python
-# Expects like 2e6 objects!?
-#pop.draw_survey(boundary=1e2, no_selection=True)
+from cosmic_coincidence.populations.aux_samplers import (VariabilityAuxSampler, 
+                                                         FlareRateAuxSampler, 
+                                                         FlareTimeAuxSampler,
+                                                         FlareDurationAuxSampler)
 ```
 
 ## BL Lac LDDE
@@ -102,22 +71,13 @@ ax.set_yscale("log")
 # For popsynth
 ldde.Lmax = 1e50
 popsynth = ldde.popsynth()
-```
 
-```python
-from cosmic_coincidence.populations.aux_samplers import (VariabilityAuxSampler, 
-                                                         FlareRateAuxSampler, 
-                                                         FlareTimeAuxSampler,
-                                                         FlareDurationAuxSampler)
-```
-
-```python
 variability = VariabilityAuxSampler()
-variability.weight = 0.35
+variability.weight = 0.03
 
 flare_rate = FlareRateAuxSampler()
-flare_rate.xmin = 1/52
-flare_rate.xmax = 52/2
+flare_rate.xmin = 1/7.5
+flare_rate.xmax = 15
 flare_rate.index = 1.5
 
 flare_times = FlareTimeAuxSampler()
@@ -138,17 +98,7 @@ pop = popsynth.draw_survey(boundary=4e-12, hard_cut=True)
 ```
 
 ```python
-len(pop.variability[pop.variability==True]) / len(pop.variability)
-```
-
-```python
-len(pop.flare_rate[pop.flare_rate!=0]) / len(pop.flare_rate)
-```
-
-```python
-fig, ax = plt.subplots()
-ax.hist(pop.flare_rate[pop.flare_rate!=0])
-ax.set_yscale("log")
+pop.n_detections
 ```
 
 ```python
@@ -169,25 +119,17 @@ sum(N_sel)
 ```
 
 ```python
-n = 0
-for i, _ in enumerate(pop.flare_times):
-    if pop.flare_times[i] == []:
-        n+=1
-        #print(pop.flare_times[i])
-n/7446
-```
-
-```python
 d = []
 for i, _ in enumerate(pop.flare_durations):
     d.extend(_)
-    #print(_)
+d = np.array(d) * 52 # weeks
+bins=np.linspace(min(d), max(d))
 fig, ax = plt.subplots()
-ax.hist(d)
-```
-
-```python
-min(d)
+ax.hist(d, bins=bins, density=True)
+ax.plot(bins, stats.pareto(1.5).pdf(bins), alpha=0.7, color='k', 
+        label='pareto approx');
+ax.set_yscale("log")
+ax.set_xlabel("Flare duration (weeks)")
 ```
 
 ```python
@@ -294,6 +236,42 @@ bins=10**np.linspace(44, 52)
 fig, ax = plt.subplots()
 ax.hist(pop.luminosities_latent[pop.selection], bins=bins);
 ax.set_xscale("log")
+```
+
+## PDE
+
+```python
+pde = Ajello14PDEModel()
+pde.A = 78.53 # 1e-13 Mpc^-3 erg^-1 s
+pde.Lstar = 0.58e48 # erg s^-1
+pde.gamma1 = 1.32
+pde.gamma2 = 1.25
+pde.kstar = 11.47
+pde.xi = -0.21
+pde.mustar = 2.15
+pde.sigma = 0.27
+
+# For SBPL
+pde.Lmax = 1e50
+```
+
+```python
+pop = pde.popsynth()
+```
+
+```python
+z = np.linspace(0, 6)
+fig, ax = plt.subplots()
+ax.plot(z, pop.spatial_distribution.dNdV(z) * pop.spatial_distribution.differential_volume(z) )
+```
+
+```python
+pde.local_density()
+```
+
+```python
+# Expects like 2e6 objects!?
+#pop.draw_survey(boundary=1e2, no_selection=True)
 ```
 
 ## Testing SBPL

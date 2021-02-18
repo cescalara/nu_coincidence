@@ -89,7 +89,7 @@ ax.legend()
 ```
 
 ```python
-print(sum(n_flares['bll']), sum(n_flares['fsrq']))
+print(sum(n_flares['bll']), sum(n_flares['fsrq']), sum(n_flares['bcu']))
 ```
 
 ```python
