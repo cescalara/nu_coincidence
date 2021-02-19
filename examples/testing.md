@@ -102,6 +102,10 @@ pop.n_detections
 ```
 
 ```python
+len(pop.variability_selected[pop.variability_selected==True]) / len(pop.variability_selected)
+```
+
+```python
 #pop.display_flux_sphere()
 ```
 
@@ -230,6 +234,10 @@ pop.n_detections
 ```
 
 ```python
+len(pop.variability_selected[pop.variability_selected==True]) / len(pop.variability_selected)
+```
+
+```python
 N_flares = [len(_) for _ in pop.flare_times]
 N_flares_det = [len(_) for _ in pop.flare_times_selected]
 N_assoc = len([_ for _ in pop.flare_times_selected if _ != []])
@@ -330,6 +338,14 @@ for fts, ds in zip(pop.flare_times_selected, pop.flare_durations_selected):
         i += 1
 ax.set_xlabel("time [years]")
 ax.vlines(nu_times, 0, 70, color='r')
+```
+
+```python
+((50 * u.deg**2).to(u.sr) / (np.pi * 4 * u.sr)) * 2000 * 0.1 * 0.1
+```
+
+```python
+
 ```
 
 ## PDE
