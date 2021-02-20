@@ -291,7 +291,7 @@ ax.hist(pop.luminosities_latent[pop.selection], bins=bins);
 ax.set_xscale("log")
 ```
 
-## Compare with nu
+## Coincidence check with simplistic nu model
 
 ```python
 from popsynth.utils.spherical_geometry import sample_theta_phi
@@ -318,34 +318,36 @@ fig, ax = plt.subplots(subplot_kw={"projection": "astro degrees mollweide"})
 fig.set_size_inches((7,5))
 ax.scatter(pop.ra[pop.selection], pop.dec[pop.selection], 
            transform=ax.get_transform("icrs"), alpha=0.1)
+match_ind = []
+i = 0
 for pop_r, pop_d in zip(pop.ra[pop.selection], pop.dec[pop.selection]):
+    j = 0
     for r, d in zip(ra, dec):
-        circle = SphericalCircle((r*u.deg, d*u.deg), 2.0*u.deg, color='r', alpha=0.5,
+        circle = SphericalCircle((r*u.deg, d*u.deg), 3.0*u.deg, color='r', alpha=0.5,
                              transform=ax.get_transform("icrs"))
         ax.add_patch(circle)
         if circle.contains_point((pop_r, pop_d)):
-            print("woo")
+            match_ind.append((i, j))
+        j+=1
+    i+=1        
 #ax.scatter(ra, dec, transform=ax.get_transform("icrs"))
+```
+
+```python
+match_ind[0]
 ```
 
 ```python
 fig, ax = plt.subplots()
 i = 0
-for fts, ds in zip(pop.flare_times_selected, pop.flare_durations_selected):
-    if fts != []:
-        for ft, d in zip(fts, ds):
-            ax.plot([ft, ft+d], [i, i], color='k')
-        i += 1
+fts, ds = (pop.flare_times_selected[match_ind[0][0]],
+           pop.flare_durations_selected[match_ind[0][0]])
+if fts != []:
+    for ft, d in zip(fts, ds):
+        ax.plot([ft, ft+d], [i, i], color='k')
+    i += 1
 ax.set_xlabel("time [years]")
-ax.vlines(nu_times, 0, 70, color='r')
-```
-
-```python
-((50 * u.deg**2).to(u.sr) / (np.pi * 4 * u.sr)) * 2000 * 0.1 * 0.1
-```
-
-```python
-
+ax.vlines(nu_times[match_ind[0][1]], 0, 2, color='r')
 ```
 
 ## PDE
