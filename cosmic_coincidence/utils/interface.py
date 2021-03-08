@@ -199,6 +199,8 @@ class Ajello14PDEModel(FermiModel):
             name="Ajello14PDE",
         )
 
+        self.r0 = None
+
     def phi_L(self, L):
 
         f1 = self.A / (np.log(10) * L)
@@ -251,20 +253,23 @@ class Ajello14PDEModel(FermiModel):
 
             r0 = I1 * I2 * 1e-13 * (1 / u.Mpc ** 3)
 
+            self.r0 = r0.to(1 / u.Gpc ** 3).value * 4 * np.pi
+
             return r0.to(1 / u.Gpc ** 3).value
 
         else:
 
             raise NotImplementedError
 
-    def popsynth(self):
+    def popsynth(self, seed=1234):
 
         if self.beta == 0 and self.tau == 0:
 
-            r0 = self.local_density() * 4 * np.pi
+            if not self.r0:
+                self.r0 = self.local_density() * 4 * np.pi
 
             pop = SBPLZPowExpCosmoPopulation(
-                r0=r0,
+                r0=self.r0,
                 k=self.kstar,
                 xi=self.xi,
                 Lmin=self.Lmin,
@@ -274,6 +279,7 @@ class Ajello14PDEModel(FermiModel):
                 Lmax=self.Lmax,
                 r_max=self.zmax,
                 is_rate=False,
+                seed=seed,
             )
 
             return pop
@@ -294,10 +300,15 @@ class BLLacLDDEModel(LDDEFermiModel):
             name="bllac_ldde_fermi",
         )
 
-    def popsynth(self):
+    def prep_pop(self):
+        """
+        Get necessary params to make popsynth.
+        """
 
         self._get_dNdV_params()
         self._get_dNdL_params()
+
+    def popsynth(self, seed=1234):
 
         Lambda = self._popt_dNdV[0] * (1 / u.Mpc ** 3)
         Lambda = Lambda.to(1 / u.Gpc ** 3).value * 4 * np.pi
@@ -312,6 +323,7 @@ class BLLacLDDEModel(LDDEFermiModel):
             Lmax=self.Lmax,
             r_max=self.zmax,
             is_rate=False,
+            seed=seed,
         )
 
         return pop
@@ -379,10 +391,15 @@ class FSRQLDDEModel(LDDEFermiModel):
 
         super(FSRQLDDEModel, self).__init__(name=name)
 
-    def popsynth(self):
+    def prep_pop(self):
+        """
+        Get necessary params to make popsynth.
+        """
 
         self._get_dNdV_params()
         self._get_dNdL_params()
+
+    def popsynth(self, seed=1234):
 
         r0 = self._popt_dNdV[0] * (1 / u.Mpc ** 3)
         r0 = r0.to(1 / u.Gpc ** 3).value * 4 * np.pi
@@ -399,6 +416,7 @@ class FSRQLDDEModel(LDDEFermiModel):
             Lmax=self.Lmax,
             r_max=self.zmax,
             is_rate=False,
+            seed=seed,
         )
 
         return pop
