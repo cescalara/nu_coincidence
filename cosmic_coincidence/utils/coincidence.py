@@ -56,10 +56,8 @@ def run_sim(
     fsrq_ldde,
     nu_simulator,
     seed,
-    i_sim,
     obs_time,
     Emin_det,
-    output_file,
 ):
 
     bllac_popsynth = bllac_ldde.popsynth(seed=seed)
@@ -126,13 +124,40 @@ def run_sim(
     fsrq_info["n_variable"] = nv
     fsrq_info["n_flaring"] = nf
 
+    return bllac_info, fsrq_info
+
     # Save useful info, appending for each round
-    with h5py.File(output_file, "r+") as f:
+    # with h5py.File(output_file, "r+") as f:
 
-        f["bllac/n_spatial"][i_sim] = bllac_info["n_spatial"]
-        f["bllac/n_variable"][i_sim] = bllac_info["n_variable"]
-        f["bllac/n_flaring"][i_sim] = bllac_info["n_flaring"]
+    #     f["bllac/n_spatial"][i_sim] = bllac_info["n_spatial"]
+    #     f["bllac/n_variable"][i_sim] = bllac_info["n_variable"]
+    #     f["bllac/n_flaring"][i_sim] = bllac_info["n_flaring"]
 
-        f["fsrq/n_spatial"][i_sim] = fsrq_info["n_spatial"]
-        f["fsrq/n_variable"][i_sim] = fsrq_info["n_variable"]
-        f["fsrq/n_flaring"][i_sim] = fsrq_info["n_flaring"]
+    #     f["fsrq/n_spatial"][i_sim] = fsrq_info["n_spatial"]
+    #     f["fsrq/n_variable"][i_sim] = fsrq_info["n_variable"]
+    #     f["fsrq/n_flaring"][i_sim] = fsrq_info["n_flaring"]
+
+
+def submit_sim(args):
+
+    (
+        bllac_ldde,
+        fsrq_ldde,
+        nu_simulator,
+        seed,
+        i_sim,
+        obs_time,
+        Emin_det,
+        output_file,
+    ) = args
+
+    run_sim(
+        bllac_ldde,
+        fsrq_ldde,
+        nu_simulator,
+        seed,
+        i_sim,
+        obs_time,
+        Emin_det,
+        output_file,
+    )

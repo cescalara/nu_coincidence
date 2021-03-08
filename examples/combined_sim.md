@@ -31,7 +31,8 @@ sys.path.append("../")
 from cosmic_coincidence.utils.interface import BLLacLDDEModel, FSRQLDDEModel
 from cosmic_coincidence.utils.plotting import SphericalCircle
 from cosmic_coincidence.utils.coincidence import (check_spatial_coincidence, 
-                                                  check_temporal_coincidence, run_sim)
+                                                  check_temporal_coincidence, 
+                                                  run_sim, submit_sim)
 ```
 
 ```python
@@ -48,7 +49,7 @@ from icecube_tools.simulator import Simulator
 
 ```python
 obs_time = 10 # years
-N = 10
+N = 100
 output_file = "output/test_sim.h5"
 
 popsynth_config["show_progress"] = False
@@ -159,10 +160,33 @@ nu_simulator.max_cosz = 0.1
 ## Simulate
 
 ```python
-for i_sim in range(N):
-    seed = i_sim * 10 
-    run_sim(bllac_ldde, fsrq_ldde, nu_simulator, seed, i_sim, obs_time, 
-            Emin_det, output_file)
+import multiprocessing
+from joblib import Parallel, delayed
+```
+
+```python
+multiprocessing.cpu_count()
+```
+
+```python
+args = [bllac_ldde, fsrq_ldde, nu_simulator, obs_time, Emin_det,
+        output_file]
+i_sim = np.array(range(N))
+job_seeds = i_sim * 10
+```
+
+```python
+def single_run(seed, i_sim, args):
+    args = [bllac_ldde, fsrq_ldde, nu_simulator, obs_time, Emin_det,
+            output_file]
+    new_args = [bllac_ldde, fsrq_ldde, nu_simulator, seed, i_sim, obs_time, Emin_det,
+            output_file]
+    submit_sim(new_args)
+```
+
+```python
+#results = Parallel(n_jobs=N, backend="loky")(
+#    delayed(single_run)(seed=s, i_sim=i, args=args) for s, i in zip(job_seeds, i_sim))
 ```
 
 ## Check results
@@ -178,6 +202,14 @@ with h5py.File(output_file, "r") as f:
 fig, ax = plt.subplots()
 ax.hist(bllac_n_spatial);
 ax.hist(bllac_n_variable);
+```
+
+```python
+bllac_n_spatial
+```
+
+```python
+bllac_n_variable
 ```
 
 ```python
