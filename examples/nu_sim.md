@@ -18,6 +18,15 @@ jupyter:
 ```python
 import numpy as np
 from matplotlib import pyplot as plt
+import ligo.skymap.plot
+from astropy import units as u
+```
+
+```python
+import sys
+sys.path.append("../")
+
+from cosmic_coincidence.utils.plotting import SphericalCircle
 ```
 
 ```python
@@ -31,7 +40,7 @@ from icecube_tools.simulator import Simulator
 ```
 
 ```python
-Emin = 1e6 # GeV
+Emin = 5e4 # GeV
 ```
 
 ```python
@@ -52,9 +61,9 @@ detector = IceCube(effective_area, energy_res, ang_res)
 ```
 
 ```python
-power_law_atmo = PowerLawFlux(2.5e-18, 1e5, 3.7, lower_energy=Emin, upper_energy=1e9)
+power_law_atmo = PowerLawFlux(2.5e-18, 1e5, 3.7, lower_energy=Emin, upper_energy=1e8)
 atmospheric = DiffuseSource(flux_model=power_law_atmo)
-power_law = PowerLawFlux(1.01e-18, 1e5, 2.19, lower_energy=Emin, upper_energy=1e9)
+power_law = PowerLawFlux(1.01e-18, 1e5, 2.19, lower_energy=Emin, upper_energy=1e8)
 astrophysical_bg = DiffuseSource(flux_model=power_law)
 sources = [atmospheric, astrophysical_bg]
 ```
@@ -63,12 +72,44 @@ sources = [atmospheric, astrophysical_bg]
 simulator = Simulator(sources, detector)
 simulator.time = 1.0 # years
 simulator.max_cosz = 0.1
-simulator.run(show_progress=True)
+simulator.run(show_progress=True, seed=42)
+```
+
+```python
+reco_energy = np.array(simulator.reco_energy)
+len(reco_energy[reco_energy>4e5])
+```
+
+```python
+bins = 10**np.linspace(2, 8)
+fig, ax = plt.subplots()
+ax.hist(simulator.true_energy, bins=bins)
+ax.hist(simulator.reco_energy, bins=bins)
+ax.set_xscale("log")
+```
+
+```python
+fig, ax = plt.subplots()
+ang_err = np.array(simulator.ang_err) * 3
+ax.hist(ang_err);
+```
+
+```python
+fig, ax = plt.subplots(subplot_kw={"projection": "astro degrees mollweide"})
+fig.set_size_inches((7, 5))
+for ra, dec, err in zip(np.rad2deg(simulator.ra), np.rad2deg(simulator.dec), 
+                        simulator.ang_err):
+    circle = SphericalCircle((ra*u.deg, dec*u.deg), err*u.deg*3, 
+                             transform=ax.get_transform("icrs"))
+    ax.add_patch(circle)
+    
+    #ax.scatter(np.rad2deg(simulator.ra), np.rad2deg(simulator.dec), 
+#           transform=ax.get_transform("icrs"))
 ```
 
 ## Scraping icecube info
 
-Can use this to update icecube tools.
+Can use this to update icecube_tools.
 
 ```python
 import requests
