@@ -192,24 +192,40 @@ def single_run(seed, i_sim, args):
 ## Check results
 
 ```python
-with h5py.File(output_file, "r") as f:
+with h5py.File("output/test_sim_err2_1000.h5", "r") as f:
     bllac_n_spatial = f["bllac/n_spatial"][()]
-    bllac_n_variable = f["bllac/n_variable"][()]
+    bllac_n_variable = f["bllac/n_variable"][()
     bllac_n_flaring = f["bllac/n_flaring"][()]
+    
+    fsrq_n_spatial = f["fsrq/n_spatial"][()]
+    fsrq_n_variable = f["fsrq/n_variable"][()]
+    fsrq_n_flaring = f["fsrq/n_flaring"][()]
 ```
 
 ```python
 fig, ax = plt.subplots()
 ax.hist(bllac_n_spatial);
 ax.hist(bllac_n_variable);
+ax.hist(bllac_n_flaring);
 ```
 
 ```python
-bllac_n_spatial
+sum(bllac_n_flaring) / len(bllac_n_flaring)
 ```
 
 ```python
-bllac_n_variable
+fig, ax = plt.subplots()
+ax.hist(fsrq_n_spatial);
+ax.hist(fsrq_n_variable);
+ax.hist(fsrq_n_flaring);
+```
+
+```python
+sum(fsrq_n_flaring) / len(fsrq_n_flaring)
+```
+
+```python
+#fsrq_n_flaring
 ```
 
 ```python

@@ -17,7 +17,7 @@ def check_spatial_coincidence(nu_ra, nu_dec, nu_ang_err, pop):
     for r, d, err in zip(nu_ra, nu_dec, nu_ang_err):
         match = (pop.ra[pop.selection] - r) ** 2 + (
             pop.dec[pop.selection] - d
-        ) ** 2 <= (err * 3) ** 2
+        ) ** 2 <= (err * 2) ** 2
         match_inds.append(np.where(match == True)[0])
         n_matches.append(len(match[match == True]))
 

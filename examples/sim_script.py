@@ -34,8 +34,8 @@ warnings.filterwarnings("ignore")
 if COMM.rank == 0:
 
     obs_time = 10  # years
-    N = 10
-    output_file = "output/test_sim.h5"
+    N = 1000
+    output_file = "output/test_sim_err2_1000.h5"
 
     trial = range(N)
     trials = np.array_split(trial, COMM.size)
