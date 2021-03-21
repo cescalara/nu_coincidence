@@ -13,6 +13,48 @@ jupyter:
     name: cosmic_coincidence
 ---
 
+## Testing dask
+
+```python
+from dask.distributed import LocalCluster, Client
+from distributed.protocol import serialize
+```
+
+```python
+import sys
+sys.path.append("../")
+
+from cosmic_coincidence.simulation import Simulation
+```
+
+```python
+sim = Simulation(N=16)
+```
+
+```python
+#cluster = LocalCluster(n_workers=4)
+client = Client(processes=False)
+client
+```
+
+```python
+sim.run(client)
+```
+
+```python
+client.get_events()
+```
+
+```python
+client.close()
+```
+
+```python
+
+```
+
+## Old stuff
+
 ```python
 import numpy as np
 from matplotlib import pyplot as plt
@@ -28,7 +70,9 @@ from popsynth.utils.configuration import popsynth_config
 ```python
 import sys
 sys.path.append("../")
-from cosmic_coincidence.utils.interface import BLLacLDDEModel, FSRQLDDEModel
+from cosmic_coincidence.blazars.bllac import BLLacLDDEModel, BLLacPopWrapper
+from cosmic_coincidence.blazars.fsrq import FSRQLDDEModel, FSRQPopWrapper
+from cosmic_coincidence.blazars.fermi_interface import FermiPopParams
 from cosmic_coincidence.utils.plotting import SphericalCircle
 from cosmic_coincidence.utils.coincidence import (check_spatial_coincidence, 
                                                   check_temporal_coincidence, 
@@ -45,26 +89,8 @@ from icecube_tools.source.source_model import DiffuseSource
 from icecube_tools.simulator import Simulator
 ```
 
-## Setup
-
 ```python
-obs_time = 10 # years
-N = 100
-output_file = "output/test_sim.h5"
-
-popsynth_config["show_progress"] = False
-
-with h5py.File(output_file, "w") as f:
-    f.create_dataset("obs_time", data=obs_time)
-    f.create_dataset("N", data=N)
-    bllac = f.create_group("bllac")
-    fsrq = f.create_group("fsrq")
-    bllac.create_dataset("n_spatial", (N,), maxshape=(None,), dtype=np.int64)
-    bllac.create_dataset("n_variable", (N,), maxshape=(None,), dtype=np.int64)
-    bllac.create_dataset("n_flaring", (N,), maxshape=(None,), dtype=np.int64)
-    fsrq.create_dataset("n_spatial", (N,), maxshape=(None,), dtype=np.int64)
-    fsrq.create_dataset("n_variable", (N,), maxshape=(None,), dtype=np.int64)
-    fsrq.create_dataset("n_flaring", (N,), maxshape=(None,), dtype=np.int64)
+from dask.distributed import LocalCluster, Client
 ```
 
 ## Blazar models
@@ -73,25 +99,73 @@ with h5py.File(output_file, "w") as f:
 BL Lac objects
 
 ```python
-bllac_ldde = BLLacLDDEModel()
-bllac_ldde.A = 3.39e4
-bllac_ldde.gamma1 = 0.27
-bllac_ldde.Lstar = 0.28e48
-bllac_ldde.gamma2 = 1.86
-bllac_ldde.zcstar = 1.34
-bllac_ldde.p1star = 2.24
-bllac_ldde.tau = 4.92
-bllac_ldde.p2 = -7.37
-bllac_ldde.alpha = 4.53e-2
-bllac_ldde.mustar = 2.1
-bllac_ldde.beta = 6.46e-2
-bllac_ldde.sigma = 0.26
+fermi_params_list = []
+
+for i in range(32):
+    fermi_params = FermiPopParams(A=3.39e4, gamma1=0.27, Lstar=0.28e48, gamma2=1.86, 
+                              zcstar=1.34, p1star=2.24, tau=4.92, p2=-7.37, 
+                              alpha=4.53e-2, mustar=2.1, beta=6.46e-2, sigma=0.26, 
+                              boundary=4e-12, hard_cut=True)
+    fermi_params.seed = i
+    fermi_params.file_path = "output/my_survey_%i.h5" % i
+    fermi_params_list.append(fermi_params)
 ```
 
 ```python
-# For popsynth
-bllac_ldde.Lmax = 1e50
-bllac_ldde.prep_pop()
+#fermi_params_list
+```
+
+```python
+#BLLacPopWrapper(fermi_params_list[0])
+```
+
+```python
+def pop_wrapper(parameter_server):
+    return BLLacPopWrapper(parameter_server)
+```
+
+```python
+#cluster = LocalCluster(n_workers=1)
+client = Client(processes=False)
+```
+
+```python
+client
+```
+
+```python
+futures = client.map(pop_wrapper, fermi_params_list)
+```
+
+```python
+results = client.gather(futures)
+```
+
+```python
+client.close()
+```
+
+```python
+results
+```
+
+```python
+def inc(x):
+    return x + np.sqrt(10)
+```
+
+```python
+client = Client(processes=False)
+client
+```
+
+```python
+futures = client.map(inc, range(10000))
+results = client.gather(futures)
+```
+
+```python
+client.close()
 ```
 
 FSRQs
