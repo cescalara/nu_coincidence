@@ -128,16 +128,13 @@ Emin_det = 2e5 # GeV
 
 ```python
 # Effective area
-Aeff_filename = "input/IC86-2012-TabulatedAeff.txt"
-effective_area = EffectiveArea(Aeff_filename)
+effective_area = EffectiveArea.from_dataset("20181018")
 
 # Energy resolution
-eres_file = "input/effective_area.h5"
-energy_res = EnergyResolution(eres_file)
+energy_res = EnergyResolution.from_dataset("20150820")
 
 # Angular resolution
-Ares_file = "input/IC86-2012-AngRes.txt"
-ang_res = AngularResolution(Ares_file)
+ang_res = AngularResolution.from_dataset("20181018")
 
 # Detector
 detector = IceCube(effective_area, energy_res, ang_res)
@@ -160,33 +157,57 @@ nu_simulator.max_cosz = 0.1
 ## Simulate
 
 ```python
-import multiprocessing
-from joblib import Parallel, delayed
+bllac_popsynth = bllac_ldde.popsynth()
 ```
 
 ```python
-multiprocessing.cpu_count()
+pop =bllac_popsynth.draw_survey(boundary=4e-12, hard_cut=True)
 ```
 
 ```python
-args = [bllac_ldde, fsrq_ldde, nu_simulator, obs_time, Emin_det,
-        output_file]
-i_sim = np.array(range(N))
-job_seeds = i_sim * 10
+pop.writeto("output/test_pop.h5")
 ```
 
 ```python
-def single_run(seed, i_sim, args):
-    args = [bllac_ldde, fsrq_ldde, nu_simulator, obs_time, Emin_det,
-            output_file]
-    new_args = [bllac_ldde, fsrq_ldde, nu_simulator, seed, i_sim, obs_time, Emin_det,
-            output_file]
-    submit_sim(new_args)
+from dask.distributed import Client
+client = Client()
+client
 ```
 
 ```python
-#results = Parallel(n_jobs=N, backend="loky")(
-#    delayed(single_run)(seed=s, i_sim=i, args=args) for s, i in zip(job_seeds, i_sim))
+def inc(x):
+    return x+10
+
+futures = client.map(inc, range(1000))
+results = client.gather(futures)
+```
+
+```python
+def run_popsynth_sim(n):
+    bllac_popsynth = bllac_ldde.popsynth(seed=n)
+    variability = VariabilityAuxSampler()
+    variability.weight = 0.05
+    flare_rate = FlareRateAuxSampler()
+    flare_rate.xmin = 1 / 7.5
+    flare_rate.xmax = 15
+    flare_rate.index = 1.5
+    flare_times = FlareTimeAuxSampler()
+    flare_times.obs_time = obs_time
+    flare_durations = FlareDurationAuxSampler()
+    flare_rate.set_secondary_sampler(variability)
+    flare_times.set_secondary_sampler(flare_rate)
+    flare_durations.set_secondary_sampler(flare_times)
+    bllac_popsynth.add_observed_quantity(flare_durations)
+    bllac_pop = bllac_popsynth.draw_survey(boundary=4e-12, hard_cut=True)
+    
+    return bllac_pop
+
+futures = client.map(run_popsynth_sim, range(10))
+results = client.gather(futures)
+```
+
+```python
+client.close()
 ```
 
 ## Check results
