@@ -1,16 +1,11 @@
-from abc import abstractmethod
+from abc import abstractmethod, ABCMeta
 import numpy as np
-from scipy import integrate, optimize
+from scipy import integrate
 from astropy import units as u
 
 from popsynth.distribution import Distribution, DistributionParameter
-from cosmic_coincidence.populations.sbpl_population import (
-    SBPLZPowExpCosmoPopulation,
-    SBPLZPowerCosmoPopulation,
-    SBPLSFRPopulation,
-)
+from cosmic_coincidence.populations.sbpl_population import SBPLZPowExpCosmoPopulation
 from cosmic_coincidence.distributions.sbpl_distribution import sbpl
-from popsynth.utils.cosmology import cosmology
 
 
 class FermiModel(Distribution):
@@ -46,6 +41,13 @@ class FermiModel(Distribution):
     def __init__(self, seed=1234, name="fermi", form=r"Phi(L, z, G)"):
 
         super(FermiModel, self).__init__(seed=seed, name=name, form=form)
+
+    def set_parameters(self, parameters):
+        """
+        Option to set parameters from dict.
+        """
+
+        self._parameter_storage = parameters
 
     @abstractmethod
     def Phi(self):
@@ -289,173 +291,120 @@ class Ajello14PDEModel(FermiModel):
             raise NotImplementedError
 
 
-class BLLacLDDEModel(LDDEFermiModel):
+class FermiPopWrapper(object, metaclass=ABCMeta):
     """
-    BL Lac LDDE model from Ajello+14.
-    """
-
-    def __init__(self):
-
-        super(BLLacLDDEModel, self).__init__(
-            name="bllac_ldde_fermi",
-        )
-
-    def prep_pop(self):
-        """
-        Get necessary params to make popsynth.
-        """
-
-        self._get_dNdV_params()
-        self._get_dNdL_params()
-
-    def popsynth(self, seed=1234):
-
-        Lambda = self._popt_dNdV[0] * (1 / u.Mpc ** 3)
-        Lambda = Lambda.to(1 / u.Gpc ** 3).value * 4 * np.pi
-
-        pop = SBPLZPowerCosmoPopulation(
-            Lambda=Lambda,
-            delta=self._popt_dNdV[1],
-            Lmin=self.Lmin,
-            alpha=self._popt_dNdL[2],
-            Lbreak=self._popt_dNdL[1],
-            beta=self._popt_dNdL[3],
-            Lmax=self.Lmax,
-            r_max=self.zmax,
-            is_rate=False,
-            seed=seed,
-        )
-
-        return pop
-
-    def _get_dNdV_params(self):
-        """
-        Find params to approximate dNdV with
-        a ZPowCosmoDistribution.
-        """
-
-        z = np.linspace(self.zmin, self.zmax)
-        dNdV = self.dNdV(z)
-
-        p0 = (max(dNdV), -5)
-        bounds = ([0, -10], [1, 0])
-
-        popt, pcov = optimize.curve_fit(
-            self._wrap_func_dNdV,
-            z,
-            dNdV,
-            p0=p0,
-            bounds=bounds,
-        )
-
-        self._popt_dNdV = popt
-
-    def _get_dNdL_params(self):
-        """
-        Find params to approximate dNdL with
-        an SBPLDistribution.
-        """
-
-        L = 10 ** np.linspace(np.log10(self.Lmin), np.log10(self.Lmax))
-        dNdL = self.dNdL(L)
-
-        p0 = (1, 1e47, 1.5, 2.5)
-        bounds = ([1e-1, 1e47, 1.0, 2.0], [10, 5e48, 2.0, 3.0])
-
-        popt, pcov = optimize.curve_fit(
-            self._wrap_func_dNdL,
-            L,
-            1e57 * dNdL,
-            p0=p0,
-            bounds=bounds,
-        )
-
-        popt[0] = popt[0] / 1e57
-        self._popt_dNdL = popt
-
-    def _wrap_func_dNdV(self, z, Lambda, delta):
-
-        return _zpower(z, Lambda, delta)
-
-    def _wrap_func_dNdL(self, L, A, Lbreak, a1, a2):
-
-        return _sbpl(L, A, Lbreak, a1, a2)
-
-
-class FSRQLDDEModel(LDDEFermiModel):
-    """
-    FSRQ LDDE model from Ajello+2012.
+    Parallel simulation wrapper for blazar
+    populations defined through the Fermi interface.
     """
 
-    def __init__(self, name="fsrq_ldde_fermi"):
+    def __init__(self, parameter_server):
 
-        super(FSRQLDDEModel, self).__init__(name=name)
+        pop_setup = self._pop_type()
 
-    def prep_pop(self):
-        """
-        Get necessary params to make popsynth.
-        """
+        pop_setup.set_parameters(parameter_server.parameters)
 
-        self._get_dNdV_params()
-        self._get_dNdL_params()
+        pop_setup.Lmax = parameter_server.Lmax
 
-    def popsynth(self, seed=1234):
+        pop_setup.prep_pop()
 
-        r0 = self._popt_dNdV[0] * (1 / u.Mpc ** 3)
-        r0 = r0.to(1 / u.Gpc ** 3).value * 4 * np.pi
+        popsynth = pop_setup.popsynth(seed=parameter_server.seed)
 
-        pop = SBPLSFRPopulation(
-            r0=r0,
-            rise=self._popt_dNdV[1],
-            decay=self._popt_dNdV[2],
-            peak=self._popt_dNdV[3],
-            Lmin=self.Lmin,
-            alpha=self._popt_dNdL[2],
-            Lbreak=self._popt_dNdL[1],
-            beta=self._popt_dNdL[3],
-            Lmax=self.Lmax,
-            r_max=self.zmax,
-            is_rate=False,
-            seed=seed,
+        survey = popsynth.draw_survey(**parameter_server.survey)
+
+        survey.writeto(parameter_server.file_path)
+
+        del survey
+
+    @abstractmethod
+    def _pop_type(self):
+
+        raise NotImplementedError()
+
+
+class FermiPopParams(object):
+    """
+    Parameter server for blazar populations
+    defined through the Fermi interface.
+    """
+
+    def __init__(
+        self,
+        A,
+        gamma1,
+        Lstar,
+        gamma2,
+        zcstar,
+        p1star,
+        tau,
+        p2,
+        alpha,
+        mustar,
+        beta,
+        sigma,
+        boundary,
+        hard_cut,
+    ):
+
+        self._parameters = dict(
+            A=A,
+            gamma1=gamma1,
+            Lstar=Lstar,
+            gamma2=gamma2,
+            zcstar=zcstar,
+            p1star=p1star,
+            tau=tau,
+            p2=p2,
+            alpha=alpha,
+            mustar=mustar,
+            beta=beta,
+            sigma=sigma,
         )
 
-        return pop
+        self._survey = dict(boundary=boundary, hard_cut=hard_cut)
 
-    def _get_dNdV_params(self):
+        self._Lmax = 1e50
 
-        z = np.linspace(self.zmin, self.zmax)
-        dNdV = self.dNdV(z)
+        self._file_path = None
 
-        popt, pcov = optimize.curve_fit(self._wrap_func_dNdV, z, dNdV)
+    @property
+    def seed(self):
 
-        self._popt_dNdV = popt
+        return self._seed
 
-    def _get_dNdL_params(self):
+    @seed.setter
+    def seed(self, value: int):
 
-        L = 10 ** np.linspace(np.log10(self.Lmin), np.log10(self.Lmax))
-        dNdL = self.dNdL(L)
+        self._seed = value
 
-        p0 = (5, 1e48, 1.1, 2.5)
-        bounds = ([0.1, 1e48, 1.0, 2.2], [10, 5e48, 1.5, 2.7])
+    @property
+    def file_path(self):
 
-        popt, pcov = optimize.curve_fit(
-            self._wrap_func_dNdL,
-            L,
-            1e58 * dNdL,
-            p0=p0,
-            bounds=bounds,
-        )
+        return self._file_path
 
-        popt[0] = popt[0] / 1e58
-        self._popt_dNdL = popt
+    @file_path.setter
+    def file_path(self, value: str):
 
-    def _wrap_func_dNdV(self, z, r0, rise, decay, peak):
+        self._file_path = value
 
-        return _sfr(z, r0, rise, decay, peak)
+    @property
+    def Lmax(self):
 
-    def _wrap_func_dNdL(self, L, A, Lbreak, a1, a2):
+        return self._Lmax
 
-        return _sbpl(L, A, Lbreak, a1, a2)
+    @Lmax.setter
+    def Lmax(self, value: float):
+
+        self._Lmax = value
+
+    @property
+    def parameters(self):
+
+        return self._parameters
+
+    @property
+    def survey(self):
+
+        return self._survey
 
 
 def _zpower(z, Lambda, delta):
