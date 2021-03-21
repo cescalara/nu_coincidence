@@ -21,7 +21,7 @@ class Simulation(object):
 
         self._param_servers = []
 
-        popsynth_config["show_progress"] = False
+        # popsynth_config["show_progress"] = False
 
         self._setup_param_servers()
 
