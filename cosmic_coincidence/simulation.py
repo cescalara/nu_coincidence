@@ -1,6 +1,6 @@
 import os
 
-from popsynth.utils.configuration import popsynth_config
+# from popsynth.utils.configuration import popsynth_config
 
 from cosmic_coincidence.blazars.fermi_interface import FermiPopParams
 from cosmic_coincidence.blazars.bllac import BLLacPopWrapper
