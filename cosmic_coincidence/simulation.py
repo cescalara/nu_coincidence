@@ -1,6 +1,5 @@
 import os
-
-# from popsynth.utils.configuration import popsynth_config
+from popsynth.utils.configuration import popsynth_config
 
 from cosmic_coincidence.blazars.fermi_interface import FermiPopParams
 from cosmic_coincidence.blazars.bllac import BLLacPopWrapper
@@ -21,7 +20,7 @@ class Simulation(object):
 
         self._param_servers = []
 
-        # popsynth_config["show_progress"] = False
+        popsynth_config["show_progress"] = False
 
         self._setup_param_servers()
 

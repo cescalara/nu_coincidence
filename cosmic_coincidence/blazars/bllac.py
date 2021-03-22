@@ -11,6 +11,12 @@ from cosmic_coincidence.blazars.fermi_interface import (
 from cosmic_coincidence.populations.sbpl_population import (
     SBPLZPowerCosmoPopulation,
 )
+from cosmic_coincidence.populations.aux_samplers import (
+    VariabilityAuxSampler,
+    FlareRateAuxSampler,
+    FlareTimeAuxSampler,
+    FlareDurationAuxSampler,
+)
 
 
 class BLLacLDDEModel(LDDEFermiModel):
@@ -118,3 +124,34 @@ class BLLacPopWrapper(FermiPopWrapper):
     def _pop_type(self, **kwargs):
 
         return BLLacLDDEModel(**kwargs)
+
+
+class VariableBLLacPopWrapper(BLLacPopWrapper):
+    """
+    Extended wrapper with added flare sampling.
+    """
+
+    def __init__(self, parameter_server):
+
+        super().__init__(parameter_server)
+
+    def _simulation_setup(self):
+
+        variability = VariabilityAuxSampler()
+        variability.weight = self._parameter_server.variability["variability_weight"]
+
+        flare_rate = FlareRateAuxSampler()
+        flare_rate.xmin = self._parameter_server.variability["flare_rate_min"]
+        flare_rate.xmax = self._parameter_server.variability["flare_rate_max"]
+        flare_rate.index = self._parameter_server.variability["flare_rate_index"]
+
+        flare_times = FlareTimeAuxSampler()
+        flare_times.obs_time = self._parameter_server.variability["obs_time"]
+
+        flare_durations = FlareDurationAuxSampler()
+
+        flare_rate.set_secondary_sampler(variability)
+        flare_times.set_secondary_sampler(flare_rate)
+        flare_durations.set_secondary_sampler(flare_times)
+
+        self._popsynth.add_observed_quantity(flare_durations)

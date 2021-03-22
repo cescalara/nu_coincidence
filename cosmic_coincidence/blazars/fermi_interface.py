@@ -299,26 +299,62 @@ class FermiPopWrapper(object, metaclass=ABCMeta):
 
     def __init__(self, parameter_server):
 
-        pop_setup = self._pop_type()
+        self._parameter_server = parameter_server
 
-        pop_setup.set_parameters(parameter_server.parameters)
+        self._pop_setup = self._pop_type()
 
-        pop_setup.Lmax = parameter_server.Lmax
+        self._pop_setup.set_parameters(self._parameter_server.parameters)
 
-        pop_setup.prep_pop()
+        self._pop_setup.Lmax = self._parameter_server.Lmax
 
-        popsynth = pop_setup.popsynth(seed=parameter_server.seed)
+        self._pop_setup.prep_pop()
 
-        survey = popsynth.draw_survey(**parameter_server.survey)
+        self._popsynth = self._pop_setup.popsynth(seed=self._parameter_server.seed)
 
-        survey.writeto(parameter_server.file_path)
+        # Optional further setup
+        self._simulation_setup()
 
-        del survey
+        # Run
+        self._run()
 
     @abstractmethod
     def _pop_type(self):
 
         raise NotImplementedError()
+
+    def _simulation_setup(self):
+
+        pass
+
+    def _run(self):
+
+        survey = self._popsynth.draw_survey(**self._parameter_server.survey)
+
+        survey.writeto(self._parameter_server.file_path)
+
+        del survey
+
+
+# class VariableFermiPopWrapper(object, metaclass=ABCMeta):
+#     """
+#     Simulation wrapper for variable blazar
+#     populations defined through the Fermi
+#     interface.
+#     """
+
+#     def __init__(self, parameter_server):
+
+#         pop_setup = self._pop_type()
+
+#         pop_setup.set_parameters(parameter_server.parameters)
+
+#         pop_setup.Lmax = parameter_server.Lmax
+
+#         pop_setup.prep_pop()
+
+#         popsynth = pop_setup.popsynth(seed=parameter_server.seed)
+
+#         variability_sampler =
 
 
 class FermiPopParams(object):
@@ -405,6 +441,66 @@ class FermiPopParams(object):
     def survey(self):
 
         return self._survey
+
+
+def VariableFermiPopParams(FermiPopParams):
+    """
+    Extended parameter server for variable
+    populations.
+    """
+
+    def __init__(
+        self,
+        A,
+        gamma1,
+        Lstar,
+        gamma2,
+        zcstar,
+        p1star,
+        tau,
+        p2,
+        alpha,
+        mustar,
+        beta,
+        sigma,
+        boundary,
+        hard_cut,
+        variability_weight,
+        flare_rate_min,
+        flare_rate_max,
+        flare_rate_index,
+        obs_time,
+    ):
+
+        super().__init__(
+            A=A,
+            gamma1=gamma1,
+            Lstar=Lstar,
+            gamma2=gamma2,
+            zcstar=zcstar,
+            p1star=p1star,
+            tau=tau,
+            p2=p2,
+            alpha=alpha,
+            mustar=mustar,
+            beta=beta,
+            sigma=sigma,
+            boundary=boundary,
+            hard_cut=hard_cut,
+        )
+
+        self._variability_parameters = dict(
+            variability_weight=variability_weight,
+            flare_rate_min=flare_rate_min,
+            flare_rate_max=flare_rate_max,
+            flare_rate_index=flare_rate_index,
+            obs_time=obs_time,
+        )
+
+    @property
+    def variability_parameters(self):
+
+        return self._variability_parameters
 
 
 def _zpower(z, Lambda, delta):

@@ -28,12 +28,12 @@ from cosmic_coincidence.simulation import Simulation
 ```
 
 ```python
-sim = Simulation(N=16)
+sim = Simulation(N=32)
 ```
 
 ```python
-#cluster = LocalCluster(n_workers=4)
-client = Client(processes=False)
+#cluster = LocalCluster(n_workers=6)
+client = Client()
 client
 ```
 
@@ -42,15 +42,11 @@ sim.run(client)
 ```
 
 ```python
-client.get_events()
+#client.get_events()
 ```
 
 ```python
 client.close()
-```
-
-```python
-
 ```
 
 ## Old stuff
