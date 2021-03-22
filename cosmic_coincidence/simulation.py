@@ -1,8 +1,14 @@
 import os
 from popsynth.utils.configuration import popsynth_config
 
-from cosmic_coincidence.blazars.fermi_interface import FermiPopParams
-from cosmic_coincidence.blazars.bllac import BLLacPopWrapper
+from cosmic_coincidence.blazars.fermi_interface import (
+    FermiPopParams,
+    VariableFermiPopParams,
+)
+from cosmic_coincidence.blazars.bllac import (
+    BLLacPopWrapper,
+    VariableBLLacPopWrapper,
+)
 
 
 class Simulation(object):
@@ -28,7 +34,7 @@ class Simulation(object):
 
         for i in range(self._N):
 
-            param_server = FermiPopParams(
+            param_server = VariableFermiPopParams(
                 A=3.39e4,
                 gamma1=0.27,
                 Lstar=0.28e48,
@@ -43,6 +49,11 @@ class Simulation(object):
                 sigma=0.26,
                 boundary=4e-12,
                 hard_cut=True,
+                variability_weight=0.05,
+                flare_rate_min=1 / 7.5,
+                flare_rate_max=15,
+                flare_rate_index=1.5,
+                obs_time=10,
             )
 
             param_server.seed = i
@@ -56,7 +67,7 @@ class Simulation(object):
 
     def _pop_wrapper(self, param_server):
 
-        return BLLacPopWrapper(param_server)
+        return VariableBLLacPopWrapper(param_server)
 
     def run(self, client=None):
 

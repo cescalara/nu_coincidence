@@ -443,7 +443,7 @@ class FermiPopParams(object):
         return self._survey
 
 
-def VariableFermiPopParams(FermiPopParams):
+class VariableFermiPopParams(FermiPopParams):
     """
     Extended parameter server for variable
     populations.
@@ -489,7 +489,7 @@ def VariableFermiPopParams(FermiPopParams):
             hard_cut=hard_cut,
         )
 
-        self._variability_parameters = dict(
+        self._variability = dict(
             variability_weight=variability_weight,
             flare_rate_min=flare_rate_min,
             flare_rate_max=flare_rate_max,
@@ -498,9 +498,9 @@ def VariableFermiPopParams(FermiPopParams):
         )
 
     @property
-    def variability_parameters(self):
+    def variability(self):
 
-        return self._variability_parameters
+        return self._variability
 
 
 def _zpower(z, Lambda, delta):
