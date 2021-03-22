@@ -73,6 +73,12 @@ from cosmic_coincidence.utils.plotting import SphericalCircle
 from cosmic_coincidence.utils.coincidence import (check_spatial_coincidence, 
                                                   check_temporal_coincidence, 
                                                   run_sim, submit_sim)
+from cosmic_coincidence.populations.aux_samplers import (
+    VariabilityAuxSampler,
+    FlareRateAuxSampler,
+    FlareTimeAuxSampler,
+    FlareDurationAuxSampler,
+)
 ```
 
 ```python
@@ -85,83 +91,27 @@ from icecube_tools.source.source_model import DiffuseSource
 from icecube_tools.simulator import Simulator
 ```
 
-```python
-from dask.distributed import LocalCluster, Client
-```
-
 ## Blazar models
 
 
 BL Lac objects
 
 ```python
-fermi_params_list = []
-
-for i in range(32):
-    fermi_params = FermiPopParams(A=3.39e4, gamma1=0.27, Lstar=0.28e48, gamma2=1.86, 
-                              zcstar=1.34, p1star=2.24, tau=4.92, p2=-7.37, 
-                              alpha=4.53e-2, mustar=2.1, beta=6.46e-2, sigma=0.26, 
-                              boundary=4e-12, hard_cut=True)
-    fermi_params.seed = i
-    fermi_params.file_path = "output/my_survey_%i.h5" % i
-    fermi_params_list.append(fermi_params)
-```
-
-```python
-#fermi_params_list
-```
-
-```python
-#BLLacPopWrapper(fermi_params_list[0])
-```
-
-```python
-def pop_wrapper(parameter_server):
-    return BLLacPopWrapper(parameter_server)
-```
-
-```python
-#cluster = LocalCluster(n_workers=1)
-client = Client(processes=False)
-```
-
-```python
-client
-```
-
-```python
-futures = client.map(pop_wrapper, fermi_params_list)
-```
-
-```python
-results = client.gather(futures)
-```
-
-```python
-client.close()
-```
-
-```python
-results
-```
-
-```python
-def inc(x):
-    return x + np.sqrt(10)
-```
-
-```python
-client = Client(processes=False)
-client
-```
-
-```python
-futures = client.map(inc, range(10000))
-results = client.gather(futures)
-```
-
-```python
-client.close()
+bllac_ldde = BLLacLDDEModel()
+bllac_ldde.A = 3.39e4
+bllac_ldde.gamma1 = 0.27
+bllac_ldde.Lstar = 0.28e48
+bllac_ldde.gamma2 = 1.86
+bllac_ldde.zcstar = 1.34
+bllac_ldde.p1star = 2.24
+bllac_ldde.tau = 4.92
+bllac_ldde.p2 = -7.37
+bllac_ldde.alpha = 4.53e-2
+bllac_ldde.mustar = 2.1
+bllac_ldde.beta = 6.46e-2
+bllac_ldde.sigma = 0.26
+bllac_ldde.Lmax = 1e50
+bllac_ldde.prep_pop()
 ```
 
 FSRQs
@@ -228,56 +178,39 @@ nu_simulator.max_cosz = 0.1
 
 ```python
 bllac_popsynth = bllac_ldde.popsynth()
+variability = VariabilityAuxSampler()
+variability.weight = 0.05
+flare_rate = FlareRateAuxSampler()
+flare_rate.xmin = 1 / 7.5
+flare_rate.xmax = 15
+flare_rate.index = 1.5
+flare_times = FlareTimeAuxSampler()
+flare_times.obs_time = 10
+flare_durations = FlareDurationAuxSampler()
+flare_rate.set_secondary_sampler(variability)
+flare_times.set_secondary_sampler(flare_rate)
+flare_durations.set_secondary_sampler(flare_times)
+bllac_popsynth.add_observed_quantity(flare_durations)
 ```
 
 ```python
-pop =bllac_popsynth.draw_survey(boundary=4e-12, hard_cut=True)
+pop = bllac_popsynth.draw_survey(boundary=4e-12, hard_cut=True)
+```
+
+```python
+test = pop._auxiliary_quantities["flare_durations"]["true_values"]
+
+with h5py.File("output/test_h5.h5", "w") as f:
+    f.create_dataset("test", data=test)
+```
+
+```python
+with h5py.File("output/test_h5.h5", "r") as f:
+    test = f["test"][()]
 ```
 
 ```python
 pop.writeto("output/test_pop.h5")
-```
-
-```python
-from dask.distributed import Client
-client = Client()
-client
-```
-
-```python
-def inc(x):
-    return x+10
-
-futures = client.map(inc, range(1000))
-results = client.gather(futures)
-```
-
-```python
-def run_popsynth_sim(n):
-    bllac_popsynth = bllac_ldde.popsynth(seed=n)
-    variability = VariabilityAuxSampler()
-    variability.weight = 0.05
-    flare_rate = FlareRateAuxSampler()
-    flare_rate.xmin = 1 / 7.5
-    flare_rate.xmax = 15
-    flare_rate.index = 1.5
-    flare_times = FlareTimeAuxSampler()
-    flare_times.obs_time = obs_time
-    flare_durations = FlareDurationAuxSampler()
-    flare_rate.set_secondary_sampler(variability)
-    flare_times.set_secondary_sampler(flare_rate)
-    flare_durations.set_secondary_sampler(flare_times)
-    bllac_popsynth.add_observed_quantity(flare_durations)
-    bllac_pop = bllac_popsynth.draw_survey(boundary=4e-12, hard_cut=True)
-    
-    return bllac_pop
-
-futures = client.map(run_popsynth_sim, range(10))
-results = client.gather(futures)
-```
-
-```python
-client.close()
 ```
 
 ## Check results

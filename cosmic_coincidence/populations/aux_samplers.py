@@ -1,5 +1,6 @@
 import numpy as np
 from scipy import stats
+import h5py
 
 from popsynth.auxiliary_sampler import AuxiliarySampler, AuxiliaryParameter
 
@@ -120,7 +121,9 @@ class FlareTimeAuxSampler(AuxiliarySampler):
 
     def true_sampler(self, size):
 
-        times = np.empty((size,), dtype=object)
+        dt = h5py.vlen_dtype(np.dtype("float64"))
+
+        times = np.empty((size,), dtype=dt)
 
         rate = self._secondary_samplers["flare_rate"].true_values
 
@@ -128,14 +131,14 @@ class FlareTimeAuxSampler(AuxiliarySampler):
 
             if rate[i] == 0:
 
-                times[i] = []
+                times[i] = np.array([], dtype=np.dtype("float64"))
 
             else:
 
                 max_nflares = int(rate[i] * self.obs_time * 10)
                 wait_times = stats.expon(loc=2 / 52, scale=1 / rate[i]).rvs(max_nflares)
                 ts = np.cumsum(wait_times)
-                times[i] = list(ts[ts < self.obs_time])
+                times[i] = np.array(ts[ts < self.obs_time], dtype=np.dtype("float64"))
 
         self._true_values = times
 
@@ -151,7 +154,9 @@ class FlareDurationAuxSampler(AuxiliarySampler):
 
     def true_sampler(self, size):
 
-        durations = np.empty((size,), dtype=object)
+        dt = h5py.vlen_dtype(np.dtype("float64"))
+
+        durations = np.empty((size,), dtype=dt)
 
         times = self._secondary_samplers["flare_times"].true_values
 
@@ -159,9 +164,9 @@ class FlareDurationAuxSampler(AuxiliarySampler):
 
         for i, _ in enumerate(durations):
 
-            if times[i] == []:
+            if times[i].size == 0:
 
-                durations[i] = []
+                durations[i] = np.array([], dtype=np.dtype("float64"))
 
             else:
 
@@ -171,10 +176,13 @@ class FlareDurationAuxSampler(AuxiliarySampler):
                 )
                 max_durations = max_durations - 1 / 52
 
-                durations[i] = [
-                    bounded_pl_inv_cdf(np.random.uniform(0, 1), 1 / 52, md, 1.5)
-                    for md in max_durations
-                ]
+                durations[i] = np.array(
+                    [
+                        bounded_pl_inv_cdf(np.random.uniform(0, 1), 1 / 52, md, 1.5)
+                        for md in max_durations
+                    ],
+                    dtype=np.dtype("float64"),
+                )
                 # durations[i] = list(np.random.uniform(low=1 / 52, high=max_durations))
 
         self._true_values = durations
