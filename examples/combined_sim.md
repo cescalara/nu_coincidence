@@ -17,7 +17,8 @@ jupyter:
 
 ```python
 from dask.distributed import LocalCluster, Client
-from distributed.protocol import serialize
+import h5py
+import numpy as np
 ```
 
 ```python
@@ -28,12 +29,19 @@ from cosmic_coincidence.simulation import Simulation
 ```
 
 ```python
-sim = Simulation(N=32)
+ # Initialise file
+file_name = "output/test_sim.h5"
+with h5py.File(file_name, "w") as f:
+    f.attrs["name"] = np.string_(file_name)
+```
+
+```python
+sim = Simulation(file_name=file_name, N=32)
 ```
 
 ```python
 #cluster = LocalCluster(n_workers=6)
-client = Client()
+client = Client(processes=False)
 client
 ```
 
@@ -42,11 +50,29 @@ sim.run(client)
 ```
 
 ```python
-#client.get_events()
+client.close()
 ```
 
 ```python
-client.close()
+with h5py.File("output/test_sim.h5", "r") as f:
+    for key in f["survey_0/auxiliary_quantities"]:
+        print(key)
+```
+
+```python
+from popsynth import Population
+```
+
+```python
+pop = Population.from_group(file_name, "survey_0")
+```
+
+```python
+pop.flare_durations
+```
+
+```python
+(20e6 * 1e5) / 1e9
 ```
 
 ## Old stuff

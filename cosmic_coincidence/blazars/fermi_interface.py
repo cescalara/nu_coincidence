@@ -330,31 +330,11 @@ class FermiPopWrapper(object, metaclass=ABCMeta):
 
         survey = self._popsynth.draw_survey(**self._parameter_server.survey)
 
-        survey.writeto(self._parameter_server.file_path)
+        survey.addto(
+            self._parameter_server.file_path, self._parameter_server.group_name
+        )
 
         del survey
-
-
-# class VariableFermiPopWrapper(object, metaclass=ABCMeta):
-#     """
-#     Simulation wrapper for variable blazar
-#     populations defined through the Fermi
-#     interface.
-#     """
-
-#     def __init__(self, parameter_server):
-
-#         pop_setup = self._pop_type()
-
-#         pop_setup.set_parameters(parameter_server.parameters)
-
-#         pop_setup.Lmax = parameter_server.Lmax
-
-#         pop_setup.prep_pop()
-
-#         popsynth = pop_setup.popsynth(seed=parameter_server.seed)
-
-#         variability_sampler =
 
 
 class FermiPopParams(object):
@@ -402,6 +382,8 @@ class FermiPopParams(object):
 
         self._file_path = None
 
+        self._group_name = None
+
     @property
     def seed(self):
 
@@ -421,6 +403,16 @@ class FermiPopParams(object):
     def file_path(self, value: str):
 
         self._file_path = value
+
+    @property
+    def group_name(self):
+
+        return self._group_name
+
+    @group_name.setter
+    def group_name(self, value: str):
+
+        self._group_name = value
 
     @property
     def Lmax(self):

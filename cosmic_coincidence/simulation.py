@@ -1,4 +1,6 @@
 import os
+import h5py
+import numpy as np
 from popsynth.utils.configuration import popsynth_config
 
 from cosmic_coincidence.blazars.fermi_interface import (
@@ -16,13 +18,13 @@ class Simulation(object):
     Set up and run simulations.
     """
 
-    def __init__(self, survey_base_name="test_survey", save_path="output", N=1):
+    def __init__(self, file_name="output/test_sim.h5", group_base_name="survey", N=1):
 
         self._N = N
 
-        self._survey_base_name = survey_base_name
+        self._file_name = file_name
 
-        self._save_path = save_path
+        self._group_base_name = group_base_name
 
         self._param_servers = []
 
@@ -58,9 +60,8 @@ class Simulation(object):
 
             param_server.seed = i
 
-            param_server.file_path = os.path.join(
-                self._save_path,
-                self._survey_base_name + "_%i.h5" % i,
+            param_server.file_path = self._file_named_server.group_name = (
+                self._group_base_name + "_%i" % i
             )
 
             self._param_servers.append(param_server)
