@@ -2,6 +2,7 @@ from abc import abstractmethod, ABCMeta
 import numpy as np
 from scipy import integrate
 from astropy import units as u
+import h5py
 
 from popsynth.distribution import Distribution, DistributionParameter
 from cosmic_coincidence.populations.sbpl_population import SBPLZPowExpCosmoPopulation
@@ -330,11 +331,91 @@ class FermiPopWrapper(object, metaclass=ABCMeta):
 
         self._survey = self._popsynth.draw_survey(**self._parameter_server.survey)
 
-        # survey.addto(
-        #    self._parameter_server.file_path, self._parameter_server.group_name
-        # )
+    def write(self):
+        """
+        A Lightweight version of the usual popsynth.Population.writeto()
+        more suited to large numbers of simulations and relevant info.
+        """
 
-        # del survey
+        with h5py.File(self._parameter_server.file_name, "r+") as f:
+
+            if self._parameter_server.group_name not in f.keys():
+
+                group = f.create_group(self._parameter_server.group_name)
+
+            else:
+
+                group = f[self.parameter_server.group_name]
+
+            subgroup = group.create_group(self._pop_setup.name)
+
+            # Attributes
+            subgroup.attrs["name"] = np.string_(self._survey._name)
+            subgroup.attrs["spatial_form"] = np.string_(self._survey._spatial_form)
+            subgroup.attrs["lf_form"] = np.string_(self._survey._lf_form)
+            subgroup.attrs["flux_sigma"] = self._survey._flux_sigma
+            subgroup.attrs["r_max"] = self._survey._r_max
+            subgroup.attrs["boundary"] = self._survey._boundary
+            subgroup.attrs["strength"] = self._survey._strength
+            subgroup.attrs["seed"] = int(self._survey._seed)
+            subgroup.attrs["hard_cut"] = self._survey._hard_cut
+
+            # True distributions
+            spatial_grp = subgroup.create_group("spatial_params")
+            for k, v in self._survey._spatial_params.items():
+                spatial_grp.create_dataset(k, data=np.array([v]), compression="lzf")
+
+            lum_grp = subgroup.create_group("lf_params")
+            for k, v in self._survey._lf_params.items():
+                lum_grp.create_dataset(k, data=np.array([v]), compression="lzf")
+
+            # Population objects
+            subgroup.create_dataset(
+                "distances",
+                data=self._survey.distances,
+                compression="lzf",
+            )
+
+            subgroup.create_dataset(
+                "luminosities_latent",
+                data=self._survey.luminosities_latent,
+                compression="lzf",
+            )
+
+            # subgroup.create_dataset(
+            #     "fluxes_latent",
+            #     data=self._survey.fluxes_latent,
+            #     compression="lzf",
+            # )
+
+            # subgroup.create_dataset(
+            #     "fluxes_observed",
+            #     data=self._survey.fluxes_observed,
+            #     compression="lzf",
+            # )
+
+            subgroup.create_dataset(
+                "selection",
+                data=self._survey.selection,
+                compression="lzf",
+            )
+
+            subgroup.create_dataset(
+                "theta",
+                data=self._survey._theta,
+                compression="lzf",
+            )
+
+            subgroup.create_dataset(
+                "phi",
+                data=self._survey._phi,
+                compression="lzf",
+            )
+
+            # Auxiliary quantities
+            aux_grp = subgroup.create_group("auxiliary_quantities")
+            for k, v in self._survey._auxiliary_quantities.items():
+                aux_grp.create_dataset(k, data=v["true_values"], compression="lzf")
 
 
 class FermiPopParams(object):
@@ -380,7 +461,7 @@ class FermiPopParams(object):
 
         self._Lmax = 1e50
 
-        self._file_path = None
+        self._file_name = None
 
         self._group_name = None
 
@@ -395,14 +476,14 @@ class FermiPopParams(object):
         self._seed = value
 
     @property
-    def file_path(self):
+    def file_name(self):
 
-        return self._file_path
+        return self._file_name
 
-    @file_path.setter
-    def file_path(self, value: str):
+    @file_name.setter
+    def file_name(self, value: str):
 
-        self._file_path = value
+        self._file_name = value
 
     @property
     def group_name(self):

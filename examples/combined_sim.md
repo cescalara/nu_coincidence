@@ -29,14 +29,8 @@ from cosmic_coincidence.simulation import Simulation
 ```
 
 ```python
- # Initialise file
 file_name = "output/test_sim.h5"
-with h5py.File(file_name, "w") as f:
-    f.attrs["name"] = np.string_(file_name)
-```
-
-```python
-sim = Simulation(file_name=file_name, N=32)
+sim = Simulation(file_name=file_name, N=64)
 ```
 
 ```python
@@ -55,8 +49,12 @@ client.close()
 
 ```python
 with h5py.File("output/test_sim.h5", "r") as f:
-    for key in f:
-        print(key)
+    #for key in f:
+    print(f.attrs["group_base_name"])
+```
+
+```python
+((3e6/64) * 1e5) / 1e9
 ```
 
 ## Old stuff
@@ -122,6 +120,14 @@ bllac_ldde.beta = 6.46e-2
 bllac_ldde.sigma = 0.26
 bllac_ldde.Lmax = 1e50
 bllac_ldde.prep_pop()
+```
+
+```python
+bllac_ldde.name
+```
+
+```python
+BLLacLDDEModel().name
 ```
 
 FSRQs
@@ -208,10 +214,28 @@ pop = bllac_popsynth.draw_survey(boundary=4e-12, hard_cut=True)
 ```
 
 ```python
+pop.selection
+```
+
+```python
+len(pop.selection)
+```
+
+```python
+pop._distance_probability
+```
+
+```python
+pop._strength
+```
+
+```python
 test = pop._auxiliary_quantities["flare_durations"]["true_values"]
 
 with h5py.File("output/test_h5.h5", "w") as f:
     f.create_dataset("test", data=test)
+    g = f.create_group("my_group")
+    g.attrs["name"]= np.string_("yo")
 ```
 
 ```python

@@ -63,7 +63,7 @@ class Simulation(object):
 
             param_server.seed = i
 
-            param_server.file_path = self._file_name
+            param_server.file_name = self._file_name
             param_server.group_name = self._group_base_name + "_%i" % i
 
             self._param_servers.append(param_server)
@@ -89,10 +89,7 @@ class Simulation(object):
 
             for future, result in as_completed(futures, with_results=True):
 
-                result._survey.addto(
-                    result._parameter_server.file_path,
-                    result._parameter_server.group_name,
-                )
+                result.write()
 
                 del result
                 del future
