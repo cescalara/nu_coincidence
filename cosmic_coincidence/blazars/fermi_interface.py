@@ -8,6 +8,13 @@ from popsynth.distribution import Distribution, DistributionParameter
 from cosmic_coincidence.populations.sbpl_population import SBPLZPowExpCosmoPopulation
 from cosmic_coincidence.distributions.sbpl_distribution import sbpl
 
+from cosmic_coincidence.populations.aux_samplers import (
+    VariabilityAuxSampler,
+    FlareRateAuxSampler,
+    FlareTimeAuxSampler,
+    FlareDurationAuxSampler,
+)
+
 
 class FermiModel(Distribution):
     """
@@ -345,7 +352,7 @@ class FermiPopWrapper(object, metaclass=ABCMeta):
 
             else:
 
-                group = f[self.parameter_server.group_name]
+                group = f[self._parameter_server.group_name]
 
             subgroup = group.create_group(self._pop_setup.name)
 
@@ -416,6 +423,37 @@ class FermiPopWrapper(object, metaclass=ABCMeta):
             aux_grp = subgroup.create_group("auxiliary_quantities")
             for k, v in self._survey._auxiliary_quantities.items():
                 aux_grp.create_dataset(k, data=v["true_values"], compression="lzf")
+
+
+class VariableFermiPopWrapper(FermiPopWrapper):
+    """
+    Extended FermiPopWrapper with added flare sampling.
+    """
+
+    def __init__(self, parameter_server):
+
+        super().__init__(parameter_server)
+
+    def _simulation_setup(self):
+
+        variability = VariabilityAuxSampler()
+        variability.weight = self._parameter_server.variability["variability_weight"]
+
+        flare_rate = FlareRateAuxSampler()
+        flare_rate.xmin = self._parameter_server.variability["flare_rate_min"]
+        flare_rate.xmax = self._parameter_server.variability["flare_rate_max"]
+        flare_rate.index = self._parameter_server.variability["flare_rate_index"]
+
+        flare_times = FlareTimeAuxSampler()
+        flare_times.obs_time = self._parameter_server.variability["obs_time"]
+
+        flare_durations = FlareDurationAuxSampler()
+
+        flare_rate.set_secondary_sampler(variability)
+        flare_times.set_secondary_sampler(flare_rate)
+        flare_durations.set_secondary_sampler(flare_times)
+
+        self._popsynth.add_observed_quantity(flare_durations)
 
 
 class FermiPopParams(object):

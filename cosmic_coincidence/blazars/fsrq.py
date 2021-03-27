@@ -5,6 +5,7 @@ from astropy import units as u
 from cosmic_coincidence.blazars.fermi_interface import (
     LDDEFermiModel,
     FermiPopWrapper,
+    VariableFermiPopWrapper,
     _sfr,
     _sbpl,
 )
@@ -90,6 +91,20 @@ class FSRQLDDEModel(LDDEFermiModel):
 class FSRQPopWrapper(FermiPopWrapper):
     """
     Wrapper for FSRQ like Fermi models.
+    """
+
+    def __init__(self, parameter_server):
+
+        super().__init__(parameter_server)
+
+    def _pop_type(self, **kwargs):
+
+        return FSRQLDDEModel(**kwargs)
+
+
+class VariableFSRQPopWrapper(VariableFermiPopWrapper):
+    """
+    Extended FSRQPopWrapper with added flare sampling.
     """
 
     def __init__(self, parameter_server):

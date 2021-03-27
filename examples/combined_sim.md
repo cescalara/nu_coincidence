@@ -25,12 +25,12 @@ import numpy as np
 import sys
 sys.path.append("../")
 
-from cosmic_coincidence.simulation import Simulation
+from cosmic_coincidence.coincidence.blazar_nu import BlazarNuSimulation
 ```
 
 ```python
 file_name = "output/test_sim.h5"
-sim = Simulation(file_name=file_name, N=64)
+sim = BlazarNuSimulation(file_name=file_name, N=16)
 ```
 
 ```python
@@ -47,14 +47,18 @@ sim.run(client)
 client.close()
 ```
 
-```python
+```python code_folding=[]
 with h5py.File("output/test_sim.h5", "r") as f:
     #for key in f:
     print(f.attrs["group_base_name"])
+    for key, value in f["survey_0/bllac_ldde_fermi/auxiliary_quantities"].items():
+        print(key)
 ```
 
 ```python
-((3e6/64) * 1e5) / 1e9
+a = 1 
+b = 2
+del a, b
 ```
 
 ## Old stuff
