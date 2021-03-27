@@ -1,10 +1,37 @@
+import time
 from dask.distributed import as_completed
 from popsynth.utils.configuration import popsynth_config
 
 from cosmic_coincidence.blazars.fermi_interface import VariableFermiPopParams
 from cosmic_coincidence.blazars.bllac import VariableBLLacPopWrapper
 from cosmic_coincidence.blazars.fsrq import VariableFSRQPopWrapper
+from cosmic_coincidence.neutrinos.icecube import (
+    IceCubeObsParams,
+    IceCubeObsWrapper,
+)
 from cosmic_coincidence.simulation import Simulation
+
+
+class BlazarNuCoincidence(object):
+    """
+    Check for coincidences of interest.
+    """
+
+    def __init__(self, bllac_pop, fsrq_pop, nu_obs):
+
+        self._bllac_pop = bllac_pop
+
+        self._fsrq_pop = fsrq_pop
+
+        self._nu_obs = nu_obs
+
+        self._run()
+
+    def _run(self):
+
+        time.sleep(10)
+
+        return 0
 
 
 class BlazarNuSimulation(Simulation):
@@ -93,6 +120,26 @@ class BlazarNuSimulation(Simulation):
 
             self._fsrq_param_servers.append(fsrq_param_server)
 
+            # Neutrinos
+            nu_param_server = IceCubeObsParams(
+                Emin=1e5,
+                Emax=1e8,
+                Enorm=1e5,
+                Emin_det=2e5,
+                atmo_flux_norm=2.5e-18,
+                atmo_index=3.7,
+                diff_flux_norm=1e-18,
+                diff_index=2.19,
+                obs_time=10,
+                max_cosz=0.1,
+            )
+
+            nu_param_server.seed = i
+            nu_param_server.file_name = self._file_name
+            nu_param_server.group_name = self._group_base_name + "_%i" % i
+
+            self._nu_param_servers.append(nu_param_server)
+
     def _bllac_pop_wrapper(self, param_server):
 
         return VariableBLLacPopWrapper(param_server)
@@ -100,6 +147,10 @@ class BlazarNuSimulation(Simulation):
     def _fsrq_pop_wrapper(self, param_server):
 
         return VariableFSRQPopWrapper(param_server)
+
+    def _nu_obs_wrapper(self, param_server):
+
+        return IceCubeObsWrapper(param_server)
 
     def _pop_wrapper(self, param_servers):
 
@@ -111,76 +162,72 @@ class BlazarNuSimulation(Simulation):
 
         return bllac, fsrq
 
+    def _coincidence_check(self, bllac_pop, fsrq_pop, nu_obs):
+
+        return BlazarNuCoincidence(bllac_pop, fsrq_pop, nu_obs)
+
     def run(self, client=None):
 
         # Parallel
         if client is not None:
 
-            param_servers = []
-            for bllac_server, fsrq_server in zip(
-                self._bllac_param_servers, self._fsrq_param_servers
-            ):
-                param_servers.append((bllac_server, fsrq_server))
+            # New ideas
+            bllac_pop = client.map(
+                self._bllac_pop_wrapper,
+                self._bllac_param_servers,
+            )
 
-            futures = client.map(self._pop_wrapper, param_servers)
+            fsrq_pop = client.map(
+                self._fsrq_pop_wrapper,
+                self._fsrq_param_servers,
+            )
 
-            for future, result in as_completed(futures, with_results=True):
+            nu_obs = client.map(
+                self._nu_obs_wrapper,
+                self._nu_param_servers,
+            )
 
-                bllac, fsrq = result
+            coincidence = client.map(
+                self._coincidence_check,
+                bllac_pop,
+                fsrq_pop,
+                nu_obs,
+            )
 
-                bllac.write()
-                fsrq.write()
+            for future, result in as_completed(coincidence, with_results=True):
 
-                del bllac, fsrq
+                result._bllac_pop.write()
+                result._fsrq_pop.write()
+                result._nu_obs.write()
+
                 del future, result
 
-            del futures
-
-            # bllac_futures = client.map(
-            #     self._bllac_pop_wrapper, self._fsrq_param_servers
-            # )
-
-            # for future, result in as_completed(bllac_futures, with_results=True):
-
-            #     result.write()
-
-            #     del result
-            #     del future
-
-            # del bllac_futures
-
-            # fsrq_futures = client.map(self._fsrq_pop_wrapper, self._fsrq_param_servers)
-
-            # for future, result in as_completed(fsrq_futures, with_results=True):
-
-            #     result.write()
-
-            #     del result
-            #     del future
-
-            # del fsrq_futures
+            del coincidence
 
         # Serial
         else:
 
-            bllac_results = [
+            bllac_pop = [
                 self._bllac_pop_wrapper(param_server)
                 for param_server in self._bllac_param_servers
             ]
 
-            for result in bllac_results:
-
-                result.write()
-
-            del bllac_results
-
-            fsrq_results = [
+            fsrq_pop = [
                 self._fsrq_pop_wrapper(param_server)
                 for param_server in self._fsrq_param_servers
             ]
 
-            for result in fsrq_results:
+            nu_obs = [
+                self._nu_obs_wrapper(param_server)
+                for param_server in self._nu_param_servers
+            ]
 
-                result.write()
+            for bllac, fsrq, nu in zip(bllac_pop, fsrq_pop, nu_obs):
 
-            del fsrq_results
+                self._coincidence_check(bllac, fsrq, nu)
+
+                bllac.write()
+                fsrq.write()
+                nu.write()
+
+            del bllac_pop, fsrq_pop, nu_obs

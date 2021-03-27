@@ -19,7 +19,6 @@ class IceCubeObservation(object):
     Store the output of IceCube simulations.
     """
 
-    N: int
     energies: float
     ra: float
     dec: float
@@ -39,6 +38,8 @@ class IceCubeObsWrapper(object):
         self._parameter_server = param_server
 
         self._simulation_setup()
+
+        self._run()
 
     def _simulation_setup(self):
 
@@ -66,7 +67,7 @@ class IceCubeObsWrapper(object):
         self._simulator.time = self._parameter_server.obs_time
         self._simulator.max_cosz = self._parameter_server.max_cosz
 
-    def run(self):
+    def _run(self):
 
         self._simulator.run(
             show_progress=False,
@@ -84,7 +85,7 @@ class IceCubeObsWrapper(object):
         times = np.random.uniform(0, self._parameter_server.obs_time, N)
 
         self._observation = IceCubeObservation(
-            N, energies, ra, dec, ang_err, times, selection
+            energies, ra, dec, ang_err, times, selection
         )
 
     def write(self):
@@ -103,11 +104,13 @@ class IceCubeObsWrapper(object):
 
             for key, value in vars(self._observation).items():
 
-                subgroup.create_dataset(key, data=value, compression="lzf")
+                if key != "name" and key != "selection":
+
+                    subgroup.create_dataset(key, data=value, compression="lzf")
 
             for key, value in self._parameter_server.parameters.items():
 
-                subgroup.create_dataset(key, data=value, compression="lzf")
+                subgroup.create_dataset(key, data=value)
 
 
 class IceCubeObsParams(ParameterServer):

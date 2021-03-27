@@ -26,20 +26,12 @@ import sys
 sys.path.append("../")
 
 from cosmic_coincidence.coincidence.blazar_nu import BlazarNuSimulation
-from cosmic_coincidence.neutrinos.icecube import IceCubeObservation
-```
-
-```python
-obs = IceCubeObservation(np.array([1., 2., 3.]), np.array([1., 2., 3.]), np.array([1., 2., 3.]), np.array([1., 2., 3.]), np.array([1., 2., 3.]), np.array([True, False, False]))
-```
-
-```python
-vars(obs).items()
+from cosmic_coincidence.neutrinos.icecube import IceCubeObsParams, IceCubeObsWrapper
 ```
 
 ```python
 file_name = "output/test_sim.h5"
-sim = BlazarNuSimulation(file_name=file_name, N=16)
+sim = BlazarNuSimulation(file_name=file_name, N=4)
 ```
 
 ```python
@@ -58,16 +50,8 @@ client.close()
 
 ```python code_folding=[]
 with h5py.File("output/test_sim.h5", "r") as f:
-    #for key in f:
-    print(f.attrs["group_base_name"])
-    for key in f["survey_0/"]:
+    for key in f["survey_0/icecube_obs"]:
         print(key)
-```
-
-```python
-a = 1 
-b = 2
-del a, b
 ```
 
 ## Old stuff
