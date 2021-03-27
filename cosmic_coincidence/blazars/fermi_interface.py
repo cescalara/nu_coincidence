@@ -7,7 +7,7 @@ import h5py
 from popsynth.distribution import Distribution, DistributionParameter
 from cosmic_coincidence.populations.sbpl_population import SBPLZPowExpCosmoPopulation
 from cosmic_coincidence.distributions.sbpl_distribution import sbpl
-
+from cosmic_coincidence.utils.parameter_server import ParameterServer
 from cosmic_coincidence.populations.aux_samplers import (
     VariabilityAuxSampler,
     FlareRateAuxSampler,
@@ -456,7 +456,7 @@ class VariableFermiPopWrapper(FermiPopWrapper):
         self._popsynth.add_observed_quantity(flare_durations)
 
 
-class FermiPopParams(object):
+class FermiPopParams(ParameterServer):
     """
     Parameter server for blazar populations
     defined through the Fermi interface.
@@ -480,6 +480,8 @@ class FermiPopParams(object):
         hard_cut,
     ):
 
+        super().__init__()
+
         self._parameters = dict(
             A=A,
             gamma1=gamma1,
@@ -499,40 +501,6 @@ class FermiPopParams(object):
 
         self._Lmax = 1e50
 
-        self._file_name = None
-
-        self._group_name = None
-
-    @property
-    def seed(self):
-
-        return self._seed
-
-    @seed.setter
-    def seed(self, value: int):
-
-        self._seed = value
-
-    @property
-    def file_name(self):
-
-        return self._file_name
-
-    @file_name.setter
-    def file_name(self, value: str):
-
-        self._file_name = value
-
-    @property
-    def group_name(self):
-
-        return self._group_name
-
-    @group_name.setter
-    def group_name(self, value: str):
-
-        self._group_name = value
-
     @property
     def Lmax(self):
 
@@ -542,11 +510,6 @@ class FermiPopParams(object):
     def Lmax(self, value: float):
 
         self._Lmax = value
-
-    @property
-    def parameters(self):
-
-        return self._parameters
 
     @property
     def survey(self):
