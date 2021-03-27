@@ -1,6 +1,7 @@
 import os
 import h5py
 import numpy as np
+from dask.distributed import as_completed
 from popsynth.utils.configuration import popsynth_config
 
 from cosmic_coincidence.blazars.fermi_interface import (
@@ -31,6 +32,8 @@ class Simulation(object):
         popsynth_config["show_progress"] = False
 
         self._setup_param_servers()
+
+        self._initialise_output_file()
 
     def _setup_param_servers(self):
 
@@ -65,6 +68,14 @@ class Simulation(object):
 
             self._param_servers.append(param_server)
 
+    def _initialise_output_file(self):
+
+        with h5py.File(self._file_name, "w") as f:
+
+            f.attrs["file_name"] = np.string_(self._file_name)
+            f.attrs["group_base_name"] = np.string_(self._group_base_name)
+            f.attrs["N"] = self._N
+
     def _pop_wrapper(self, param_server):
 
         return VariableBLLacPopWrapper(param_server)
@@ -76,15 +87,16 @@ class Simulation(object):
 
             futures = client.map(self._pop_wrapper, self._param_servers)
 
-            results = client.gather(futures)
+            for future, result in as_completed(futures, with_results=True):
 
-            for res in results:
-
-                res._survey.addto(
-                    res._parameter_server.file_path, res._parameter_server.group_name
+                result._survey.addto(
+                    result._parameter_server.file_path,
+                    result._parameter_server.group_name,
                 )
 
-            del results
+                del result
+                del future
+
             del futures
 
         else:
@@ -93,6 +105,15 @@ class Simulation(object):
             results = [
                 self._pop_wrapper(param_server) for param_server in self._param_servers
             ]
+
+            for result in results:
+
+                result._survey.addto(
+                    result._parameter_server.file_path,
+                    result._parameter_server.group_name,
+                )
+
+            del results
 
     def save(self):
 
