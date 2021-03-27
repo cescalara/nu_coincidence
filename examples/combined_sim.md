@@ -41,7 +41,7 @@ sim = Simulation(file_name=file_name, N=32)
 
 ```python
 #cluster = LocalCluster(n_workers=6)
-client = Client(processes=False)
+client = Client()
 client
 ```
 
@@ -55,24 +55,8 @@ client.close()
 
 ```python
 with h5py.File("output/test_sim.h5", "r") as f:
-    for key in f["survey_0/auxiliary_quantities"]:
+    for key in f:
         print(key)
-```
-
-```python
-from popsynth import Population
-```
-
-```python
-pop = Population.from_group(file_name, "survey_0")
-```
-
-```python
-pop.flare_durations
-```
-
-```python
-(20e6 * 1e5) / 1e9
 ```
 
 ## Old stuff

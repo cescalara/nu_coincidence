@@ -60,9 +60,8 @@ class Simulation(object):
 
             param_server.seed = i
 
-            param_server.file_path = self._file_named_server.group_name = (
-                self._group_base_name + "_%i" % i
-            )
+            param_server.file_path = self._file_name
+            param_server.group_name = self._group_base_name + "_%i" % i
 
             self._param_servers.append(param_server)
 
@@ -72,17 +71,25 @@ class Simulation(object):
 
     def run(self, client=None):
 
+        # Parallel
         if client is not None:
 
             futures = client.map(self._pop_wrapper, self._param_servers)
 
             results = client.gather(futures)
 
+            for res in results:
+
+                res._survey.addto(
+                    res._parameter_server.file_path, res._parameter_server.group_name
+                )
+
             del results
             del futures
 
         else:
 
+            # Serial
             results = [
                 self._pop_wrapper(param_server) for param_server in self._param_servers
             ]

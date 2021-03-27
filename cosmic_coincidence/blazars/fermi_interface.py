@@ -328,13 +328,13 @@ class FermiPopWrapper(object, metaclass=ABCMeta):
 
     def _run(self):
 
-        survey = self._popsynth.draw_survey(**self._parameter_server.survey)
+        self._survey = self._popsynth.draw_survey(**self._parameter_server.survey)
 
-        survey.addto(
-            self._parameter_server.file_path, self._parameter_server.group_name
-        )
+        # survey.addto(
+        #    self._parameter_server.file_path, self._parameter_server.group_name
+        # )
 
-        del survey
+        # del survey
 
 
 class FermiPopParams(object):
