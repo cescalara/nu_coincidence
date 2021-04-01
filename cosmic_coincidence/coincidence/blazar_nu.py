@@ -58,7 +58,7 @@ class BlazarNuCoincidence(object):
     @property
     def name(self):
 
-        return self.name
+        return self._name
 
     @property
     def bllac_coincidence(self):
@@ -88,13 +88,17 @@ class BlazarNuCoincidence(object):
 
             for key, value in self.bllac_coincidence.items():
 
-                bllac_group.create_dataset(key, data=value, compression="lzf")
+                if key != "spatial_match_inds":
+
+                    bllac_group.create_dataset(key, data=value)
 
             fsrq_group = subgroup.create_group("fsrq")
 
             for key, value in self.fsrq_coincidence.items():
 
-                fsrq_group.create_dataset(key, data=value, compression="lzf")
+                if key != "spatial_match_inds":
+
+                    fsrq_group.create_dataset(key, data=value)
 
     def _check_spatial(self):
         """
@@ -131,7 +135,7 @@ class BlazarNuCoincidence(object):
         )
 
         self.fsrq_coincidence["n_spatial"] = n_match_spatial
-        self.bllac_coincidence["spatial_match_inds"] = spatial_match_inds
+        self.fsrq_coincidence["spatial_match_inds"] = spatial_match_inds
 
     def _check_temporal(self):
         """

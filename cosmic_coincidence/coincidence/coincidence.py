@@ -41,7 +41,7 @@ def check_spatial_coincidence(
 
         # Check if source locations inside event circle
         match_selection = (population_ras - e_ra) ** 2 + (
-            population_decs - e_decs
+            population_decs - e_dec
         ) ** 2 <= e_ang_err ** 2
 
         n_match_spatial += len(match_selection[match_selection == True])
