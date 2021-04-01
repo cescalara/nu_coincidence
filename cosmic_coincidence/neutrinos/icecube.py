@@ -88,6 +88,11 @@ class IceCubeObsWrapper(object):
             energies, ra, dec, ang_err, times, selection
         )
 
+    @property
+    def observation(self):
+
+        return self._observation
+
     def write(self):
 
         with h5py.File(self._parameter_server.file_name, "r+") as f:

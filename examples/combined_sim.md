@@ -31,7 +31,7 @@ from cosmic_coincidence.neutrinos.icecube import IceCubeObsParams, IceCubeObsWra
 
 ```python
 file_name = "output/test_sim.h5"
-sim = BlazarNuSimulation(file_name=file_name, N=4)
+sim = BlazarNuSimulation(file_name=file_name, N=16)
 ```
 
 ```python
@@ -52,6 +52,14 @@ client.close()
 with h5py.File("output/test_sim.h5", "r") as f:
     for key in f["survey_0/icecube_obs"]:
         print(key)
+```
+
+```python
+e_time = 2
+flare_times = np.array([1, 5, 10])
+flare_durations = np.array([2, 2, 2])
+
+len(np.where(((e_time >= flare_times) & (e_time <= flare_times + flare_durations)) == True)[0])
 ```
 
 ## Old stuff

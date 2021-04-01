@@ -338,6 +338,11 @@ class FermiPopWrapper(object, metaclass=ABCMeta):
 
         self._survey = self._popsynth.draw_survey(**self._parameter_server.survey)
 
+    @property
+    def survey(self):
+
+        return self._survey
+
     def write(self):
         """
         A Lightweight version of the usual popsynth.Population.writeto()

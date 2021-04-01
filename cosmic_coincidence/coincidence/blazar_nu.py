@@ -1,7 +1,13 @@
 import time
+import h5py
+from collections import OrderedDict
 from dask.distributed import as_completed
 from popsynth.utils.configuration import popsynth_config
 
+from cosmic_coincidence.coincidence.coincidence import (
+    check_spatial_coincidence,
+    check_temporal_coincidence,
+)
 from cosmic_coincidence.blazars.fermi_interface import VariableFermiPopParams
 from cosmic_coincidence.blazars.bllac import VariableBLLacPopWrapper
 from cosmic_coincidence.blazars.fsrq import VariableFSRQPopWrapper
@@ -17,7 +23,15 @@ class BlazarNuCoincidence(object):
     Check for coincidences of interest.
     """
 
-    def __init__(self, bllac_pop, fsrq_pop, nu_obs):
+    def __init__(
+        self,
+        bllac_pop,
+        fsrq_pop,
+        nu_obs,
+        name="blazar_nu_coincidence",
+    ):
+
+        self._name = name
 
         self._bllac_pop = bllac_pop
 
@@ -25,13 +39,137 @@ class BlazarNuCoincidence(object):
 
         self._nu_obs = nu_obs
 
+        self._file_name = nu_obs._parameter_server.file_name
+
+        self._group_name = nu_obs._parameter_server.group_name
+
+        self._bllac_coincidence = OrderedDict()
+
+        self._fsrq_coincidence = OrderedDict()
+
         self._run()
 
     def _run(self):
 
-        time.sleep(10)
+        self._check_spatial()
 
-        return 0
+        self._check_temporal()
+
+    @property
+    def name(self):
+
+        return self.name
+
+    @property
+    def bllac_coincidence(self):
+
+        return self._bllac_coincidence
+
+    @property
+    def fsrq_coincidence(self):
+
+        return self._fsrq_coincidence
+
+    def write(self):
+
+        with h5py.File(self._file_name, "r+") as f:
+
+            if self._group_name not in f.keys():
+
+                group = f.create_group(self._group_name)
+
+            else:
+
+                group = f[self._group_name]
+
+            subgroup = group.create_group(self.name)
+
+            bllac_group = subgroup.create_group("bllac")
+
+            for key, value in self.bllac_coincidence.items():
+
+                bllac_group.create_dataset(key, data=value, compression="lzf")
+
+            fsrq_group = subgroup.create_group("fsrq")
+
+            for key, value in self.fsrq_coincidence.items():
+
+                fsrq_group.create_dataset(key, data=value, compression="lzf")
+
+    def _check_spatial(self):
+        """
+        Check for spatial coincidences between
+        the *detected* blazar populations and
+        neutrinos
+        """
+
+        observation = self._nu_obs.observation
+
+        # BL Lacs
+        survey = self._bllac_pop.survey
+
+        n_match_spatial, spatial_match_inds = check_spatial_coincidence(
+            observation.ra,
+            observation.dec,
+            observation.ang_err,
+            survey.ra[survey.selection],
+            survey.dec[survey.selection],
+        )
+
+        self.bllac_coincidence["n_spatial"] = n_match_spatial
+        self.bllac_coincidence["spatial_match_inds"] = spatial_match_inds
+
+        # FSRQs
+        survey = self._fsrq_pop.survey
+
+        n_match_spatial, spatial_match_inds = check_spatial_coincidence(
+            observation.ra,
+            observation.dec,
+            observation.ang_err,
+            survey.ra[survey.selection],
+            survey.dec[survey.selection],
+        )
+
+        self.fsrq_coincidence["n_spatial"] = n_match_spatial
+        self.bllac_coincidence["spatial_match_inds"] = spatial_match_inds
+
+    def _check_temporal(self):
+        """
+        Check for temporal coincidences between
+        the *detected* blazar populations and
+        neutrinos, which are also spatial
+        coincidences.
+        """
+
+        observation = self._nu_obs.observation
+
+        # BL Lacs
+        survey = self._bllac_pop.survey
+
+        n_match_variable, n_match_flaring = check_temporal_coincidence(
+            observation.times,
+            self.bllac_coincidence["spatial_match_inds"],
+            survey.variability[survey.selection],
+            survey.flare_times[survey.selection],
+            survey.flare_durations[survey.selection],
+        )
+
+        self.bllac_coincidence["n_variable"] = n_match_variable
+        self.bllac_coincidence["n_flaring"] = n_match_flaring
+
+        # FSRQs
+        survey = self._fsrq_pop.survey
+
+        n_match_variable, n_match_flaring = check_temporal_coincidence(
+            observation.times,
+            self.fsrq_coincidence["spatial_match_inds"],
+            survey.variability[survey.selection],
+            survey.flare_times[survey.selection],
+            survey.flare_durations[survey.selection],
+        )
+
+        self.fsrq_coincidence["n_variable"] = n_match_variable
+        self.fsrq_coincidence["n_flaring"] = n_match_flaring
 
 
 class BlazarNuSimulation(Simulation):
@@ -171,7 +309,6 @@ class BlazarNuSimulation(Simulation):
         # Parallel
         if client is not None:
 
-            # New ideas
             bllac_pop = client.map(
                 self._bllac_pop_wrapper,
                 self._bllac_param_servers,
@@ -199,6 +336,7 @@ class BlazarNuSimulation(Simulation):
                 result._bllac_pop.write()
                 result._fsrq_pop.write()
                 result._nu_obs.write()
+                result.write()
 
                 del future, result
 
