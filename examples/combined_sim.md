@@ -50,8 +50,20 @@ client.close()
 
 ```python code_folding=[]
 with h5py.File("output/test_sim.h5", "r") as f:
-    for key in f["survey_0/icecube_obs"]:
+    for key in f["survey_0/"]:
         print(key)
+```
+
+```python
+# scaling 
+# file size
+(469808/16) * 1e5 / 1e9 
+```
+
+```python
+# scaling
+# time (hours)
+(((120/16) * 1e5) / 100) / (60 * 60)
 ```
 
 ## Check coincidence stuff

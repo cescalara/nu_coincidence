@@ -30,6 +30,9 @@ from cosmic_coincidence.utils.plotting import SphericalCircle
 ```
 
 ```python
+import sys
+sys.path.append("../../icecube_tools/")
+
 from icecube_tools.detector.effective_area import EffectiveArea
 from icecube_tools.detector.energy_resolution import EnergyResolution
 from icecube_tools.detector.angular_resolution import AngularResolution
@@ -37,6 +40,17 @@ from icecube_tools.detector.detector import IceCube
 from icecube_tools.source.flux_model import PowerLawFlux, BrokenPowerLawFlux
 from icecube_tools.source.source_model import DiffuseSource
 from icecube_tools.simulator import Simulator
+
+from icecube_tools.utils.vMF import get_kappa, get_theta_p
+```
+
+```python
+kappa = get_kappa(1, 0.68)
+print(kappa)
+theta_p_1 = get_theta_p(kappa, 0.68)
+theta_p_2 = get_theta_p(kappa, 0.95)
+theta_p_3 = get_theta_p(kappa, 0.99)
+print(theta_p_1, theta_p_2, theta_p_3)
 ```
 
 ```python
@@ -45,16 +59,13 @@ Emin = 5e4 # GeV
 
 ```python
 # Effective area
-Aeff_filename = "input/IC86-2012-TabulatedAeff.txt"
-effective_area = EffectiveArea(Aeff_filename)
+effective_area = EffectiveArea.from_dataset("20181018")
 
 # Energy resolution
-eres_file = "input/effective_area.h5"
-energy_res = EnergyResolution(eres_file)
+energy_res = EnergyResolution.from_dataset("20150820")
 
 # Angular resolution
-Ares_file = "input/IC86-2012-AngRes.txt"
-ang_res = AngularResolution(Ares_file)
+ang_res = AngularResolution.from_dataset("20181018", ret_ang_err_p=0.9, offset=0.4)
 
 # Detector
 detector = IceCube(effective_area, energy_res, ang_res)
@@ -70,9 +81,9 @@ sources = [atmospheric, astrophysical_bg]
 
 ```python
 simulator = Simulator(sources, detector)
-simulator.time = 1.0 # years
+simulator.time = 10 # years
 simulator.max_cosz = 0.1
-simulator.run(show_progress=True, seed=42)
+simulator.run(show_progress=True, seed=987)
 ```
 
 ```python
@@ -90,7 +101,7 @@ ax.set_xscale("log")
 
 ```python
 fig, ax = plt.subplots()
-ang_err = np.array(simulator.ang_err) * 3
+ang_err = np.array(simulator.ang_err)[reco_energy>4e5] 
 ax.hist(ang_err);
 ```
 
@@ -99,7 +110,7 @@ fig, ax = plt.subplots(subplot_kw={"projection": "astro degrees mollweide"})
 fig.set_size_inches((7, 5))
 for ra, dec, err in zip(np.rad2deg(simulator.ra), np.rad2deg(simulator.dec), 
                         simulator.ang_err):
-    circle = SphericalCircle((ra*u.deg, dec*u.deg), err*u.deg*3, 
+    circle = SphericalCircle((ra*u.deg, dec*u.deg), err*u.deg*2, 
                              transform=ax.get_transform("icrs"))
     ax.add_patch(circle)
     

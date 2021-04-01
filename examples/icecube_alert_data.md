@@ -43,22 +43,22 @@ eval(df.RA_Error.values[1])
 ```
 
 ```python
-ra_errs = []
-for ra_e in df.RA_Error.values:
-    if ra_e != "(-)":
-        a, b = eval(ra_e)
-        ra_errs.append(a)
-        ra_errs.append(b)
-ra_errs = abs(np.array(ra_errs))
+df.
 ```
 
 ```python
+ra_errs = []
 dec_errs = []
-for dec_e in df.Dec_Error.values:
-    if dec_e != "(-)":
+Ereco = []
+for ra_e, dec_e in zip(df.RA_Error.values, df.Dec_Error.values):
+    if ra_e != "(-)" and dec_e != "(-)":
+        a, b = eval(ra_e)
+        ra_errs.append(a)
+        ra_errs.append(b)
         a, b = eval(dec_e)
         dec_errs.append(a)
         dec_errs.append(b)
+ra_errs = abs(np.array(ra_errs))
 dec_errs = abs(np.array(dec_errs))
 ```
 

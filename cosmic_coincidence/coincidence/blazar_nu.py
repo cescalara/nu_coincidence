@@ -337,9 +337,10 @@ class BlazarNuSimulation(Simulation):
 
             for future, result in as_completed(coincidence, with_results=True):
 
-                result._bllac_pop.write()
-                result._fsrq_pop.write()
-                result._nu_obs.write()
+                # While debugging..
+                # result._bllac_pop.write()
+                # result._fsrq_pop.write()
+                # result._nu_obs.write()
                 result.write()
 
                 del future, result
@@ -366,10 +367,11 @@ class BlazarNuSimulation(Simulation):
 
             for bllac, fsrq, nu in zip(bllac_pop, fsrq_pop, nu_obs):
 
-                self._coincidence_check(bllac, fsrq, nu)
+                result = self._coincidence_check(bllac, fsrq, nu)
 
                 bllac.write()
                 fsrq.write()
                 nu.write()
+                result.write()
 
             del bllac_pop, fsrq_pop, nu_obs
