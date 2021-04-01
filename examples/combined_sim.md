@@ -29,6 +29,8 @@ from cosmic_coincidence.coincidence.blazar_nu import BlazarNuSimulation
 from cosmic_coincidence.neutrinos.icecube import IceCubeObsParams, IceCubeObsWrapper
 ```
 
+## Main sim
+
 ```python
 file_name = "output/test_sim.h5"
 sim = BlazarNuSimulation(file_name=file_name, N=16)

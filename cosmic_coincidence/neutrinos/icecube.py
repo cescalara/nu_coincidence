@@ -43,15 +43,19 @@ class IceCubeObsWrapper(object):
 
     def _simulation_setup(self):
 
-        effective_area = EffectiveArea.from_dataset("20181018")
+        effective_area = EffectiveArea.from_dataset("20181018", fetch=False)
 
         angular_resolution = AngularResolution.from_dataset(
             "20181018",
+            fetch=False,
             ret_ang_err_p=0.9,  # Return 90% CIs
             offset=0.4,  # Shift angular error up in attempt to match HESE
         )
 
-        energy_resolution = EnergyResolution.from_dataset("20150820")
+        energy_resolution = EnergyResolution.from_dataset(
+            "20150820",
+            fetch=False,
+        )
 
         detector = IceCube(
             effective_area,
