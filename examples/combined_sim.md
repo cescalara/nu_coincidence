@@ -57,6 +57,10 @@ with h5py.File("output/test_sim.h5", "r") as f:
 ```
 
 ```python
+64*4
+```
+
+```python
 # scaling 
 # file size
 (469808/16) * 1e5 / 1e9 
