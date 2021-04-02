@@ -304,6 +304,20 @@ class BlazarNuSimulation(Simulation):
 
         return bllac, fsrq
 
+    def _sim_wrapper(self, bllac_param_server, fsrq_param_server, nu_param_server):
+
+        bllac_pop = self._bllac_pop_wrapper(bllac_param_server)
+
+        fsrq_pop = self._fsrq_pop_wrapper(fsrq_param_server)
+
+        nu_obs = self._nu_obs_wrapper(nu_param_server)
+
+        result = self._coincidence_check(bllac_pop, fsrq_pop, nu_obs)
+
+        del bllac_pop, fsrq_pop, nu_obs
+
+        return result
+
     def _coincidence_check(self, bllac_pop, fsrq_pop, nu_obs):
 
         return BlazarNuCoincidence(bllac_pop, fsrq_pop, nu_obs)
@@ -313,29 +327,36 @@ class BlazarNuSimulation(Simulation):
         # Parallel
         if client is not None:
 
-            bllac_pop = client.map(
-                self._bllac_pop_wrapper,
+            # bllac_pop = client.map(
+            #     self._bllac_pop_wrapper,
+            #     self._bllac_param_servers,
+            # )
+
+            # fsrq_pop = client.map(
+            #     self._fsrq_pop_wrapper,
+            #     self._fsrq_param_servers,
+            # )
+
+            # nu_obs = client.map(
+            #     self._nu_obs_wrapper,
+            #     self._nu_param_servers,
+            # )
+
+            # coincidence = client.map(
+            #     self._coincidence_check,
+            #     bllac_pop,
+            #     fsrq_pop,
+            #     nu_obs,
+            # )
+
+            results = client.map(
+                self._sim_wrapper,
                 self._bllac_param_servers,
-            )
-
-            fsrq_pop = client.map(
-                self._fsrq_pop_wrapper,
                 self._fsrq_param_servers,
-            )
-
-            nu_obs = client.map(
-                self._nu_obs_wrapper,
                 self._nu_param_servers,
             )
 
-            coincidence = client.map(
-                self._coincidence_check,
-                bllac_pop,
-                fsrq_pop,
-                nu_obs,
-            )
-
-            for future, result in as_completed(coincidence, with_results=True):
+            for future, result in as_completed(results, with_results=True):
 
                 # While debugging..
                 # result._bllac_pop.write()
@@ -345,7 +366,8 @@ class BlazarNuSimulation(Simulation):
 
                 del future, result
 
-            del coincidence
+            # del coincidence
+            del results
 
         # Serial
         else:
