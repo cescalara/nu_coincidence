@@ -55,6 +55,14 @@ sim.run(client)
 client.close()
 ```
 
+```python
+import gc
+```
+
+```python
+gc.get_count()
+```
+
 ```python code_folding=[]
 with h5py.File("output/test_sim.h5", "r") as f:
     for key in f["survey_0/"]:

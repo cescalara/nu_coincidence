@@ -366,7 +366,6 @@ class BlazarNuSimulation(Simulation):
                 result.write()
 
                 del future, result
-                gc.collect()
 
             # del coincidence
             del results
