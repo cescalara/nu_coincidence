@@ -140,14 +140,6 @@ ax.set_xlabel("Flare duration (weeks)")
 ```
 
 ```python
-min(d)
-```
-
-```python
-pop.writeto("output/test_pop.h5")
-```
-
-```python
 bins = 10**np.linspace(-18, -6)
 fig, ax = plt.subplots()
 ax.hist(pop.fluxes_latent, bins=bins, alpha=0.5);
