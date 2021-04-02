@@ -314,6 +314,8 @@ class BlazarNuSimulation(Simulation):
 
         result = self._coincidence_check(bllac_pop, fsrq_pop, nu_obs)
 
+        del bllac_pop, fsrq_pop, nu_obs
+
         return result
 
     def _coincidence_check(self, bllac_pop, fsrq_pop, nu_obs):
@@ -362,9 +364,10 @@ class BlazarNuSimulation(Simulation):
                 # result._nu_obs.write()
                 result.write()
 
-                del future
+                del future, result
 
             # del coincidence
+            del results
 
         # Serial
         else:
