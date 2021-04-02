@@ -24,8 +24,9 @@ import sys
 sys.path.append("../")
 from cosmic_coincidence.populations.sbpl_population import SBPLZPowExpCosmoPopulation
 from cosmic_coincidence.distributions.sbpl_distribution import SBPLDistribution
-from cosmic_coincidence.utils.interface import Ajello14PDEModel, BLLacLDDEModel
-from cosmic_coincidence.utils.interface import FSRQLDDEModel
+from cosmic_coincidence.blazars.fermi_interface import Ajello14PDEModel
+from cosmic_coincidence.blazars.bllac import BLLacLDDEModel
+from cosmic_coincidence.blazars.fsrq import FSRQLDDEModel
 from cosmic_coincidence.populations.aux_samplers import (VariabilityAuxSampler, 
                                                          FlareRateAuxSampler, 
                                                          FlareTimeAuxSampler,
@@ -136,6 +137,14 @@ ax.plot(bins, stats.pareto(1.5).pdf(bins), alpha=0.7, color='k',
         label='pareto approx');
 ax.set_yscale("log")
 ax.set_xlabel("Flare duration (weeks)")
+```
+
+```python
+min(d)
+```
+
+```python
+pop.writeto("output/test_pop.h5")
 ```
 
 ```python

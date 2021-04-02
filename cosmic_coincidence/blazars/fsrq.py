@@ -53,7 +53,7 @@ class FSRQLDDEModel(LDDEFermiModel):
 
     def _get_dNdV_params(self):
 
-        z = np.linspace(self.zmin, self.zmax)
+        z = np.geomspace(self.zmin, self.zmax)
         dNdV = self.dNdV(z)
 
         popt, pcov = optimize.curve_fit(self._wrap_func_dNdV, z, dNdV)

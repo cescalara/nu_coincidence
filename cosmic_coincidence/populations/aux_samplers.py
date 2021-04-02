@@ -89,7 +89,7 @@ class FlareRateAuxSampler(BoundedPowerLawAuxSampler):
         self._true_values = rate * self._true_values
 
 
-class FlareNumAuxSampler(ParetoAuxSampler):
+class FlareNumAuxSampler(AuxiliarySampler):
     """
     Sample number of flares for a given rate.
     """
@@ -135,10 +135,12 @@ class FlareTimeAuxSampler(AuxiliarySampler):
 
             else:
 
-                max_nflares = int(rate[i] * self.obs_time * 10)
-                wait_times = stats.expon(loc=2 / 52, scale=1 / rate[i]).rvs(max_nflares)
-                ts = np.cumsum(wait_times)
-                times[i] = np.array(ts[ts < self.obs_time], dtype=np.dtype("float64"))
+                n_flares = np.random.poisson(rate[i] * self.obs_time)
+
+                time_samples = np.random.uniform(0, self.obs_time, size=n_flares)
+                time_samples = np.sort(time_samples)
+
+                times[i] = np.array(time_samples, dtype=np.dtype("float64"))
 
         self._true_values = times
 
@@ -162,28 +164,32 @@ class FlareDurationAuxSampler(AuxiliarySampler):
 
         obs_time = self._secondary_samplers["flare_times"].obs_time
 
+        eps = 1e-3
+
         for i, _ in enumerate(durations):
 
             if times[i].size == 0:
 
-                durations[i] = np.array([], dtype=np.dtype("float64"))
+                durations[i] = np.array([], dtype=dt)
 
             else:
 
-                max_durations = np.array(times[i][1:]) - np.array(times[i][:-1])
-                max_durations = np.append(
-                    max_durations, np.max([obs_time - times[i][-1], 2 / 52])
-                )
-                max_durations = max_durations - 1 / 52
+                # Difference between flare times
+                max_durations = np.diff(times[i])
+
+                # Add final flare duration, can go up until obs_time
+                max_durations = np.append(max_durations, obs_time - times[i][-1])
+
+                # Minimum duration of 1 week
+                max_durations[max_durations < 1 / 52] = 1 / 52 + eps
 
                 durations[i] = np.array(
                     [
                         bounded_pl_inv_cdf(np.random.uniform(0, 1), 1 / 52, md, 1.5)
                         for md in max_durations
                     ],
-                    dtype=np.dtype("float64"),
+                    dtype=dt,
                 )
-                # durations[i] = list(np.random.uniform(low=1 / 52, high=max_durations))
 
         self._true_values = durations
 
