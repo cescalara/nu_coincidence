@@ -1,5 +1,6 @@
 import time
 import h5py
+import gc
 from collections import OrderedDict
 from dask.distributed import as_completed
 from popsynth.utils.configuration import popsynth_config
@@ -365,6 +366,7 @@ class BlazarNuSimulation(Simulation):
                 result.write()
 
                 del future, result
+                gc.collect()
 
             # del coincidence
             del results

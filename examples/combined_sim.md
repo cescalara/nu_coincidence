@@ -19,6 +19,7 @@ jupyter:
 from dask.distributed import LocalCluster, Client
 import h5py
 import numpy as np
+import gc
 ```
 
 ```python
@@ -40,6 +41,10 @@ sim = BlazarNuSimulation(file_name=file_name, N=16)
 #cluster = LocalCluster(n_workers=6)
 client = Client()
 client
+```
+
+```python
+gc.set_debug(gc.DEBUG_LEAK)
 ```
 
 ```python
