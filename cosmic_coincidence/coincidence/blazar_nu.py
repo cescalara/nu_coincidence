@@ -6,7 +6,6 @@ from joblib import (
     delayed,
 )
 from collections import OrderedDict
-from popsynth.utils.configuration import popsynth_config
 
 from cosmic_coincidence.coincidence.coincidence import (
     check_spatial_coincidence,
@@ -201,8 +200,6 @@ class BlazarNuSimulation(Simulation):
             group_base_name=group_base_name,
             N=N,
         )
-
-        popsynth_config["show_progress"] = False
 
     def _setup_param_servers(self):
 

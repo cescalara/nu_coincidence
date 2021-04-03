@@ -170,7 +170,7 @@ class FlareDurationAuxSampler(AuxiliarySampler):
 
             if times[i].size == 0:
 
-                durations[i] = np.array([], dtype=dt)
+                durations[i] = np.array([], dtype=np.dtype("float64"))
 
             else:
 
@@ -188,7 +188,7 @@ class FlareDurationAuxSampler(AuxiliarySampler):
                         bounded_pl_inv_cdf(np.random.uniform(0, 1), 1 / 52, md, 1.5)
                         for md in max_durations
                     ],
-                    dtype=dt,
+                    dtype=np.dtype("float64"),
                 )
 
         self._true_values = durations

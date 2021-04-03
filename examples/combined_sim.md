@@ -13,7 +13,7 @@ jupyter:
     name: cosmic_coincidence
 ---
 
-## Testing Parallel
+## Simulation of blazars and unrelated neutrinos
 
 ```python
 import h5py
@@ -25,18 +25,9 @@ import sys
 sys.path.append("../")
 
 from cosmic_coincidence.coincidence.blazar_nu import BlazarNuSimulation
-from cosmic_coincidence.neutrinos.icecube import IceCubeObsParams, IceCubeObsWrapper
 ```
 
-```python
-from icecube_tools.detector.effective_area import EffectiveArea
-```
-
-```python
-my_aeff = EffectiveArea.from_dataset("20150820")
-```
-
-## Main sim
+## Main sim in parallel
 
 ```python
 file_name = "output/test_sim.h5"
@@ -85,11 +76,10 @@ coincidence.write()
 
 ```python
 with h5py.File("output/test_sim.h5", "r") as f:
-    for key in f["survey_0/blazar_nu_coincidence/bllac"]:
         print(f["survey_0/blazar_nu_coincidence/bllac/n_spatial"][()])
 ```
 
-## Check results
+## Check old results
 
 ```python
 with h5py.File("output/test_sim_err2_1000.h5", "r") as f:
@@ -122,10 +112,6 @@ ax.hist(fsrq_n_flaring);
 
 ```python
 sum(fsrq_n_flaring) / len(fsrq_n_flaring)
-```
-
-```python
-#fsrq_n_flaring
 ```
 
 ```python
