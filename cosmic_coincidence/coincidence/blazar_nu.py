@@ -1,8 +1,11 @@
-import time
 import h5py
-import gc
+from joblib import (
+    register_parallel_backend,
+    parallel_backend,
+    Parallel,
+    delayed,
+)
 from collections import OrderedDict
-from dask.distributed import as_completed
 from popsynth.utils.configuration import popsynth_config
 
 from cosmic_coincidence.coincidence.coincidence import (
@@ -17,6 +20,9 @@ from cosmic_coincidence.neutrinos.icecube import (
     IceCubeObsWrapper,
 )
 from cosmic_coincidence.simulation import Simulation
+from cosmic_coincidence.utils.parallel import FileWritingBackend
+
+register_parallel_backend("file_write", FileWritingBackend)
 
 
 class BlazarNuCoincidence(object):
@@ -179,7 +185,8 @@ class BlazarNuCoincidence(object):
 
 class BlazarNuSimulation(Simulation):
     """
-    Set up and run simulations.
+    Set up and run simulations for blazar-neutrino
+    coincidences.
     """
 
     def __init__(
@@ -295,16 +302,6 @@ class BlazarNuSimulation(Simulation):
 
         return IceCubeObsWrapper(param_server)
 
-    def _pop_wrapper(self, param_servers):
-
-        bllac_server, fsrq_server = param_servers
-
-        bllac = VariableBLLacPopWrapper(bllac_server)
-
-        fsrq = VariableFSRQPopWrapper(fsrq_server)
-
-        return bllac, fsrq
-
     def _sim_wrapper(self, bllac_param_server, fsrq_param_server, nu_param_server):
 
         bllac_pop = self._bllac_pop_wrapper(bllac_param_server)
@@ -323,78 +320,38 @@ class BlazarNuSimulation(Simulation):
 
         return BlazarNuCoincidence(bllac_pop, fsrq_pop, nu_obs)
 
-    def run(self, client=None):
+    def run(self, parallel=True, n_jobs=4):
 
         # Parallel
-        if client is not None:
+        if parallel:
 
-            # bllac_pop = client.map(
-            #     self._bllac_pop_wrapper,
-            #     self._bllac_param_servers,
-            # )
+            # Writes to file upon completion
+            with parallel_backend("file_write"):
 
-            # fsrq_pop = client.map(
-            #     self._fsrq_pop_wrapper,
-            #     self._fsrq_param_servers,
-            # )
-
-            # nu_obs = client.map(
-            #     self._nu_obs_wrapper,
-            #     self._nu_param_servers,
-            # )
-
-            # coincidence = client.map(
-            #     self._coincidence_check,
-            #     bllac_pop,
-            #     fsrq_pop,
-            #     nu_obs,
-            # )
-
-            results = client.map(
-                self._sim_wrapper,
-                self._bllac_param_servers,
-                self._fsrq_param_servers,
-                self._nu_param_servers,
-            )
-
-            for future, result in as_completed(results, with_results=True):
-
-                # While debugging..
-                # result._bllac_pop.write()
-                # result._fsrq_pop.write()
-                # result._nu_obs.write()
-                result.write()
-
-                del future, result
-
-            # del coincidence
-            del results
+                Parallel(n_jobs=n_jobs)(
+                    delayed(self._sim_wrapper)(bllac_ps, fsrq_ps, nu_ps)
+                    for bllac_ps, fsrq_ps, nu_ps in zip(
+                        self._bllac_param_servers,
+                        self._fsrq_param_servers,
+                        self._nu_param_servers,
+                    )
+                )
 
         # Serial
         else:
 
-            bllac_pop = [
-                self._bllac_pop_wrapper(param_server)
-                for param_server in self._bllac_param_servers
-            ]
+            for bllac_ps, fsrq_ps, nu_ps in zip(
+                self._bllac_param_servers,
+                self._fsrq_param_servers,
+                self._nu_param_servers,
+            ):
 
-            fsrq_pop = [
-                self._fsrq_pop_wrapper(param_server)
-                for param_server in self._fsrq_param_servers
-            ]
+                result = self._sim_wrapper(
+                    bllac_ps,
+                    fsrq_ps,
+                    nu_ps,
+                )
 
-            nu_obs = [
-                self._nu_obs_wrapper(param_server)
-                for param_server in self._nu_param_servers
-            ]
-
-            for bllac, fsrq, nu in zip(bllac_pop, fsrq_pop, nu_obs):
-
-                result = self._coincidence_check(bllac, fsrq, nu)
-
-                bllac.write()
-                fsrq.write()
-                nu.write()
                 result.write()
 
-            del bllac_pop, fsrq_pop, nu_obs
+                del result

@@ -1,6 +1,5 @@
 from abc import abstractmethod, ABCMeta
 from joblib._parallel_backends import LokyBackend
-from joblib import register_parallel_backend
 
 
 class MultiCallback:
@@ -33,10 +32,7 @@ class ImmediateResultBackend(LokyBackend, metaclass=ABCMeta):
         future_handler, which must be implemented.
         """
 
-        # As future is a list with one element
-        _future = future[0]
-
-        self.future_handler(_future)
+        self.future_handler(future)
 
         del future
 
@@ -60,5 +56,16 @@ class ImmediateResultBackend(LokyBackend, metaclass=ABCMeta):
         raise NotImplementedError()
 
 
-# Register custom backend
-register_parallel_backend("immediate_result", ImmediateResultBackend)
+class FileWritingBackend(ImmediateResultBackend):
+    """
+    Assumes result from future has a write()
+    method which is called.
+    """
+
+    def future_handler(self, future):
+
+        result = future.result()[0]
+
+        result.write()
+
+        del result
