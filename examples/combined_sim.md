@@ -19,7 +19,9 @@ jupyter:
 from dask.distributed import LocalCluster, Client
 import h5py
 import numpy as np
-import gc
+from joblib._parallel_backends import MultiprocessingBackend, LokyBackend
+from joblib import register_parallel_backend, parallel_backend
+from joblib import Parallel, delayed
 ```
 
 ```python
@@ -28,6 +30,51 @@ sys.path.append("../")
 
 from cosmic_coincidence.coincidence.blazar_nu import BlazarNuSimulation
 from cosmic_coincidence.neutrinos.icecube import IceCubeObsParams, IceCubeObsWrapper
+```
+
+```python
+from icecube_tools.detector.effective_area import EffectiveArea
+```
+
+```python
+my_aeff = EffectiveArea.from_dataset("20150820")
+```
+
+## Test joblib
+
+```python
+class MultiCallback:
+    def __init__(self, *callbacks):
+        self.callbacks = [cb for cb in callbacks if cb]
+
+    def __call__(self, out):
+        for cb in self.callbacks:
+            cb(out)
+
+class ImmediateResultBackend(LokyBackend):
+    def callback(self, future):
+        result = future.result()[0]
+        result.write()
+        del future, result
+
+    def apply_async(self, func, callback=None):
+        cbs = MultiCallback(callback, self.callback)
+        return super().apply_async(func, cbs)
+
+register_parallel_backend('custom', ImmediateResultBackend, make_default=True)
+```
+
+```python
+file_name = "output/test_sim.h5"
+sim = BlazarNuSimulation(file_name=file_name, N=4)
+```
+
+```python
+out = Parallel(n_jobs=2)(delayed(sim._sim_wrapper)(bllac_ps, fsrq_ps, nu_ps) for bllac_ps, fsrq_ps, nu_ps in zip(sim._bllac_param_servers, sim._fsrq_param_servers, sim._nu_param_servers))
+```
+
+```python
+del out
 ```
 
 ## Main sim
