@@ -13,7 +13,7 @@ jupyter:
     name: cosmic_coincidence
 ---
 
-## Check if point inside circle/ellipse on a spherical surface
+## Check if point inside circle on a spherical surface
 
 ```python
 import numpy as np
@@ -80,6 +80,8 @@ ax.scatter(ras.to(u.deg)[selection],
            transform=ax.get_transform("icrs"), color='r')
 ```
 
-```python
+## Check if point inside ellipse on spherical surface
 
+```python
+# this is hard
 ```
