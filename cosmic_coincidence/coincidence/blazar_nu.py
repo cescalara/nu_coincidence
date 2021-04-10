@@ -1,4 +1,5 @@
 import h5py
+import numpy as np
 from joblib import (
     register_parallel_backend,
     parallel_backend,
@@ -119,11 +120,11 @@ class BlazarNuCoincidence(object):
         survey = self._bllac_pop.survey
 
         n_match_spatial, spatial_match_inds = check_spatial_coincidence(
-            observation.ra,
-            observation.dec,
-            observation.ang_err,
-            survey.ra[survey.selection],
-            survey.dec[survey.selection],
+            np.deg2rad(observation.ra),
+            np.deg2rad(observation.dec),
+            np.deg2rad(observation.ang_err),
+            np.deg2rad(survey.ra[survey.selection]),
+            np.deg2rad(survey.dec[survey.selection]),
         )
 
         self.bllac_coincidence["n_spatial"] = n_match_spatial
@@ -133,11 +134,11 @@ class BlazarNuCoincidence(object):
         survey = self._fsrq_pop.survey
 
         n_match_spatial, spatial_match_inds = check_spatial_coincidence(
-            observation.ra,
-            observation.dec,
-            observation.ang_err,
-            survey.ra[survey.selection],
-            survey.dec[survey.selection],
+            np.deg2rad(observation.ra),
+            np.deg2rad(observation.dec),
+            np.deg2rad(observation.ang_err),
+            np.deg2rad(survey.ra[survey.selection]),
+            np.deg2rad(survey.dec[survey.selection]),
         )
 
         self.fsrq_coincidence["n_spatial"] = n_match_spatial

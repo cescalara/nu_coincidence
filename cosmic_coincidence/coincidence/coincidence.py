@@ -31,6 +31,8 @@ def check_spatial_coincidence(
     Check the spatial coincidence of events
     assuming circular error regions with the
     sources in population, which are assumed to be points.
+
+    All angles should be in radians.
     """
 
     n_match_spatial = 0
@@ -40,9 +42,8 @@ def check_spatial_coincidence(
     for e_ra, e_dec, e_ang_err in zip(event_ras, event_decs, event_ang_errs):
 
         # Check if source locations inside event circle
-        match_selection = (population_ras - e_ra) ** 2 + (
-            population_decs - e_dec
-        ) ** 2 <= e_ang_err ** 2
+        sigmas = get_central_angle(e_ra, e_dec, population_ras, population_decs)
+        match_selection = sigmas <= e_ang_err
 
         n_match_spatial += len(match_selection[match_selection == True])
 
@@ -50,6 +51,25 @@ def check_spatial_coincidence(
         spatial_match_inds.append(np.where(match_selection == True)[0])
 
     return n_match_spatial, spatial_match_inds
+
+
+def get_central_angle(ref_ra, ref_dec, ras, decs):
+    """
+    Get the central angles between ref_ra and
+    ref_dec and a bunch of ras and decs. Angles
+    should be in radians.
+
+    Useful for computing the separation of points
+    on the unit sphere.
+    """
+
+    sin_term = np.sin(ref_dec) * np.sin(decs)
+
+    cos_term = np.cos(ref_dec) * np.cos(decs)
+
+    diff_term = np.cos(ref_ra - ras)
+
+    return np.arccos(sin_term + cos_term * diff_term)
 
 
 def check_temporal_coincidence(
