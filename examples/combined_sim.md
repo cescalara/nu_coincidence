@@ -64,6 +64,10 @@ nu_obs = sim._nu_obs_wrapper(nu_params)
 ```
 
 ```python
+nu_obs.observation.ang_err
+```
+
+```python
 coincidence = sim._coincidence_check(bllac_pop, fsrq_pop, nu_obs)
 ```
 
