@@ -57,6 +57,7 @@ Emax = 1e8 # GeV
 Emin_det = 4e5 # GeV
 Enorm = 1e5 # GeV
 spectral_index = 2.0
+flux_factor = 0.01
 ```
 
 ## BL Lacs
@@ -138,7 +139,7 @@ for i in range(N):
                                        bllac_pop.flare_amplitudes[i]):
             
             # Define point source 
-            L = bllac_pop.luminosities_latent[i] * amp # erg s^-1
+            L = bllac_pop.luminosities_latent[i] * amp * flux_factor # erg s^-1
             L = L * 624 # GeV s^-1
             F = L / (4*np.pi * cosmology.luminosity_distance(z)**2) 
             tmp = PowerLawFlux(1, Enorm, spectral_index, 
@@ -256,7 +257,7 @@ for i in range(N):
                                        fsrq_pop.flare_amplitudes[i]):
             
             # Define point source 
-            L = fsrq_pop.luminosities_latent[i] * amp # erg s^-1
+            L = fsrq_pop.luminosities_latent[i] * amp * flux_factor # erg s^-1
             L = L * 624 # GeV s^-1
             F = L / (4*np.pi * cosmology.luminosity_distance(z)**2) 
             tmp = PowerLawFlux(1, Enorm, spectral_index, 
@@ -335,8 +336,8 @@ legend_patches = [SphericalCircle((0*u.deg, 0*u.deg), 1*u.deg, color="red"),
                   SphericalCircle((0*u.deg ,0*u.deg), 1*u.deg, color="blue")]
 legend_labels = ["Parent blazar is detected", "Parent blazar is undetected"]
 ax.legend(legend_patches, legend_labels)
-fig.suptitle("F_nu = F_gamma")
-fig.savefig("figures/combined_equal_flux.pdf", bbox_inches="tight", dpi=500)
+fig.suptitle("F_nu = %.2f F_gamma" % flux_factor)
+fig.savefig("figures/combined_flux_factor_%.2f.pdf" % flux_factor, bbox_inches="tight", dpi=500)
 ```
 
 ```python
