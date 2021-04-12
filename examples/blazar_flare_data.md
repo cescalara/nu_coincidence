@@ -5,8 +5,8 @@ jupyter:
     text_representation:
       extension: .md
       format_name: markdown
-      format_version: '1.2'
-      jupytext_version: 1.9.1
+      format_version: '1.3'
+      jupytext_version: 1.11.0
   kernelspec:
     display_name: cosmic_coincidence
     language: python
@@ -27,6 +27,10 @@ hdul.info()
 ```
 
 ```python
+hdul[2].header
+```
+
+```python
 # Get flare duration for different categories
 N = len(hdul[1].data)
 
@@ -39,6 +43,11 @@ n_flares = {}
 n_flares['bll'] = []
 n_flares['fsrq'] = []
 n_flares['bcu'] = []
+
+ph_count_excess = {}
+ph_count_excess['bll'] = []
+ph_count_excess['fsrq'] = []
+ph_count_excess['bcu'] = []
 
 # Loop over sources
 for i in range(N):
@@ -56,6 +65,11 @@ for i in range(N):
     tstart = hdul[2].data['TSTART'][non_neg_sel].astype(int)
     tstop = hdul[2].data['TSTOP'][non_neg_sel].astype(int)     
     
+    # Get Expected events vs observed
+    lowE_expected = hdul[2].data['LEAVNEV'][non_neg_sel]
+    lowE_observed = hdul[2].data['LENEV'][non_neg_sel]
+    count_excess = lowE_observed / lowE_expected
+    
     # Merge adjacent flare periods
     eq_ind = np.where(np.equal(tstart[1:], tstop[:-1]))[0]
     a = np.delete(tstart, eq_ind+1)
@@ -64,14 +78,17 @@ for i in range(N):
     
     if c == 'bll':
         duration['bll'].extend(d)
+        ph_count_excess['bll'].extend(count_excess)
         n_flares['bll'].append(len(d))
         
     elif c == 'fsrq':
         duration['fsrq'].extend(d)
         n_flares['fsrq'].append(len(d))
+        ph_count_excess['fsrq'].extend(count_excess)
         
     elif c == 'bcu':
         duration['bcu'].extend(d)
+        ph_count_excess['bcu'].extend(count_excess)
         n_flares['bcu'].append(len(d))
 ```
 
@@ -114,8 +131,29 @@ ax.set_xscale('log')
 ```
 
 ```python
-max(n_flares[''])
+from scipy import stats
 ```
+
+```python
+fig, ax = plt.subplots()
+bins = np.linspace(0, 15, 100)
+#ax.hist(ph_count_excess['bll'], alpha=0.7, density=True, bins=bins);
+ax.hist(ph_count_excess['fsrq'], alpha=0.7, density=True, bins=bins);
+#ax.hist(ph_count_excess['bcu'], alpha=0.7, density=True, bins=bins);
+#ax.set_yscale("log")
+#ax.set_yscale("log")
+#ax.hist(stats.skewnorm(a=10, loc=1, scale=2).rvs(100000), density=True, 
+#        alpha=0.7, bins=bins);
+ax.hist(stats.pareto(3).rvs(10000) * 1.2, alpha=0.7, bins=bins, density=True)
+ax.axvline(1, color="k")
+ax.set_xlim(0, 5)
+```
+
+```python
+min(stats.pareto(6).rvs(10000) * 1.2)
+```
+
+## rough
 
 ```python
 fig, ax = plt.subplots()
