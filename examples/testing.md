@@ -24,7 +24,7 @@ import sys
 sys.path.append("../")
 from cosmic_coincidence.populations.sbpl_population import SBPLZPowExpCosmoPopulation
 from cosmic_coincidence.distributions.sbpl_distribution import SBPLDistribution
-from cosmic_coincidence.blazars.fermi_interface import Ajello14PDEModel
+from cosmic_coincidence.blazars.fermi_interface import Ajello14PDEModel, _sbpl
 from cosmic_coincidence.blazars.bllac import BLLacLDDEModel
 from cosmic_coincidence.blazars.fsrq import FSRQLDDEModel
 from cosmic_coincidence.populations.aux_samplers import (VariabilityAuxSampler, 
@@ -36,19 +36,54 @@ from cosmic_coincidence.populations.aux_samplers import (VariabilityAuxSampler,
 ## BL Lac LDDE
 
 ```python
+# Best fit
 ldde = BLLacLDDEModel()
-ldde.A = 3.39e4
-ldde.gamma1 = 0.27
-ldde.Lstar = 0.28e48
-ldde.gamma2 = 1.86
-ldde.zcstar = 1.34
-ldde.p1star = 2.24
-ldde.tau = 4.92
-ldde.p2 = -7.37
-ldde.alpha = 4.53e-2
-ldde.mustar = 2.1
-ldde.beta = 6.46e-2
-ldde.sigma = 0.26
+ldde.A = 3.39 * 1e4
+ldde.gamma1 = 0.27 
+ldde.Lstar = 0.28 * 1e48
+ldde.gamma2 = 1.86 
+ldde.zcstar = 1.34 
+ldde.p1star = 2.24 
+ldde.tau = 4.92 
+ldde.p2 = -7.37 
+ldde.alpha = 4.53 * 1e-2
+ldde.mustar = 2.1 
+ldde.beta = 6.46 * 1e-2
+ldde.sigma = 0.26 
+```
+
+```python
+# Max 68% CI
+ldde = BLLacLDDEModel()
+ldde.A = (3.39+7.44) * 1e4
+ldde.gamma1 = 0.27 + 0.26
+ldde.Lstar = (0.28 + 0.48) * 1e48
+ldde.gamma2 = 1.86 + 0.86
+ldde.zcstar = 1.34 + 0.22
+ldde.p1star = 2.24 + 1.25
+ldde.tau = 4.92 + 1.45
+ldde.p2 = -7.37 + 2.95
+ldde.alpha = (4.53 + 4.98) * 1e-2
+ldde.mustar = 2.1 + 0.03
+ldde.beta = (6.46 + 2.34) * 1e-2
+ldde.sigma = 0.26 + 0.02
+```
+
+```python
+# Min 68% CI
+ldde = BLLacLDDEModel()
+ldde.A = (3.39-2.13) * 1e4
+ldde.gamma1 = 0.27 - 0.46
+ldde.Lstar = (0.28 - 0.21) * 1e48
+ldde.gamma2 = 1.86 - 0.48
+ldde.zcstar = 1.34 - 0.27
+ldde.p1star = 2.24 - 1.07
+ldde.tau = 4.92 - 2.12
+ldde.p2 = -7.37 - 5.43
+ldde.alpha = (4.53 - 6.52) * 1e-2
+ldde.mustar = 2.1 - 0.03
+ldde.beta = (6.46 - 2.07) * 1e-2
+ldde.sigma = 0.26 - 0.02
 ```
 
 ```python
