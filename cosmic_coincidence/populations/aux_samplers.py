@@ -194,6 +194,44 @@ class FlareDurationAuxSampler(AuxiliarySampler):
         self._true_values = durations
 
 
+class FlareAmplitudeAuxSampler(AuxiliarySampler):
+    """
+    Sample increase in luminosity of the flares
+    as a multiplicative factor.
+    """
+
+    xmin = AuxiliaryParameter(vmin=0, default=1)
+    index = AuxiliaryParameter(default=1)
+
+    def __init__(self, name="flare_amplitudes", observed=False):
+
+        super(FlareAmplitudeAuxSampler, self).__init__(name=name, observed=observed)
+
+    def true_sampler(self, size):
+
+        dt = h5py.vlen_dtype(np.dtype("float64"))
+
+        amplitudes = np.empty((size,), dtype=dt)
+
+        times = self._secondary_samplers["flare_times"].true_values
+
+        for i, _ in enumerate(amplitudes):
+
+            if times[i].size == 0:
+
+                amplitudes[i] = np.array([], dtype=np.dtype("float64"))
+
+            else:
+
+                n_flares = times[i].size
+
+                samples = stats.pareto(self.index).rvs(n_flares) * self.xmin
+
+                amplitudes[i] = np.array(samples, dtype=np.dtype("float64"))
+
+        self._true_values = amplitudes
+
+
 def bounded_pl_inv_cdf(x, xmin, xmax, index):
     """
     Bounded power law inverse CDF.
