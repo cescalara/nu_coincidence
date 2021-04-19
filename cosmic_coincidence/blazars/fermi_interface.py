@@ -5,6 +5,8 @@ from astropy import units as u
 import h5py
 
 from popsynth.distribution import Distribution, DistributionParameter
+from popsynth.selection_probability.flux_selectors import HardFluxSelection
+
 from cosmic_coincidence.populations.sbpl_population import SBPLZPowExpCosmoPopulation
 from cosmic_coincidence.distributions.sbpl_distribution import sbpl
 from cosmic_coincidence.utils.parameter_server import ParameterServer
@@ -336,7 +338,13 @@ class FermiPopWrapper(object, metaclass=ABCMeta):
 
     def _run(self):
 
-        self._survey = self._popsynth.draw_survey(**self._parameter_server.survey)
+        flux_selector = HardFluxSelection()
+        flux_selector.boundary = self._parameter_server.survey["boundary"]
+        self._popsynth.set_flux_selection(flux_selector)
+
+        flux_sigma = self._parameter_server.survey["flux_sigma"]
+
+        self._survey = self._popsynth.draw_survey(flux_sigma=flux_sigma)
 
     @property
     def survey(self):
@@ -481,7 +489,8 @@ class FermiPopParams(ParameterServer):
         mustar,
         beta,
         sigma,
-        boundary,
+        flux_boundary,
+        flux_sigma,
         hard_cut,
     ):
 
@@ -502,7 +511,11 @@ class FermiPopParams(ParameterServer):
             sigma=sigma,
         )
 
-        self._survey = dict(boundary=boundary, hard_cut=hard_cut)
+        self._selection = dict(
+            flux_boundary=flux_boundary,
+            flux_sigma=flux_sigma,
+            hard_cut=hard_cut,
+        )
 
         self._Lmax = 1e50
 
@@ -517,9 +530,9 @@ class FermiPopParams(ParameterServer):
         self._Lmax = value
 
     @property
-    def survey(self):
+    def selection(self):
 
-        return self._survey
+        return self._selection
 
 
 class VariableFermiPopParams(FermiPopParams):
@@ -542,7 +555,8 @@ class VariableFermiPopParams(FermiPopParams):
         mustar,
         beta,
         sigma,
-        boundary,
+        flux_boundary,
+        flux_sigma,
         hard_cut,
         variability_weight,
         flare_rate_min,
@@ -564,7 +578,8 @@ class VariableFermiPopParams(FermiPopParams):
             mustar=mustar,
             beta=beta,
             sigma=sigma,
-            boundary=boundary,
+            flux_boundary=flux_boundary,
+            flux_sigma=flux_sigma,
             hard_cut=hard_cut,
         )
 
