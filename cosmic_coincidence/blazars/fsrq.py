@@ -36,6 +36,7 @@ class FSRQLDDEModel(LDDEFermiModel):
 
         pop = SBPLSFRPopulation(
             r0=r0,
+            a=1,
             rise=self._popt_dNdV[1],
             decay=self._popt_dNdV[2],
             peak=self._popt_dNdV[3],

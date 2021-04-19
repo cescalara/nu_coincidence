@@ -77,6 +77,7 @@ class SBPLSFRPopulation(SFRPopulation):
     def __init__(
         self,
         r0,
+        a,
         rise,
         decay,
         peak,
@@ -99,6 +100,7 @@ class SBPLSFRPopulation(SFRPopulation):
 
         super(SBPLSFRPopulation, self).__init__(
             r0=r0,
+            a=a,
             rise=rise,
             decay=decay,
             peak=peak,

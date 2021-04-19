@@ -20,6 +20,8 @@ import numpy as np
 from scipy import stats
 from matplotlib import pyplot as plt
 
+from popsynth.selection_probability.flux_selectors import HardFluxSelection
+
 import sys
 sys.path.append("../")
 from cosmic_coincidence.populations.sbpl_population import SBPLZPowExpCosmoPopulation
@@ -106,7 +108,7 @@ ax.set_yscale("log")
 ```python
 # For popsynth
 ldde.Lmax = 1e50
-popsynth = ldde.popsynth()
+pop_gen = ldde.popsynth()
 
 variability = VariabilityAuxSampler()
 variability.weight = 0.05
@@ -125,12 +127,17 @@ flare_rate.set_secondary_sampler(variability)
 flare_times.set_secondary_sampler(flare_rate)
 flare_durations.set_secondary_sampler(flare_times)
 
-popsynth.add_observed_quantity(flare_durations)
+pop_gen.add_observed_quantity(flare_durations)
 ```
 
 ```python
-pop = popsynth.draw_survey(boundary=4e-12, hard_cut=True)
-#pop = popsynth.draw_survey(boundary=1e2, no_selection=True)
+flux_selector = HardFluxSelection()
+flux_selector.boundary = 4e-12
+pop_gen.set_flux_selection(flux_selector)
+
+pop = pop_gen.draw_survey(flux_sigma=1)
+#pop = pop_gen.draw_survey(boundary=4e-12, hard_cut=True)
+#pop = pop_gen.draw_survey(boundary=1e2, no_selection=True)
 ```
 
 ```python
@@ -143,6 +150,10 @@ len(pop.variability_selected[pop.variability_selected==True]) / len(pop.variabil
 
 ```python
 #pop.display_flux_sphere()
+```
+
+```python
+len(pop.distances)
 ```
 
 ```python
@@ -239,7 +250,7 @@ ax.set_yscale("log")
 ```python
 # For popsynth
 ldde.Lmax = 1e50
-popsynth = ldde.popsynth()
+pop_gen = ldde.popsynth()
 
 variability = VariabilityAuxSampler()
 variability.weight = 0.4
@@ -258,11 +269,19 @@ flare_rate.set_secondary_sampler(variability)
 flare_times.set_secondary_sampler(flare_rate)
 flare_durations.set_secondary_sampler(flare_times)
 
-popsynth.add_observed_quantity(flare_durations)
+pop_gen.add_observed_quantity(flare_durations)
 ```
 
 ```python
-pop = popsynth.draw_survey(boundary=4e-12, hard_cut=True)
+flux_selector = HardFluxSelection()
+flux_selector.boundary = 4e-12
+pop_gen.set_flux_selection(flux_selector)
+
+pop = pop_gen.draw_survey(flux_sigma=1)
+```
+
+```python
+len(pop.distances)
 ```
 
 ```python

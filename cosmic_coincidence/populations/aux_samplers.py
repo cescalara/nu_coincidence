@@ -10,6 +10,8 @@ class ParetoAuxSampler(AuxiliarySampler):
     Sample from a Pareto distribution.
     """
 
+    _auxiliary_sampler_name = "ParetoAuxSampler"
+
     xmin = AuxiliaryParameter(vmin=0)
     index = AuxiliaryParameter(default=1)
 
@@ -26,6 +28,8 @@ class BoundedPowerLawAuxSampler(AuxiliarySampler):
     """
     Sample from a bounded power law.
     """
+
+    _auxiliary_sampler_name = "BoundedPowerLawAuxSampler"
 
     xmin = AuxiliaryParameter(vmin=0)
     xmax = AuxiliaryParameter()
@@ -50,6 +54,8 @@ class VariabilityAuxSampler(AuxiliarySampler):
     Boolean outcome.
     """
 
+    _auxiliary_sampler_name = "VariabilityAuxSampler"
+
     weight = AuxiliaryParameter(vmin=0, vmax=1)
 
     def __init__(self, name="variability", observed=False):
@@ -69,6 +75,8 @@ class FlareRateAuxSampler(BoundedPowerLawAuxSampler):
     """
     Sample source flare rate given its variability.
     """
+
+    _auxiliary_sampler_name = "FlareRateAuxSampler"
 
     def __init__(self, name="flare_rate", observed=False):
 
@@ -94,6 +102,8 @@ class FlareNumAuxSampler(AuxiliarySampler):
     Sample number of flares for a given rate.
     """
 
+    _auxiliary_sampler_name = "FlareNumAuxSampler"
+
     obs_time = AuxiliaryParameter(vmin=0, default=1)
 
     def __init__(self, name="flare_num", observed=False):
@@ -112,6 +122,8 @@ class FlareTimeAuxSampler(AuxiliarySampler):
     Sample flare times for each source give
     rate and total number of flares.
     """
+
+    _auxiliary_sampler_name = "FlareTimeAuxSampler"
 
     obs_time = AuxiliaryParameter(vmin=0, default=1)
 
@@ -149,6 +161,8 @@ class FlareDurationAuxSampler(AuxiliarySampler):
     """
     Sample flare durations given flare times
     """
+
+    _auxiliary_sampler_name = "FlareDurationAuxSampler"
 
     def __init__(self, name="flare_durations", observed=False):
 
@@ -199,6 +213,8 @@ class FlareAmplitudeAuxSampler(AuxiliarySampler):
     Sample increase in luminosity of the flares
     as a multiplicative factor.
     """
+
+    _auxiliary_sampler_name = "FlareAmplitudeAuxSampler"
 
     xmin = AuxiliaryParameter(vmin=0, default=1)
     index = AuxiliaryParameter(default=1)
