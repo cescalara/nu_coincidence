@@ -79,6 +79,18 @@ coincidence.write()
 ```
 
 ```python
+bllac_pop._survey._flux_selector
+```
+
+```python
+bllac_pop._survey._flux_selector_set
+```
+
+```python
+bllac_pop._survey.writeto("test_pop_new.yaml")
+```
+
+```python
 with h5py.File("output/test_sim.h5", "r") as f:
         print(f["survey_0/blazar_nu_coincidence/bllac/n_spatial"][()])
 ```

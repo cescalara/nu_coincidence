@@ -375,10 +375,7 @@ class FermiPopWrapper(object, metaclass=ABCMeta):
             subgroup.attrs["lf_form"] = np.string_(self._survey._lf_form)
             subgroup.attrs["flux_sigma"] = self._survey._flux_sigma
             subgroup.attrs["r_max"] = self._survey._r_max
-            subgroup.attrs["boundary"] = self._survey._boundary
-            subgroup.attrs["strength"] = self._survey._strength
             subgroup.attrs["seed"] = int(self._survey._seed)
-            subgroup.attrs["hard_cut"] = self._survey._hard_cut
 
             # True distributions
             spatial_grp = subgroup.create_group("spatial_params")
