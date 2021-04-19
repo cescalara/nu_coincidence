@@ -339,10 +339,10 @@ class FermiPopWrapper(object, metaclass=ABCMeta):
     def _run(self):
 
         flux_selector = HardFluxSelection()
-        flux_selector.boundary = self._parameter_server.survey["boundary"]
+        flux_selector.boundary = self._parameter_server.selection["flux_boundary"]
         self._popsynth.set_flux_selection(flux_selector)
 
-        flux_sigma = self._parameter_server.survey["flux_sigma"]
+        flux_sigma = self._parameter_server.selection["flux_sigma"]
 
         self._survey = self._popsynth.draw_survey(flux_sigma=flux_sigma)
 
