@@ -87,6 +87,10 @@ simulator.run(show_progress=True, seed=987)
 ```
 
 ```python
+simulator.source_label
+```
+
+```python
 reco_energy = np.array(simulator.reco_energy)
 len(reco_energy[reco_energy>4e5])
 ```
@@ -118,30 +122,91 @@ for ra, dec, err in zip(np.rad2deg(simulator.ra), np.rad2deg(simulator.dec),
 #           transform=ax.get_transform("icrs"))
 ```
 
-## Scraping icecube info
-
-Can use this to update icecube_tools.
+### Compare Aeff
 
 ```python
-import requests
-import zipfile
+te_bins = effective_area.true_energy_bins
+cosz_bins = effective_area.cos_zenith_bins
+aeff = effective_area.values
 ```
 
 ```python
-# get file
-url = "http://icecube.wisc.edu/data-releases/20210126_PS-IC40-IC86_VII.zip"
-response = requests.get(url, stream=True)
+aeff_north = aeff
 ```
 
 ```python
-# save locally 
-with open("data/test_dl_file.zip", 'wb') as f:
-    for chunk in response.iter_content(chunk_size=8192): 
-        f.write(chunk)
+fig, ax = plt.subplots()
+red_fac = 1e-3
+#ax.plot(te_bins[:-1], aeff.sum(axis=1)*red_fac)
+#ax.plot(te_bins[:-1], aeff.T[cosz_bins[1:]>0].T.sum(axis=1)*red_fac)
+#ax.plot(te_bins[:-1], aeff.T[cosz_bins[1:]<0].T.sum(axis=1)*red_fac)
+ax.plot(te_bins[:-1], aeff.sum(axis=1)*red_fac*stats.norm(5e5, 0.3*5e5).cdf(te_bins[:-1]))
+ax.set_xscale("log")
+ax.set_yscale("log")
+ax.set_xlim(1e4, 1e7)
+ax.set_ylim(1e-3, 1e3)
+ax.grid()
 ```
 
 ```python
-# unzip
-with zipfile.ZipFile("data/test_dl_file.zip", 'r') as zip_ref:
-    zip_ref.extractall("data/test_dl_file")
+from scipy import stats
+```
+
+```python
+
+```
+
+```python
+np.shape(aeff.sum(axis=1))
+```
+
+```python
+len(cosz_bins)
+```
+
+```python
+file_stem = "/Users/fran/Downloads/20131121_Search_for_contained_neutrino_events_at_energies_above_30_TeV_in_2_years_of_data/effective_areas/"
+mu_file_name = file_stem + "numu_north.txt"
+e_file_name = file_stem + "nue_north.txt"
+tau_file_name = file_stem + "nutau_north.txt"
+```
+
+```python
+out_mu = np.loadtxt(mu_file_name, skiprows=2)
+out_e = np.loadtxt(e_file_name, skiprows=2)
+out_tau = np.loadtxt(tau_file_name, skiprows=2)
+```
+
+```python
+fig, ax = plt.subplots()
+ax.plot(out.T[0], (out_mu.T[2] + out_e.T[2] + out_tau.T[2])*0.1)
+ax.set_xscale("log")
+ax.set_yscale("log")
+ax.set_xlim(1e4, 1e7)
+ax.set_ylim(1e-3, 1e3)
+ax.grid()
+```
+
+```python
+out
+```
+
+```python
+ang_res = AngularResolution.from_dataset("20181018", ret_ang_err_p=0.9, offset=0.0)
+```
+
+```python
+fig, ax = plt.subplots()
+ax.plot(ang_res.true_energy_values, ang_res.values)
+ax.set_xscale("log")
+ax.set_ylim(0.2, 0.5)
+ax.set_xlim(1e5, 1e9)
+```
+
+```python
+
+```
+
+```python
+
 ```
