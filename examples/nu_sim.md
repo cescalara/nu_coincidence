@@ -40,55 +40,38 @@ from icecube_tools.detector.detector import IceCube
 from icecube_tools.source.flux_model import PowerLawFlux, BrokenPowerLawFlux
 from icecube_tools.source.source_model import DiffuseSource
 from icecube_tools.simulator import Simulator
-
-from icecube_tools.utils.vMF import get_kappa, get_theta_p
 ```
 
 ```python
-kappa = get_kappa(1, 0.68)
-print(kappa)
-theta_p_1 = get_theta_p(kappa, 0.68)
-theta_p_2 = get_theta_p(kappa, 0.95)
-theta_p_3 = get_theta_p(kappa, 0.99)
-print(theta_p_1, theta_p_2, theta_p_3)
-```
+ehe_aeff = EffectiveArea.from_dataset("20181018")
+hese_aeff = EffectiveArea.from_dataset("20131121", scale_factor=0.2)
 
-```python
-Emin = 5e4 # GeV
-```
-
-```python
-# Effective area
-effective_area = EffectiveArea.from_dataset("20181018")
-
-# Energy resolution
 energy_res = EnergyResolution.from_dataset("20150820")
+ang_res = AngularResolution.from_dataset("20181018", ret_ang_err_p=0.9, offset=0.9)
 
-# Angular resolution
-ang_res = AngularResolution.from_dataset("20181018", ret_ang_err_p=0.9, offset=0.4)
-
-# Detector
-detector = IceCube(effective_area, energy_res, ang_res)
+ehe_detector = IceCube(ehe_aeff, energy_res, ang_res)
+hese_detector = IceCube(hese_aeff, energy_res, ang_res)
 ```
 
 ```python
-power_law_atmo = PowerLawFlux(2.5e-18, 1e5, 3.7, lower_energy=Emin, upper_energy=1e8)
+Emin = 1e4 # GeV
+Emax = 1e8 # GeV
+
+power_law_atmo = PowerLawFlux(2.5e-18, 1e5, 3.7, lower_energy=Emin, 
+                              upper_energy=Emax)
 atmospheric = DiffuseSource(flux_model=power_law_atmo)
-power_law = PowerLawFlux(1.01e-18, 1e5, 2.19, lower_energy=Emin, upper_energy=1e8)
+power_law = PowerLawFlux(1.0e-18, 1e5, 2.5, lower_energy=Emin, upper_energy=Emax)
 astrophysical_bg = DiffuseSource(flux_model=power_law)
 sources = [atmospheric, astrophysical_bg]
 ```
 
 ```python
-simulator = Simulator(sources, detector)
-simulator.time = 10 # years
-simulator.max_cosz = 0.1
-simulator.run(show_progress=True, seed=987)
-```
-
-```python
-reco_energy = np.array(simulator.reco_energy)
-len(reco_energy[reco_energy>4e5])
+simulator = Simulator(sources, hese_detector)
+simulator.time = 7.5 # years
+simulator.max_cosz = 1
+simulator._get_expected_number()
+simulator._Nex
+simulator.run(show_progress=True, seed=42)
 ```
 
 ```python
@@ -101,14 +84,7 @@ ax.set_xscale("log")
 
 ```python
 fig, ax = plt.subplots()
-ax.hist(np.array(simulator.true_energy)[reco_energy>4e5], bins = 10**np.linspace(4, 8))
-ax.set_xscale("log")
-ax.set_yscale("log")
-```
-
-```python
-fig, ax = plt.subplots()
-ang_err = np.array(simulator.ang_err)[reco_energy>4e5] 
+ang_err = np.array(simulator.ang_err)
 ax.hist(ang_err);
 ```
 
@@ -120,9 +96,36 @@ for ra, dec, err in zip(np.rad2deg(simulator.ra), np.rad2deg(simulator.dec),
     circle = SphericalCircle((ra*u.deg, dec*u.deg), err*u.deg*2, 
                              transform=ax.get_transform("icrs"))
     ax.add_patch(circle)
-    
-    #ax.scatter(np.rad2deg(simulator.ra), np.rad2deg(simulator.dec), 
-#           transform=ax.get_transform("icrs"))
+```
+
+```python
+Emin = 5e4 # GeV
+Emax = 1e8 # GeV
+
+power_law_atmo = PowerLawFlux(2.5e-18, 1e5, 3.7, lower_energy=Emin, 
+                              upper_energy=Emax)
+atmospheric = DiffuseSource(flux_model=power_law_atmo)
+power_law = PowerLawFlux(0.3e-18, 1e5, 2.5, lower_energy=Emin, upper_energy=Emax)
+astrophysical_bg = DiffuseSource(flux_model=power_law)
+sources = [atmospheric, astrophysical_bg]
+```
+
+```python
+simulator = Simulator(sources, ehe_detector)
+simulator.time = 7.5 # years
+simulator.max_cosz = 1
+simulator._get_expected_number()
+simulator._Nex
+simulator.run(show_progress=True, seed=42)
+```
+
+```python
+reco_energy = np.array(simulator.reco_energy)
+len(reco_energy[reco_energy>3e5])
+```
+
+```python
+np.array(simulator.source_label)[reco_energy>2e5]
 ```
 
 ## Aeff for HESE/EHE alerts
@@ -262,8 +265,36 @@ ax.set_ylim(0.2, 0.5)
 ax.set_xlim(1e5, 1e9)
 ```
 
-```python
+## Reading HESE Aeffs
 
+```python
+import numpy as np
+import os
+from matplotlib import pyplot as plt
+import sys
+sys.path.append("../../icecube_tools/")
+
+from icecube_tools.detector.effective_area import R2013AeffReader, EffectiveArea
+from icecube_tools.utils.data import IceCubeData, find_folders
+```
+
+```python
+aeff = EffectiveArea.from_dataset("20131121")
+```
+
+```python
+fig, ax = plt.subplots()
+ax.pcolormesh(aeff.true_energy_bins, aeff.cos_zenith_bins, 
+             np.log10(aeff.values.T))
+ax.set_xscale("log")
+```
+
+```python
+my_data = IceCubeData()
+```
+
+```python
+my_data.ls()
 ```
 
 ```python
