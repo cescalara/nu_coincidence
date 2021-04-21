@@ -87,10 +87,6 @@ simulator.run(show_progress=True, seed=987)
 ```
 
 ```python
-simulator.source_label
-```
-
-```python
 reco_energy = np.array(simulator.reco_energy)
 len(reco_energy[reco_energy>4e5])
 ```
@@ -101,6 +97,13 @@ fig, ax = plt.subplots()
 ax.hist(simulator.true_energy, bins=bins)
 ax.hist(simulator.reco_energy, bins=bins)
 ax.set_xscale("log")
+```
+
+```python
+fig, ax = plt.subplots()
+ax.hist(np.array(simulator.true_energy)[reco_energy>4e5], bins = 10**np.linspace(4, 8))
+ax.set_xscale("log")
+ax.set_yscale("log")
 ```
 
 ```python
@@ -190,6 +193,39 @@ ax.grid()
 ```python
 out
 ```
+
+## Effective area with E selection
+
+```python
+power_law = PowerLawFlux(1.01e-18, 1e5, 1.5, lower_energy=Emin, upper_energy=1e8)
+astrophysical_bg = DiffuseSource(flux_model=power_law)
+sources = [astrophysical_bg]
+```
+
+```python
+simulator = Simulator(sources, detector)
+simulator.time = 50 # years
+simulator.max_cosz = 0.1
+simulator.run(show_progress=True, seed=987)
+```
+
+```python
+bins = 10**np.linspace(4, 8, 100)
+dN_dt_init, _ = np.histogram(simulator.true_energy, bins=bins)
+dN_dt_true, _ = np.histogram(simulator.reco_energy, bins=bins)
+
+fig, ax = plt.subplots()
+ax.plot(bins[1:], dN_dt_true / dN_dt_init)
+ax.set_xscale("log")
+```
+
+```python
+fig, ax = plt.subplots()
+ax.hist(simulator.true_energy, bins=bins);
+ax.set_xscale("log")
+```
+
+## Angular resolution
 
 ```python
 ang_res = AngularResolution.from_dataset("20181018", ret_ang_err_p=0.9, offset=0.0)
