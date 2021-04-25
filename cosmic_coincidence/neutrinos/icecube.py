@@ -96,7 +96,7 @@ class IceCubeAlertsWrapper(IceCubeObsWrapper):
 
     def _simulation_setup(self):
 
-        self._energy_res = EnergyResolution.from_dataset("20150820")
+        self._energy_res = EnergyResolution.from_dataset("20150820", fetch=False)
 
         self._hese_simulation_setup()
 
@@ -114,7 +114,11 @@ class IceCubeAlertsWrapper(IceCubeObsWrapper):
         hese_sources = [atmo_source, diffuse_source]
 
         # Detector
-        hese_aeff = EffectiveArea.from_dataset("20131121", scale_factor=0.12)
+        hese_aeff = EffectiveArea.from_dataset(
+            "20131121",
+            scale_factor=0.12,
+            fetch=False,
+        )
 
         hese_ang_res = AngularResolution.from_dataset(
             "20181018",
@@ -123,6 +127,7 @@ class IceCubeAlertsWrapper(IceCubeObsWrapper):
             scale=3,
             scatter=0.5,
             minimum=0.2,
+            fetch=False,
         )
 
         hese_detector = IceCube(hese_aeff, self._energy_res, hese_ang_res)
@@ -142,7 +147,7 @@ class IceCubeAlertsWrapper(IceCubeObsWrapper):
 
         ehe_sources = [atmo_source, diffuse_source]
 
-        ehe_aeff = EffectiveArea.from_dataset("20181018")
+        ehe_aeff = EffectiveArea.from_dataset("20181018", fetch=False)
 
         ehe_ang_res = AngularResolution.from_dataset(
             "20181018",
@@ -151,6 +156,7 @@ class IceCubeAlertsWrapper(IceCubeObsWrapper):
             scale=1,
             minimum=0.2,
             scatter=0.2,
+            fetch=False,
         )
 
         ehe_detector = IceCube(ehe_aeff, self._energy_res, ehe_ang_res)
