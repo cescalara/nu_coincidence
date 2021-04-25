@@ -277,7 +277,7 @@ class BlazarNuSimulation(Simulation):
                 Emax=1e8,
                 Enorm=1e5,
                 hese_Emin_det=1e4,
-                ehe_Emin_det=2.5e5,
+                ehe_Emin_det=3e5,
                 hese_atmo_flux_norm=4e-18,
                 ehe_atmo_flux_norm=4e-18 / 3,
                 atmo_index=3.7,
