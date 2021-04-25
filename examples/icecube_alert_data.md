@@ -43,10 +43,6 @@ print((len(times)-5) / ((times.value[-1] - times.value[0])/365))
 ```
 
 ```python
-eval(df.RA_Error.values[1])
-```
-
-```python
 ra_errs = []
 dec_errs = []
 Ereco = []
@@ -78,14 +74,6 @@ min(ra_errs)
 
 ```python
 min(dec_errs)
-```
-
-```python
-df
-```
-
-```python
-
 ```
 
 ```python

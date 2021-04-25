@@ -155,7 +155,7 @@ class IceCubeAlertsWrapper(IceCubeObsWrapper):
 
         ehe_detector = IceCube(ehe_aeff, self._energy_res, ehe_ang_res)
 
-        self._ehe_detector = Simulator(ehe_sources, ehe_detector)
+        self._ehe_simulator = Simulator(ehe_sources, ehe_detector)
         self._ehe_simulator.time = self._parameter_server.ehe.obs_time
         self._ehe_simulator.max_cosz = self._parameter_server.ehe.max_cosz
 
@@ -174,9 +174,9 @@ class IceCubeAlertsWrapper(IceCubeObsWrapper):
         )
 
         # EHE
-        self._ehe_simulator.run(show_progress=False, seed=self.parameter_server.seed)
+        self._ehe_simulator.run(show_progress=False, seed=self._parameter_server.seed)
 
-        ehe_Emin_det = self._parameter_serve.ehe.Emin_det
+        ehe_Emin_det = self._parameter_server.ehe.Emin_det
         ehe_selection = np.array(self._ehe_simulator.reco_energy) > ehe_Emin_det
 
         ehe_times = np.random.uniform(
@@ -200,7 +200,7 @@ class IceCubeAlertsWrapper(IceCubeObsWrapper):
         ang_err = ang_err[selection]
 
         energies = np.concatenate(
-            (self._hese_simulator.rec_energy, self._ehe_simulator.reco_energy)
+            (self._hese_simulator.reco_energy, self._ehe_simulator.reco_energy)
         )
         energies = energies[selection]
 
@@ -378,10 +378,12 @@ class IceCubeObsParams(ParameterServer):
         return self._Emin_det
 
 
-class IceCubeAlertParams(ParameterServer):
+class IceCubeAlertsParams(ParameterServer):
     """
     Parameter server for IceCube alerts where
     HESE and EHE simulations both require inputs.
+
+    For use with IceCubeAlertsWrapper
     """
 
     def __init__(

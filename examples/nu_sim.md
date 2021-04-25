@@ -13,7 +13,7 @@ jupyter:
     name: cosmic_coincidence
 ---
 
-## Running sim using icecube_tools
+## Simulation of IceCube alerts
 
 ```python
 import numpy as np
@@ -27,7 +27,78 @@ import sys
 sys.path.append("../")
 
 from cosmic_coincidence.utils.plotting import SphericalCircle
+from cosmic_coincidence.neutrinos.icecube import IceCubeAlertsWrapper
+from cosmic_coincidence.neutrinos.icecube import IceCubeAlertsParams
 ```
+
+## From cosmic_coincidence
+
+```python
+param_server = IceCubeAlertsParams(hese_Emin=1e4, ehe_Emin=5e4, Emax=1e8, Enorm=1e5, 
+                                    hese_Emin_det=1e4, ehe_Emin_det=2.5e5,
+                                    hese_atmo_flux_norm=4e-18, 
+                                    ehe_atmo_flux_norm=4e-18/3,
+                                    atmo_index=3.7, 
+                                    hese_diff_flux_norm=2e-18,
+                                    ehe_diff_flux_norm=2e-18/3,
+                                    diff_index=2.6,
+                                    max_cosz=1, obs_time=7.5)
+param_server.seed = 567
+```
+
+```python
+nu_obs = IceCubeAlertsWrapper(param_server)
+```
+
+```python
+obs = nu_obs.observation
+```
+
+```python
+len(obs.ra)
+```
+
+```python
+fig, ax = plt.subplots(subplot_kw={"projection": "astro degrees mollweide"})
+fig.set_size_inches((7, 5))
+for ra, dec, err in zip(np.rad2deg(obs.ra), np.rad2deg(obs.dec), 
+                        obs.ang_err):
+    circle = SphericalCircle((ra*u.deg, dec*u.deg), err*u.deg, 
+                             transform=ax.get_transform("icrs"))
+    ax.add_patch(circle)
+```
+
+```python
+fig, ax = plt.subplots(1, 2)
+fig.set_size_inches((12, 5))
+ax[0].hist(obs.ang_err);
+event_areas = 2 * np.pi * (1 - np.cos(np.deg2rad(obs.ang_err)))
+ax[1].hist(event_areas);
+```
+
+```python
+sum(event_areas)
+```
+
+```python
+
+# old style...
+            nu_param_server = IceCubeObsParams(
+                Emin=1e5,
+                Emax=1e8,
+                Enorm=1e5,
+                Emin_det=2e5,
+                atmo_flux_norm=2.5e-18,
+                atmo_index=3.7,
+                diff_flux_norm=1e-18,
+                diff_index=2.19,
+                obs_time=10,
+                max_cosz=0.1,
+            )
+
+```
+
+## From icecube_tools
 
 ```python
 import sys
@@ -82,8 +153,12 @@ simulator = Simulator(sources, hese_detector)
 simulator.time = 7.5 # years
 simulator.max_cosz = 1
 simulator._get_expected_number()
-simulator.run(show_progress=True, seed=np.random.randint(100, 10000))
+simulator.run(show_progress=True, seed=42)
 print(simulator._Nex)
+```
+
+```python
+simulator.N
 ```
 
 ```python
@@ -134,7 +209,7 @@ simulator = Simulator(sources, ehe_detector)
 simulator.time = 7.5 # years
 simulator.max_cosz = 1
 simulator._get_expected_number()
-simulator.run(show_progress=True, seed=np.random.randint(100, 100000))
+simulator.run(show_progress=True, seed=42)
 print(simulator._Nex)
 ```
 
@@ -145,10 +220,6 @@ Ereco_min = 2.5e5
 ```python
 reco_energy = np.array(simulator.reco_energy)
 len(reco_energy[reco_energy>Ereco_min]) 
-```
-
-```python
-sum(np.array(simulator.source_label)[reco_energy>Ereco_min])
 ```
 
 ```python

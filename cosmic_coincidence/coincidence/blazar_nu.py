@@ -16,8 +16,8 @@ from cosmic_coincidence.blazars.fermi_interface import VariableFermiPopParams
 from cosmic_coincidence.blazars.bllac import VariableBLLacPopWrapper
 from cosmic_coincidence.blazars.fsrq import VariableFSRQPopWrapper
 from cosmic_coincidence.neutrinos.icecube import (
-    IceCubeObsParams,
-    IceCubeObsWrapper,
+    IceCubeAlertsParams,
+    IceCubeAlertsWrapper,
 )
 from cosmic_coincidence.simulation import Simulation
 from cosmic_coincidence.utils.parallel import FileWritingBackend
@@ -271,17 +271,21 @@ class BlazarNuSimulation(Simulation):
             self._fsrq_param_servers.append(fsrq_param_server)
 
             # Neutrinos
-            nu_param_server = IceCubeObsParams(
-                Emin=1e5,
+            nu_param_server = IceCubeAlertsParams(
+                hese_Emin=1e4,
+                ehe_Emin=5e4,
                 Emax=1e8,
                 Enorm=1e5,
-                Emin_det=2e5,
-                atmo_flux_norm=2.5e-18,
+                hese_Emin_det=1e4,
+                ehe_Emin_det=2.5e5,
+                hese_atmo_flux_norm=4e-18,
+                ehe_atmo_flux_norm=4e-18 / 3,
                 atmo_index=3.7,
-                diff_flux_norm=1e-18,
-                diff_index=2.19,
+                hese_diff_flux_norm=2e-18,
+                ehe_diff_flux_norm=2e-18 / 3,
+                diff_index=2.6,
                 obs_time=10,
-                max_cosz=0.1,
+                max_cosz=1,
             )
 
             nu_param_server.seed = i
@@ -300,7 +304,7 @@ class BlazarNuSimulation(Simulation):
 
     def _nu_obs_wrapper(self, param_server):
 
-        return IceCubeObsWrapper(param_server)
+        return IceCubeAlertsWrapper(param_server)
 
     def _sim_wrapper(self, bllac_param_server, fsrq_param_server, nu_param_server):
 
