@@ -26,7 +26,7 @@ class IceCubeObservation(object):
     ang_err: float
     times: float
     selection: bool
-    source_component: int
+    source_label: int
     name: str = "icecube_obs"
 
 
@@ -161,7 +161,65 @@ class IceCubeAlertsWrapper(IceCubeObsWrapper):
 
     def _run(self):
 
-        pass
+        # HESE
+        self._hese_simulator.run(show_progress=False, seed=self._parameter_server.seed)
+
+        hese_Emin_det = self._parameter_server.hese.Emin_det
+        hese_selection = np.array(self._hese_simulator.reco_energy) > hese_Emin_det
+
+        hese_times = np.random.uniform(
+            0,
+            self._parameter_server.hese.obs_time,
+            self._hese_simulator.N,
+        )
+
+        # EHE
+        self._ehe_simulator.run(show_progress=False, seed=self.parameter_server.seed)
+
+        ehe_Emin_det = self._parameter_serve.ehe.Emin_det
+        ehe_selection = np.array(self._ehe_simulator.reco_energy) > ehe_Emin_det
+
+        ehe_times = np.random.uniform(
+            0,
+            self._parameter_server.ehe.obs_time,
+            self._ehe_simulator.N,
+        )
+
+        # Combine
+        selection = np.concatenate((hese_selection, ehe_selection))
+
+        ra = np.concatenate((self._hese_simulator.ra, self._ehe_simulator.ra))
+        ra = np.rad2deg(ra[selection])
+
+        dec = np.concatenate((self._hese_simulator.dec, self._ehe_simulator.dec))
+        dec = np.rad2deg(dec[selection])
+
+        ang_err = np.concatenate(
+            (self._hese_simulator.ang_err, self._ehe_simulator.ang_err)
+        )
+        ang_err = ang_err[selection]
+
+        energies = np.concatenate(
+            (self._hese_simulator.rec_energy, self._ehe_simulator.reco_energy)
+        )
+        energies = energies[selection]
+
+        source_labels = np.concatenate(
+            (self._hese_simulator.source_label, self._ehe_simulator.source_label)
+        )
+        source_labels = source_labels[selection]
+
+        times = np.concatenate((hese_times, ehe_times))[selection]
+
+        self._observation = IceCubeObservation(
+            energies,
+            ra,
+            dec,
+            ang_err,
+            times,
+            selection,
+            source_labels,
+        )
 
 
 class IceCubeTracksWrapper(IceCubeObsWrapper):
@@ -223,11 +281,21 @@ class IceCubeTracksWrapper(IceCubeObsWrapper):
         dec = np.rad2deg(self._simulator.dec)[selection]
         ang_err = np.array(self._simulator.ang_err)[selection]
         energies = np.array(self._simulator.reco_energy)[selection]
-        N = len(ra)
-        times = np.random.uniform(0, self._parameter_server.obs_time, N)
+        source_labels = np.array(self._simulator.source_label)[selection]
+        times = np.random.uniform(
+            0,
+            self._parameter_server.obs_time,
+            self._simulator.N,
+        )
 
         self._observation = IceCubeObservation(
-            energies, ra, dec, ang_err, times, selection
+            energies,
+            ra,
+            dec,
+            ang_err,
+            times,
+            selection,
+            source_labels,
         )
 
 
