@@ -80,22 +80,50 @@ ax[1].hist(event_areas);
 sum(event_areas)
 ```
 
+Compare with old style...
+
 ```python
+from cosmic_coincidence.neutrinos.icecube import IceCubeTracksWrapper
+from cosmic_coincidence.neutrinos.icecube import IceCubeObsParams
+```
 
-# old style...
-            nu_param_server = IceCubeObsParams(
-                Emin=1e5,
-                Emax=1e8,
-                Enorm=1e5,
-                Emin_det=2e5,
-                atmo_flux_norm=2.5e-18,
-                atmo_index=3.7,
-                diff_flux_norm=1e-18,
-                diff_index=2.19,
-                obs_time=10,
-                max_cosz=0.1,
-            )
+```python
+param_server = IceCubeObsParams(Emin=1e5, Emax=1e8, Enorm=1e5, Emin_det=4e5,
+                               atmo_flux_norm=2.5e-18, atmo_index=3.7,
+                               diff_flux_norm=1e-18, diff_index=2.19,
+                               obs_time=10, max_cosz=0.1)
+param_server.seed = 42
+```
 
+```python
+nu_obs = IceCubeTracksWrapper(param_server)
+```
+
+```python
+obs = nu_obs.observation
+len(obs.ra)
+```
+
+```python
+fig, ax = plt.subplots(subplot_kw={"projection": "astro degrees mollweide"})
+fig.set_size_inches((7, 5))
+for ra, dec, err in zip(np.rad2deg(obs.ra), np.rad2deg(obs.dec), 
+                        obs.ang_err):
+    circle = SphericalCircle((ra*u.deg, dec*u.deg), err*u.deg, 
+                             transform=ax.get_transform("icrs"))
+    ax.add_patch(circle)
+```
+
+```python
+fig, ax = plt.subplots(1, 2)
+fig.set_size_inches((12, 5))
+ax[0].hist(obs.ang_err);
+event_areas = 2 * np.pi * (1 - np.cos(np.deg2rad(obs.ang_err)))
+ax[1].hist(event_areas);
+```
+
+```python
+sum(event_areas)
 ```
 
 ## From icecube_tools
@@ -199,7 +227,7 @@ Emax = 1e8 # GeV
 power_law_atmo = PowerLawFlux(4e-18/3, 1e5, 3.7, lower_energy=Emin, 
                               upper_energy=Emax)
 atmospheric = DiffuseSource(flux_model=power_law_atmo)
-power_law = PowerLawFlux(1e-18/3, 1e5, 2.6, lower_energy=Emin, upper_energy=Emax)
+power_law = PowerLawFlux(2e-18/3, 1e5, 2.6, lower_energy=Emin, upper_energy=Emax)
 astrophysical_bg = DiffuseSource(flux_model=power_law)
 sources = [atmospheric, astrophysical_bg]
 ```
@@ -214,7 +242,7 @@ print(simulator._Nex)
 ```
 
 ```python
-Ereco_min = 2.5e5
+Ereco_min = 3e5
 ```
 
 ```python
@@ -247,10 +275,16 @@ ax.hist(ang_err, bins=bins);
 
 ```python
 fig, ax = plt.subplots()
-bins = np.linspace(0, 6, 50)
-ax.hist(hese_ang_err, bins=bins, cumulative=True, histtype="step", density=True);
-ax.hist(ehe_ang_err, bins=bins, cumulative=True, histtype="step", density=True);
-#ax.hist(ang_err, bins=bins, cumulative=True, histtype="step");
+bins = np.linspace(0, 5.5, 100)
+ax.hist(hese_ang_err, bins=bins, cumulative=True, histtype="step", density=True, 
+        label="HESE", color="blue");
+ax.hist(ehe_ang_err, bins=bins, cumulative=True, histtype="step", density=True,
+        label="EHE", color="green");
+ax.set_xlim(0, 5)
+ax.legend()
+ax.set_xlabel("Opening angle [deg]")
+ax.set_ylabel("Cumulative")
+#fig.savefig("figures/realtime_angres_fig9.pdf", bbox_inches="tight", dpi=100)
 ```
 
 ```python
