@@ -1,5 +1,6 @@
 import numpy as np
 import h5py
+from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass
 
 from icecube_tools.detector.effective_area import EffectiveArea
@@ -25,12 +26,14 @@ class IceCubeObservation(object):
     ang_err: float
     times: float
     selection: bool
+    source_component: int
     name: str = "icecube_obs"
 
 
-class IceCubeObsWrapper(object):
+class IceCubeObsWrapper(object, metaclass=ABCMeta):
     """
-    Wrapper for the simulation of IceCube observations.
+    Abstract base class for IceCube-like
+    observations.
     """
 
     def __init__(self, param_server):
@@ -41,60 +44,15 @@ class IceCubeObsWrapper(object):
 
         self._run()
 
+    @abstractmethod
     def _simulation_setup(self):
 
-        effective_area = EffectiveArea.from_dataset("20181018", fetch=False)
+        pass
 
-        angular_resolution = AngularResolution.from_dataset(
-            "20181018",
-            fetch=False,
-            ret_ang_err_p=0.9,  # Return 90% CIs
-            offset=0.4,  # Shift angular error up in attempt to match HESE
-        )
-
-        energy_resolution = EnergyResolution.from_dataset(
-            "20150820",
-            fetch=False,
-        )
-
-        detector = IceCube(
-            effective_area,
-            energy_resolution,
-            angular_resolution,
-        )
-
-        atmo_power_law = PowerLawFlux(**self._parameter_server.atmospheric)
-        atmo_source = DiffuseSource(flux_model=atmo_power_law)
-
-        diffuse_power_law = PowerLawFlux(**self._parameter_server.diffuse)
-        diffuse_source = DiffuseSource(flux_model=diffuse_power_law)
-
-        sources = [atmo_source, diffuse_source]
-
-        self._simulator = Simulator(sources, detector)
-        self._simulator.time = self._parameter_server.obs_time
-        self._simulator.max_cosz = self._parameter_server.max_cosz
-
+    @abstractmethod
     def _run(self):
 
-        self._simulator.run(
-            show_progress=False,
-            seed=self._parameter_server.seed,
-        )
-
-        # Select neutrinos above reco energy threshold
-        Emin_det = self._parameter_server.Emin_det
-        selection = np.array(self._simulator.reco_energy) > Emin_det
-        ra = np.rad2deg(self._simulator.ra)[selection]
-        dec = np.rad2deg(self._simulator.dec)[selection]
-        ang_err = np.array(self._simulator.ang_err)[selection]
-        energies = np.array(self._simulator.reco_energy)[selection]
-        N = len(ra)
-        times = np.random.uniform(0, self._parameter_server.obs_time, N)
-
-        self._observation = IceCubeObservation(
-            energies, ra, dec, ang_err, times, selection
-        )
+        pass
 
     @property
     def observation(self):
@@ -124,6 +82,149 @@ class IceCubeObsWrapper(object):
             for key, value in self._parameter_server.parameters.items():
 
                 subgroup.create_dataset(key, data=value)
+
+
+class IceCubeAlertsWrapper(IceCubeObsWrapper):
+    """
+    Wrapper for simulation of HESE and EHE
+    alerts.
+    """
+
+    def __init__(self, param_server):
+
+        super().__init__(param_server)
+
+    def _simulation_setup(self):
+
+        self._energy_res = EnergyResolution.from_dataset("20150820")
+
+        self._hese_simulation_setup()
+
+        self._ehe_simulation_setup()
+
+    def _hese_simulation_setup(self):
+
+        # Sources - all flavor flux
+        atmo_power_law = PowerLawFlux(**self._parameter_server.atmospheric)
+        atmo_source = DiffuseSource(flux_model=atmo_power_law)
+
+        diffuse_power_law = PowerLawFlux(**self._parameter_server.diffuse)
+        diffuse_source = DiffuseSource(flux_model=diffuse_power_law)
+
+        hese_sources = [atmo_source, diffuse_source]
+
+        # Detector
+        hese_aeff = EffectiveArea.from_dataset("20131121", scale_factor=0.12)
+
+        hese_ang_res = AngularResolution.from_dataset(
+            "20181018",
+            ret_ang_err_p=0.9,
+            offset=-0.2,
+            scale=3,
+            scatter=0.5,
+            minimum=0.2,
+        )
+
+        hese_detector = IceCube(hese_aeff, self._energy_res, hese_ang_res)
+
+        self._hese_simulator = Simulator(hese_sources, hese_detector)
+
+    def _ehe_simulation_setup(self):
+
+        # Sources - only numu flux
+        atmo_power_law = PowerLawFlux(**self._parameter_server.atmospheric)
+        atmo_source = DiffuseSource(flux_model=atmo_power_law)
+
+        diffuse_power_law = PowerLawFlux(**self._parameter_server.diffuse)
+        diffuse_source = DiffuseSource(flux_model=diffuse_power_law)
+
+        ehe_sources = [atmo_source, diffuse_source]
+
+        ehe_aeff = EffectiveArea.from_dataset("20181018")
+
+        ehe_ang_res = AngularResolution.from_dataset(
+            "20181018",
+            ret_ang_err_p=0.9,
+            offset=0.0,
+            scale=1,
+            minimum=0.2,
+            scatter=0.2,
+        )
+
+        ehe_detector = IceCube(ehe_aeff, self._energy_res, ehe_ang_res)
+
+        self._ehe_detector = Simulator(ehe_sources, ehe_detector)
+
+    def _run(self):
+
+        pass
+
+
+class IceCubeTracksWrapper(IceCubeObsWrapper):
+    """
+    Wrapper for the simulation of track events.
+    """
+
+    def __init__(self, param_server):
+
+        super().__init__(param_server)
+
+    def _simulation_setup(self):
+
+        # Sources
+        atmo_power_law = PowerLawFlux(**self._parameter_server.atmospheric)
+        atmo_source = DiffuseSource(flux_model=atmo_power_law)
+
+        diffuse_power_law = PowerLawFlux(**self._parameter_server.diffuse)
+        diffuse_source = DiffuseSource(flux_model=diffuse_power_law)
+
+        sources = [atmo_source, diffuse_source]
+
+        # Detector
+        effective_area = EffectiveArea.from_dataset("20181018", fetch=False)
+
+        angular_resolution = AngularResolution.from_dataset(
+            "20181018",
+            fetch=False,
+            ret_ang_err_p=0.9,  # Return 90% CIs
+            offset=0.4,  # Shift angular error up in attempt to match HESE
+        )
+
+        energy_resolution = EnergyResolution.from_dataset(
+            "20150820",
+            fetch=False,
+        )
+
+        detector = IceCube(
+            effective_area,
+            energy_resolution,
+            angular_resolution,
+        )
+
+        self._simulator = Simulator(sources, detector)
+        self._simulator.time = self._parameter_server.obs_time
+        self._simulator.max_cosz = self._parameter_server.max_cosz
+
+    def _run(self):
+
+        self._simulator.run(
+            show_progress=False,
+            seed=self._parameter_server.seed,
+        )
+
+        # Select neutrinos above reco energy threshold
+        Emin_det = self._parameter_server.Emin_det
+        selection = np.array(self._simulator.reco_energy) > Emin_det
+        ra = np.rad2deg(self._simulator.ra)[selection]
+        dec = np.rad2deg(self._simulator.dec)[selection]
+        ang_err = np.array(self._simulator.ang_err)[selection]
+        energies = np.array(self._simulator.reco_energy)[selection]
+        N = len(ra)
+        times = np.random.uniform(0, self._parameter_server.obs_time, N)
+
+        self._observation = IceCubeObservation(
+            energies, ra, dec, ang_err, times, selection
+        )
 
 
 class IceCubeObsParams(ParameterServer):
