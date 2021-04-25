@@ -105,10 +105,10 @@ class IceCubeAlertsWrapper(IceCubeObsWrapper):
     def _hese_simulation_setup(self):
 
         # Sources - all flavor flux
-        atmo_power_law = PowerLawFlux(**self._parameter_server.atmospheric)
+        atmo_power_law = PowerLawFlux(**self._parameter_server.hese.atmospheric)
         atmo_source = DiffuseSource(flux_model=atmo_power_law)
 
-        diffuse_power_law = PowerLawFlux(**self._parameter_server.diffuse)
+        diffuse_power_law = PowerLawFlux(**self._parameter_server.hese.diffuse)
         diffuse_source = DiffuseSource(flux_model=diffuse_power_law)
 
         hese_sources = [atmo_source, diffuse_source]
@@ -128,14 +128,16 @@ class IceCubeAlertsWrapper(IceCubeObsWrapper):
         hese_detector = IceCube(hese_aeff, self._energy_res, hese_ang_res)
 
         self._hese_simulator = Simulator(hese_sources, hese_detector)
+        self._hese_simulator.time = self._parameter_server.hese.obs_time
+        self._hese_simulator.max_cosz = self._parameter_server.hese.max_cosz
 
     def _ehe_simulation_setup(self):
 
         # Sources - only numu flux
-        atmo_power_law = PowerLawFlux(**self._parameter_server.atmospheric)
+        atmo_power_law = PowerLawFlux(**self._parameter_server.ehe.atmospheric)
         atmo_source = DiffuseSource(flux_model=atmo_power_law)
 
-        diffuse_power_law = PowerLawFlux(**self._parameter_server.diffuse)
+        diffuse_power_law = PowerLawFlux(**self._parameter_server.ehe.diffuse)
         diffuse_source = DiffuseSource(flux_model=diffuse_power_law)
 
         ehe_sources = [atmo_source, diffuse_source]
@@ -154,6 +156,8 @@ class IceCubeAlertsWrapper(IceCubeObsWrapper):
         ehe_detector = IceCube(ehe_aeff, self._energy_res, ehe_ang_res)
 
         self._ehe_detector = Simulator(ehe_sources, ehe_detector)
+        self._ehe_simulator.time = self._parameter_server.ehe.obs_time
+        self._ehe_simulator.max_cosz = self._parameter_server.ehe.max_cosz
 
     def _run(self):
 
@@ -304,3 +308,66 @@ class IceCubeObsParams(ParameterServer):
     def Emin_det(self):
 
         return self._Emin_det
+
+
+class IceCubeAlertParams(ParameterServer):
+    """
+    Parameter server for IceCube alerts where
+    HESE and EHE simulations both require inputs.
+    """
+
+    def __init__(
+        self,
+        hese_Emin,
+        ehe_Emin,
+        Emax,
+        Enorm,
+        hese_Emin_det,
+        ehe_Emin_det,
+        hese_atmo_flux_norm,
+        ehe_atmo_flux_norm,
+        atmo_index,
+        hese_diff_flux_norm,
+        ehe_diff_flux_norm,
+        diff_index,
+        max_cosz,
+        obs_time,
+    ):
+
+        super().__init__()
+
+        self._hese = IceCubeObsParams(
+            hese_Emin,
+            Emax,
+            Enorm,
+            hese_Emin_det,
+            hese_atmo_flux_norm,
+            atmo_index,
+            hese_diff_flux_norm,
+            diff_index,
+            max_cosz,
+            obs_time,
+        )
+
+        self._ehe = IceCubeObsParams(
+            ehe_Emin,
+            Emax,
+            Enorm,
+            ehe_Emin_det,
+            ehe_atmo_flux_norm,
+            atmo_index,
+            ehe_diff_flux_norm,
+            diff_index,
+            max_cosz,
+            obs_time,
+        )
+
+    @property
+    def hese(self):
+
+        return self._hese
+
+    @property
+    def ehe(self):
+
+        return self._ehe
