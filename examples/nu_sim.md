@@ -43,24 +43,36 @@ from icecube_tools.simulator import Simulator
 ```
 
 ```python
-ehe_aeff = EffectiveArea.from_dataset("20181018")
-hese_aeff = EffectiveArea.from_dataset("20131121", scale_factor=0.2)
-
 energy_res = EnergyResolution.from_dataset("20150820")
-ang_res = AngularResolution.from_dataset("20181018", ret_ang_err_p=0.9, offset=0.9)
-
-ehe_detector = IceCube(ehe_aeff, energy_res, ang_res)
-hese_detector = IceCube(hese_aeff, energy_res, ang_res)
 ```
+
+```python
+# HESE
+hese_aeff = EffectiveArea.from_dataset("20131121", scale_factor=0.12)
+hese_ang_res = AngularResolution.from_dataset("20181018", ret_ang_err_p=0.9, 
+                                             offset=-0.2, scale=3, scatter=0.5, 
+                                              minimum=0.2)
+hese_detector = IceCube(hese_aeff, energy_res, hese_ang_res)
+
+# EHE
+ehe_aeff = EffectiveArea.from_dataset("20181018")
+ehe_ang_res = AngularResolution.from_dataset("20181018", ret_ang_err_p=0.9, 
+                                             offset=0.0, scale=1, minimum=0.2, 
+                                             scatter=0.2)
+ehe_detector = IceCube(ehe_aeff, energy_res, ehe_ang_res)
+```
+
+### HESE
 
 ```python
 Emin = 1e4 # GeV
 Emax = 1e8 # GeV
 
-power_law_atmo = PowerLawFlux(2.5e-18, 1e5, 3.7, lower_energy=Emin, 
+# Based on HESE 7.5 year paper all nu-flavor
+power_law_atmo = PowerLawFlux(4e-18, 1e5, 3.7, lower_energy=Emin, 
                               upper_energy=Emax)
 atmospheric = DiffuseSource(flux_model=power_law_atmo)
-power_law = PowerLawFlux(1.0e-18, 1e5, 2.5, lower_energy=Emin, upper_energy=Emax)
+power_law = PowerLawFlux(2e-18, 1e5, 2.6, lower_energy=Emin, upper_energy=Emax)
 astrophysical_bg = DiffuseSource(flux_model=power_law)
 sources = [atmospheric, astrophysical_bg]
 ```
@@ -70,8 +82,8 @@ simulator = Simulator(sources, hese_detector)
 simulator.time = 7.5 # years
 simulator.max_cosz = 1
 simulator._get_expected_number()
-simulator._Nex
-simulator.run(show_progress=True, seed=42)
+simulator.run(show_progress=True, seed=np.random.randint(100, 10000))
+print(simulator._Nex)
 ```
 
 ```python
@@ -84,8 +96,13 @@ ax.set_xscale("log")
 
 ```python
 fig, ax = plt.subplots()
-ang_err = np.array(simulator.ang_err)
-ax.hist(ang_err);
+bins = np.linspace(0, 6, 15)
+hese_ang_err = np.array(simulator.ang_err)
+ax.hist(hese_ang_err, bins=bins);
+```
+
+```python
+min(hese_ang_err)
 ```
 
 ```python
@@ -93,19 +110,21 @@ fig, ax = plt.subplots(subplot_kw={"projection": "astro degrees mollweide"})
 fig.set_size_inches((7, 5))
 for ra, dec, err in zip(np.rad2deg(simulator.ra), np.rad2deg(simulator.dec), 
                         simulator.ang_err):
-    circle = SphericalCircle((ra*u.deg, dec*u.deg), err*u.deg*2, 
+    circle = SphericalCircle((ra*u.deg, dec*u.deg), err*u.deg, 
                              transform=ax.get_transform("icrs"))
     ax.add_patch(circle)
 ```
+
+### EHE
 
 ```python
 Emin = 5e4 # GeV
 Emax = 1e8 # GeV
 
-power_law_atmo = PowerLawFlux(2.5e-18, 1e5, 3.7, lower_energy=Emin, 
+power_law_atmo = PowerLawFlux(4e-18/3, 1e5, 3.7, lower_energy=Emin, 
                               upper_energy=Emax)
 atmospheric = DiffuseSource(flux_model=power_law_atmo)
-power_law = PowerLawFlux(0.3e-18, 1e5, 2.5, lower_energy=Emin, upper_energy=Emax)
+power_law = PowerLawFlux(1e-18/3, 1e5, 2.6, lower_energy=Emin, upper_energy=Emax)
 astrophysical_bg = DiffuseSource(flux_model=power_law)
 sources = [atmospheric, astrophysical_bg]
 ```
@@ -115,17 +134,75 @@ simulator = Simulator(sources, ehe_detector)
 simulator.time = 7.5 # years
 simulator.max_cosz = 1
 simulator._get_expected_number()
-simulator._Nex
-simulator.run(show_progress=True, seed=42)
+simulator.run(show_progress=True, seed=np.random.randint(100, 100000))
+print(simulator._Nex)
+```
+
+```python
+Ereco_min = 2.5e5
 ```
 
 ```python
 reco_energy = np.array(simulator.reco_energy)
-len(reco_energy[reco_energy>3e5])
+len(reco_energy[reco_energy>Ereco_min]) 
 ```
 
 ```python
-np.array(simulator.source_label)[reco_energy>2e5]
+sum(np.array(simulator.source_label)[reco_energy>Ereco_min])
+```
+
+```python
+bins = 10**np.linspace(2, 8)
+fig, ax = plt.subplots()
+ax.hist(simulator.true_energy, bins=bins)
+ax.hist(simulator.reco_energy, bins=bins)
+ax.set_xscale("log")
+```
+
+### Angular resolutions
+
+```python
+fig, ax = plt.subplots()
+ehe_ang_err = np.array(simulator.ang_err)[reco_energy>Ereco_min]
+ax.hist(ehe_ang_err);
+```
+
+```python
+fig, ax = plt.subplots()
+bins = np.linspace(0, 6, 15)
+ang_err = np.concatenate((hese_ang_err, ehe_ang_err))
+ax.hist(ang_err, bins=bins);
+```
+
+```python
+fig, ax = plt.subplots()
+bins = np.linspace(0, 6, 50)
+ax.hist(hese_ang_err, bins=bins, cumulative=True, histtype="step", density=True);
+ax.hist(ehe_ang_err, bins=bins, cumulative=True, histtype="step", density=True);
+#ax.hist(ang_err, bins=bins, cumulative=True, histtype="step");
+```
+
+```python
+event_areas = []
+for ae in ang_err:
+    r = np.deg2rad(ae)
+    area = 2 * np.pi * (1 - np.cos(r))
+    event_areas.append(area)
+```
+
+```python
+fig, ax = plt.subplots()
+ax.hist(event_areas);
+```
+
+```python
+sum(event_areas) # steradians
+```
+
+```python
+fig, ax = plt.subplots()
+ax.hist(event_areas, density=True);
+ax.axvline(0.007, color='k')
 ```
 
 ## Aeff for HESE/EHE alerts
@@ -196,7 +273,7 @@ with h5py.File("output/sim_for_ehe_aeff.h5") as f:
     dec_samples = f["dec"][()]
     
 pl_samples = astrophysical_bg.flux_model.sample(1000000)
-Ereco_min = 2e5
+Ereco_min = 2.5e5
 selection = reco_samples > Ereco_min
 north_selection = (reco_samples > Ereco_min) & (dec_samples > 0)
 south_selection = (reco_samples > Ereco_min) & (dec_samples < 0)
@@ -216,7 +293,7 @@ Etrue_sel_south, _ = np.histogram(true_samples[south_selection], bins=bins,
 ### Figure 7
 
 ```python
-hese_aeff_fac = 0.2
+hese_aeff_fac = 0.12
 ehe_aeff_fac = 20
 ```
 
@@ -254,47 +331,14 @@ fig.savefig("figures/realtime_aeff_fig7.pdf", bbox_inches="tight", dpi=100)
 ## Angular resolution
 
 ```python
-ang_res = AngularResolution.from_dataset("20181018", ret_ang_err_p=0.9, offset=0.0)
+ang_res = AngularResolution.from_dataset("20181018", ret_ang_err_p=0.9, offset=0.0, 
+                                         scale=1.5)
 ```
 
 ```python
 fig, ax = plt.subplots()
 ax.plot(ang_res.true_energy_values, ang_res.values)
 ax.set_xscale("log")
-ax.set_ylim(0.2, 0.5)
-ax.set_xlim(1e5, 1e9)
-```
-
-## Reading HESE Aeffs
-
-```python
-import numpy as np
-import os
-from matplotlib import pyplot as plt
-import sys
-sys.path.append("../../icecube_tools/")
-
-from icecube_tools.detector.effective_area import R2013AeffReader, EffectiveArea
-from icecube_tools.utils.data import IceCubeData, find_folders
-```
-
-```python
-aeff = EffectiveArea.from_dataset("20131121")
-```
-
-```python
-fig, ax = plt.subplots()
-ax.pcolormesh(aeff.true_energy_bins, aeff.cos_zenith_bins, 
-             np.log10(aeff.values.T))
-ax.set_xscale("log")
-```
-
-```python
-my_data = IceCubeData()
-```
-
-```python
-my_data.ls()
 ```
 
 ```python

@@ -64,12 +64,20 @@ dec_errs = abs(np.array(dec_errs))
 
 ```python
 fig, ax = plt.subplots()
-bins=np.linspace(0, 5.3, 15)
+bins=np.linspace(0, 6, 15)
 ax.hist(ra_errs, alpha=0.7, label="RA errors", bins=bins)
 ax.hist(dec_errs, alpha=0.7, label="Dec errors", bins=bins)
 ax.axvline(np.mean(ra_errs), color='k')
 ax.axvline(np.mean(dec_errs), color='k')
 ax.legend();
+```
+
+```python
+min(ra_errs)
+```
+
+```python
+min(dec_errs)
 ```
 
 ```python
@@ -101,24 +109,33 @@ len(decs[decs>0])
 len(decs[decs<0])
 ```
 
-## Compare ellipse vs. circular 
+## Compare rectangular vs. circular 
 Find area of the sky covered by error regions.
 
 ```python
 event_areas = []
+circle_event_areas = []
 for ra_e, dec_e in zip(df.RA_Error.values, df.Dec_Error.values):
     if ra_e != "(-)" and dec_e != "(-)":
         ra1, ra2 = eval(ra_e)
         dec1, dec2 = eval(dec_e)
 
-        ra_err = np.deg2rad(ra1 + ra2)
-        dec_err = np.deg2rad(dec1 + dec2)
+        ra_err = np.deg2rad(abs(ra1) + abs(ra2))
+        dec_err = np.deg2rad(abs(dec1) + abs(dec2))
         area = 4 * np.arcsin(np.tan(ra_err/2) * np.tan(dec_err/2))
         event_areas.append(area)
+        
+        radius_est = np.mean([ra_err, dec_err])/2
+        circle_area = 2 * np.pi * (1-np.cos(radius_est))
+        circle_event_areas.append(circle_area)
 ```
 
 ```python
 sum(event_areas) # steradians
+```
+
+```python
+sum(circle_event_areas)
 ```
 
 ```python
@@ -127,7 +144,12 @@ sum(event_areas) / (4 * np.pi)
 
 ```python
 fig, ax = plt.subplots()
-ax.hist(event_areas);
+ax.hist(event_areas, alpha=0.5, density=True);
+ax.hist(circle_event_areas, alpha=0.5, density=True);
+```
+
+```python
+min(event_areas)
 ```
 
 ```python
