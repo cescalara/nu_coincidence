@@ -18,9 +18,10 @@ jupyter:
 ```python
 import numpy as np
 from scipy import stats
+import scipy.special as sf
 from matplotlib import pyplot as plt
 
-from popsynth.selection_probability.flux_selectors import HardFluxSelection
+from popsynth.selection_probability.flux_selectors import HardFluxSelection, SoftFluxSelection
 
 import sys
 sys.path.append("../")
@@ -33,6 +34,7 @@ from cosmic_coincidence.populations.aux_samplers import (VariabilityAuxSampler,
                                                          FlareRateAuxSampler, 
                                                          FlareTimeAuxSampler,
                                                          FlareDurationAuxSampler)
+from cosmic_coincidence.populations.selection import GalacticPlaneSelection
 ```
 
 ## BL Lac LDDE
@@ -131,11 +133,29 @@ pop_gen.add_observed_quantity(flare_durations)
 ```
 
 ```python
-flux_selector = HardFluxSelection()
-flux_selector.boundary = 4e-12
-pop_gen.set_flux_selection(flux_selector)
+# Selection
+values = 10**np.linspace(-15, -7)
+strength = 2
+boundary = 4e-12
+probs = sf.expit(strength * (np.log10(values) - np.log10(boundary))) 
+fig, ax = plt.subplots()
+ax.plot(values, probs)
+ax.set_xscale("log")
+#ax.set_yscale("log")
+```
 
-pop = pop_gen.draw_survey(flux_sigma=1)
+```python
+flux_selector = SoftFluxSelection()
+flux_selector.boundary = 4e-12
+flux_selector.strength = 2
+
+spatial_selector = GalacticPlaneSelection()
+spatial_selector.b_limit = 10
+
+pop_gen.set_flux_selection(flux_selector)
+pop_gen.add_spatial_selector(spatial_selector)
+
+pop = pop_gen.draw_survey(flux_sigma=0.1)
 #pop = pop_gen.draw_survey(boundary=4e-12, hard_cut=True)
 #pop = pop_gen.draw_survey(boundary=1e2, no_selection=True)
 ```
@@ -145,7 +165,21 @@ pop.n_detections
 ```
 
 ```python
+import ligo.skymap.plot
+```
+
+```python
+fig, ax = plt.subplots(subplot_kw={"projection": "astro degrees mollweide"})
+fig.set_size_inches((12, 7))
+ax.scatter(pop.ra[pop.selection], pop.dec[pop.selection], transform=ax.get_transform("icrs"))
+```
+
+```python
 len(pop.variability_selected[pop.variability_selected==True]) / len(pop.variability_selected)
+```
+
+```python
+np.sin(np.deg2rad(5))
 ```
 
 ```python
@@ -273,11 +307,12 @@ pop_gen.add_observed_quantity(flare_durations)
 ```
 
 ```python
-flux_selector = HardFluxSelection()
+flux_selector = SoftFluxSelection()
 flux_selector.boundary = 4e-12
+flux_selector.strength = 2
 pop_gen.set_flux_selection(flux_selector)
 
-pop = pop_gen.draw_survey(flux_sigma=1)
+pop = pop_gen.draw_survey(flux_sigma=0.1)
 ```
 
 ```python
