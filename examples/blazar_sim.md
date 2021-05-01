@@ -36,6 +36,21 @@ from cosmic_coincidence.populations.aux_samplers import (VariabilityAuxSampler,
 from cosmic_coincidence.populations.selection import GalacticPlaneSelection
 ```
 
+## From file
+
+```python
+from cosmic_coincidence.utils.package_data import get_path_to_data
+from cosmic_coincidence.popsynth_wrapper import PopsynthParams, PopsynthWrapper
+```
+
+```python
+ps = get_path_to_data("bllac.yml")
+param_server = PopsynthParams(ps)
+param_server.seed = 100
+pop = PopsynthWrapper(param_server)
+pop.survey.distances[pop.survey.selection].size
+```
+
 ## General population models
 
 ```python
