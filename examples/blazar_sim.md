@@ -45,6 +45,7 @@ from popsynth.population_synth import PopulationSynth
 
 from cosmic_coincidence.populations.sbpl_population import (SBPLZPowerCosmoPopulation, 
                                                             SBPLSFRPopulation)
+from cosmic_coincidence.utils.package_data import get_path_to_data
 ```
 
 ```python
@@ -97,11 +98,13 @@ print("Total objects: %i \t Detected objects: %i" % (pop.distances.size,
 ```
 
 ```python
-pop_gen.write_to("output/test_pop_gen.yaml")
+pop_gen.write_to("output/bllac.yml")
 ```
 
 ```python
-new_pop_gen = PopulationSynth.from_file("output/test_pop_gen.yaml")
+file_path = get_path_to_data("bllac.yml")
+new_pop_gen = PopulationSynth.from_file(file_path)
+new_pop_gen._seed = 42 # need to overwrite!
 ```
 
 ```python
@@ -220,6 +223,43 @@ print("Min Ndet: %i \t Max Ndet: %i" % (min(Ndet), max(Ndet)))
 pop_gen = BPLSFRPopulation(r0=60, a=1, rise=11, decay=4.7, peak=0.6, 
                             Lmin=7e43, alpha=-1.1, Lbreak=1e48, beta=-2.5, Lmax=1e52,
                             r_max=6, is_rate=False, seed=42)
+
+flux_selector = SoftFluxSelection()
+flux_selector.boundary = 4e-12
+flux_selector.strength = 2
+
+galactic_plane_selector = GalacticPlaneSelection()
+galactic_plane_selector.b_limit = 10
+
+pop_gen.set_flux_selection(flux_selector)
+pop_gen.add_spatial_selector(galactic_plane_selector)
+
+variability = VariabilityAuxSampler()
+variability.weight = 0.05
+
+flare_rate = FlareRateAuxSampler()
+flare_rate.xmin = 1/7.5
+flare_rate.xmax = 15
+flare_rate.index = 1.5
+
+flare_times = FlareTimeAuxSampler()
+flare_times.obs_time = 7.5 # years
+
+flare_durations = FlareDurationAuxSampler()
+
+flare_rate.set_secondary_sampler(variability)
+flare_times.set_secondary_sampler(flare_rate)
+flare_durations.set_secondary_sampler(flare_times)
+
+pop_gen.add_observed_quantity(flare_durations)
+
+pop = pop_gen.draw_survey(flux_sigma=0.1)
+print("Total objects: %i \t Detected objects: %i" % (pop.distances.size, 
+                                        pop.distances[pop.selection].size))
+```
+
+```python
+pop_gen.write_to("output/fsrq.yml")
 ```
 
 ```python
