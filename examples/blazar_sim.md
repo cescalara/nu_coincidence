@@ -45,11 +45,66 @@ from cosmic_coincidence.popsynth_wrapper import PopsynthParams, PopsynthWrapper
 ```
 
 ```python
-ps = get_path_to_data("fsrq.yml")
+ps = get_path_to_data("bllac.yml")
 param_server = PopsynthParams(ps)
-param_server.seed = 100
-pop = PopsynthWrapper(param_server)
-pop.survey.distances[pop.survey.selection].size
+param_server.seed = 42
+pop_wrapper = PopsynthWrapper(param_server)
+pop = pop_wrapper.survey
+pop.distances[pop.selection].size
+```
+
+```python
+N_flares = [len(_) for _ in pop.flare_times]
+N_flares_det = [len(_) for _ in pop.flare_times_selected]
+N_assoc = len([_ for _ in pop.flare_times_selected if _ != []])
+fig, ax = plt.subplots()
+bins = np.linspace(0, 80)
+ax.hist(N_flares, bins=bins, alpha=0.7, label="All")
+ax.hist(N_flares_det, bins=bins, alpha=0.7, label="Detected")
+ax.set_yscale("log")
+ax.set_xlabel("Total number of flares")
+ax.legend();
+print("N detected flares:", sum(N_flares_det))
+print("N associated sources:", N_assoc)
+```
+
+```python
+d = []
+for i, _ in enumerate(pop.flare_durations):
+    d.extend(_)
+d = np.array(d) * 52 # weeks
+bins=np.linspace(min(d), max(d))
+fig, ax = plt.subplots()
+ax.hist(d, bins=bins, density=True)
+ax.plot(bins, stats.pareto(1.5).pdf(bins), alpha=0.7, color='k', 
+        label='pareto approx');
+ax.set_yscale("log")
+ax.set_xlabel("Flare duration (weeks)")
+```
+
+```python
+bins = 10**np.linspace(-18, -6)
+fig, ax = plt.subplots()
+ax.hist(pop.fluxes_latent, bins=bins, alpha=0.5);
+ax.hist(pop.selected_fluxes_latent, bins=bins, alpha=0.5)
+ax.set_xscale("log")
+```
+
+```python
+fig, ax = plt.subplots()
+ax.scatter(pop.distances, pop.luminosities_latent, alpha=0.1)
+ax.scatter(pop.selected_distances, pop.luminosities_latent[pop.selection], alpha=0.1)
+ax.set_yscale("log")
+ax.set_xscale("log")
+ax.set_xlim(0.01, 6)
+ax.set_ylim(1e44, 1e50)
+```
+
+```python
+bins=10**np.linspace(44, 52)
+fig, ax = plt.subplots()
+ax.hist(pop.luminosities_latent[pop.selection], bins=bins);
+ax.set_xscale("log")
 ```
 
 ## General population models

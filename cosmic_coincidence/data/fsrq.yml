@@ -39,7 +39,7 @@ auxiliary samplers:
     selection:
       UnitySelection: {}
     type: VariabilityAuxSampler
-    weight: 0.05
+    weight: 0.4
 
 flux selection:
   SoftFluxSelection:
