@@ -12,14 +12,23 @@ from cosmic_coincidence.coincidence.coincidence import (
     check_spatial_coincidence,
     check_temporal_coincidence,
 )
-from cosmic_coincidence.blazars.fermi_interface import VariableFermiPopParams
-from cosmic_coincidence.blazars.bllac import VariableBLLacPopWrapper
-from cosmic_coincidence.blazars.fsrq import VariableFSRQPopWrapper
+from cosmic_coincidence.popsynth_wrapper import (
+    PopsynthParams,
+    PopsynthWrapper,
+)
+from cosmic_coincidence.populations.aux_samplers import (
+    VariabilityAuxSampler,
+    FlareRateAuxSampler,
+    FlareTimeAuxSampler,
+    FlareDurationAuxSampler,
+)
+from cosmic_coincidence.populations.selection import GalacticPlaneSelection
 from cosmic_coincidence.neutrinos.icecube import (
     IceCubeAlertsParams,
     IceCubeAlertsWrapper,
 )
 from cosmic_coincidence.simulation import Simulation
+from cosmic_coincidence.utils.package_data import get_path_to_data
 from cosmic_coincidence.utils.parallel import FileWritingBackend
 
 register_parallel_backend("file_write", FileWritingBackend)
@@ -213,29 +222,8 @@ class BlazarNuSimulation(Simulation):
             seed = i * 100
 
             # BL Lacs
-            bllac_param_server = VariableFermiPopParams(
-                A=3.39e4,
-                gamma1=0.27,
-                Lstar=0.28e48,
-                gamma2=1.86,
-                zcstar=1.34,
-                p1star=2.24,
-                tau=4.92,
-                p2=-7.37,
-                alpha=4.53e-2,
-                mustar=2.1,
-                beta=6.46e-2,
-                sigma=0.26,
-                flux_boundary=4e-12,
-                flux_sigma=1,
-                hard_cut=True,
-                variability_weight=0.05,
-                flare_rate_min=1 / 7.5,
-                flare_rate_max=15,
-                flare_rate_index=1.5,
-                obs_time=10,
-            )
-
+            bllac_spec = get_path_to_data("bllac.yml")
+            bllac_param_server = PopsynthParams(bllac_spec)
             bllac_param_server.seed = seed
             bllac_param_server.file_name = self._file_name
             bllac_param_server.group_name = self._group_base_name + "_%i" % i
@@ -243,29 +231,8 @@ class BlazarNuSimulation(Simulation):
             self._bllac_param_servers.append(bllac_param_server)
 
             # FSRQs
-            fsrq_param_server = VariableFermiPopParams(
-                A=3.06e4,
-                gamma1=0.21,
-                Lstar=0.84e48,
-                gamma2=1.58,
-                zcstar=1.47,
-                p1star=7.35,
-                tau=0,
-                p2=-6.51,
-                alpha=0.21,
-                mustar=2.44,
-                beta=0,
-                sigma=0.18,
-                flux_boundary=4e-12,
-                flux_sigma=1,
-                hard_cut=True,
-                variability_weight=0.4,
-                flare_rate_min=1 / 7.5,
-                flare_rate_max=15,
-                flare_rate_index=1.5,
-                obs_time=10,
-            )
-
+            fsrq_spec = get_path_to_data("fsrq.yml")
+            fsrq_param_server = PopsynthParams(fsrq_spec)
             fsrq_param_server.seed = i
             fsrq_param_server.file_name = self._file_name
             fsrq_param_server.group_name = self._group_base_name + "_%i" % i
@@ -298,11 +265,11 @@ class BlazarNuSimulation(Simulation):
 
     def _bllac_pop_wrapper(self, param_server):
 
-        return VariableBLLacPopWrapper(param_server)
+        return PopsynthWrapper(param_server)
 
     def _fsrq_pop_wrapper(self, param_server):
 
-        return VariableFSRQPopWrapper(param_server)
+        return PopsynthWrapper(param_server)
 
     def _nu_obs_wrapper(self, param_server):
 

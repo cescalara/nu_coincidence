@@ -44,7 +44,7 @@ from cosmic_coincidence.popsynth_wrapper import PopsynthParams, PopsynthWrapper
 ```
 
 ```python
-ps = get_path_to_data("bllac.yml")
+ps = get_path_to_data("fsrq.yml")
 param_server = PopsynthParams(ps)
 param_server.seed = 100
 pop = PopsynthWrapper(param_server)

@@ -13,6 +13,8 @@ class PopsynthParams(ParameterServer):
         :popsynth_spec: YAML file containing popsynth info.
         """
 
+        super().__init__()
+
         self._popsynth_spec = popsynth_spec
 
         self._flux_sigma = flux_sigma
