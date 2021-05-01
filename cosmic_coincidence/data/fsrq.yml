@@ -17,7 +17,7 @@ auxiliary samplers:
     xmax: 15
     xmin: 0.13333333333333333
   flare_times:
-    obs_time: 7.5
+    obs_time: 10
     observed: false
     secondary:
     - flare_rate
@@ -52,11 +52,11 @@ spatial distribution:
     a: 1
     decay: 4.7
     peak: 0.6
-    r0: 60
+    r0: 55
     r_max: 6
     rise: 11
   is_rate: false
   
-spatial selection:
-  GalacticPlaneSelection:
-    b_limit: 10
+# spatial selection:
+#  GalacticPlaneSelection:
+#    b_limit: 10
