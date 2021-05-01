@@ -17,13 +17,22 @@ auxiliary samplers:
     xmax: 15
     xmin: 0.13333333333333333
   flare_times:
-    obs_time: 7.5
+    obs_time: 10
     observed: false
     secondary:
     - flare_rate
     selection:
       UnitySelection: {}
     type: FlareTimeAuxSampler
+  spectral_index:
+    mu: 2.5
+    observed: true
+    secondary: []
+    selection:
+      UnitySelection: {}
+    sigma: 0.1
+    tau: 0.2
+    type: SpectralIndexAuxSampler
   variability:
     observed: false
     secondary: []
@@ -48,7 +57,7 @@ spatial distribution:
     a: 1
     decay: 4.7
     peak: 0.6
-    r0: 60
+    r0: 55
     r_max: 6
     rise: 11
   is_rate: false

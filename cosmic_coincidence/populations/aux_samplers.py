@@ -3,6 +3,20 @@ from scipy import stats
 import h5py
 
 from popsynth.auxiliary_sampler import AuxiliarySampler, AuxiliaryParameter
+from popsynth.aux_samplers.normal_aux_sampler import NormalAuxSampler
+
+
+class SpectralIndexAuxSampler(NormalAuxSampler):
+    """
+    Sample the spectral index of a source
+    with a simple power law spectrum.
+    """
+
+    _auxiliary_sampler_name = "SpectralIndexAuxSampler"
+
+    def __init__(self, name="spectral_index", observed=True):
+
+        super().__init__(name=name, observed=observed)
 
 
 class ParetoAuxSampler(AuxiliarySampler):

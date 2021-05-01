@@ -24,6 +24,15 @@ auxiliary samplers:
     selection:
       UnitySelection: {}
     type: FlareTimeAuxSampler
+  spectral_index:
+    mu: 2.5
+    observed: true
+    secondary: []
+    selection:
+      UnitySelection: {}
+    sigma: 0.1
+    tau: 0.2
+    type: SpectralIndexAuxSampler
   variability:
     observed: false
     secondary: []
@@ -31,12 +40,12 @@ auxiliary samplers:
       UnitySelection: {}
     type: VariabilityAuxSampler
     weight: 0.05
-    
+
 flux selection:
   SoftFluxSelection:
     boundary: 4.0e-12
     strength: 2
-    
+
 luminosity distribution:
   BPLDistribution:
     Lbreak: 1.0e+48
@@ -44,7 +53,7 @@ luminosity distribution:
     Lmin: 7.0e+43
     alpha: -1.1
     beta: -2.5
-    
+
 seed: 42
 
 spatial distribution:
@@ -56,7 +65,7 @@ spatial distribution:
     r_max: 6
     rise: 11
   is_rate: false
-  
+
 # spatial selection:
-#  GalacticPlaneSelection:
-#    b_limit: 10
+#   GalacticPlaneSelection:
+#     b_limit: 10

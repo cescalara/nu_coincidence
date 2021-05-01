@@ -34,6 +34,7 @@ from cosmic_coincidence.populations.aux_samplers import (VariabilityAuxSampler,
                                                          FlareTimeAuxSampler,
                                                          FlareDurationAuxSampler)
 from cosmic_coincidence.populations.selection import GalacticPlaneSelection
+from cosmic_coincidence.populations.aux_samplers import SpectralIndexAuxSampler
 ```
 
 ## From file
@@ -88,6 +89,11 @@ galactic_plane_selector.b_limit = 10
 pop_gen.set_flux_selection(flux_selector)
 pop_gen.add_spatial_selector(galactic_plane_selector)
 
+spectral_index = SpectralIndexAuxSampler()
+spectral_index.mu = 2.1
+spectral_index.tau = 0.25
+spectral_index.sigma = 0.1
+
 variability = VariabilityAuxSampler()
 variability.weight = 0.05
 
@@ -97,7 +103,7 @@ flare_rate.xmax = 15
 flare_rate.index = 1.5
 
 flare_times = FlareTimeAuxSampler()
-flare_times.obs_time = 7.5 # years
+flare_times.obs_time = 10 # years
 
 flare_durations = FlareDurationAuxSampler()
 
@@ -106,6 +112,7 @@ flare_times.set_secondary_sampler(flare_rate)
 flare_durations.set_secondary_sampler(flare_times)
 
 pop_gen.add_observed_quantity(flare_durations)
+pop_gen.add_observed_quantity(spectral_index)
 
 pop = pop_gen.draw_survey(flux_sigma=0.1)
 print("Total objects: %i \t Detected objects: %i" % (pop.distances.size, 
@@ -235,7 +242,7 @@ print("Min Ndet: %i \t Max Ndet: %i" % (min(Ndet), max(Ndet)))
 
 ```python
 # Standard values
-pop_gen = BPLSFRPopulation(r0=60, a=1, rise=11, decay=4.7, peak=0.6, 
+pop_gen = BPLSFRPopulation(r0=55, a=1, rise=11, decay=4.7, peak=0.6, 
                             Lmin=7e43, alpha=-1.1, Lbreak=1e48, beta=-2.5, Lmax=1e52,
                             r_max=6, is_rate=False, seed=42)
 
@@ -249,6 +256,11 @@ galactic_plane_selector.b_limit = 10
 pop_gen.set_flux_selection(flux_selector)
 pop_gen.add_spatial_selector(galactic_plane_selector)
 
+spectral_index = SpectralIndexAuxSampler()
+spectral_index.mu = 2.5
+spectral_index.tau = 0.2
+spectral_index.sigma = 0.1
+
 variability = VariabilityAuxSampler()
 variability.weight = 0.05
 
@@ -258,7 +270,7 @@ flare_rate.xmax = 15
 flare_rate.index = 1.5
 
 flare_times = FlareTimeAuxSampler()
-flare_times.obs_time = 7.5 # years
+flare_times.obs_time = 10 # years
 
 flare_durations = FlareDurationAuxSampler()
 
@@ -267,6 +279,7 @@ flare_times.set_secondary_sampler(flare_rate)
 flare_durations.set_secondary_sampler(flare_times)
 
 pop_gen.add_observed_quantity(flare_durations)
+pop_gen.add_observed_quantity(spectral_index)
 
 pop = pop_gen.draw_survey(flux_sigma=0.1)
 print("Total objects: %i \t Detected objects: %i" % (pop.distances.size, 
