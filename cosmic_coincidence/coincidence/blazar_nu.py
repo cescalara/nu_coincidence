@@ -210,6 +210,8 @@ class BlazarNuSimulation(Simulation):
 
         for i in range(self._N):
 
+            seed = i * 100
+
             # BL Lacs
             bllac_param_server = VariableFermiPopParams(
                 A=3.39e4,
@@ -234,7 +236,7 @@ class BlazarNuSimulation(Simulation):
                 obs_time=10,
             )
 
-            bllac_param_server.seed = i
+            bllac_param_server.seed = seed
             bllac_param_server.file_name = self._file_name
             bllac_param_server.group_name = self._group_base_name + "_%i" % i
 
