@@ -225,7 +225,7 @@ for i in range(100):
 # Number of detected objects
 Ndet = []
 for i in range(100):
-    pop_gen = BPLSFRPopulation(r0=30, a=1, rise=11, decay=4.7, peak=0.6, 
+    pop_gen = BPLSFRPopulation(r0=35, a=1, rise=11, decay=4.7, peak=0.6, 
                                Lmin=7e43, alpha=-1.1, Lbreak=1e48, beta=-2.5,
                                Lmax=1e52, r_max=6, is_rate=False, 
                                seed=np.random.randint(100, 10000))
