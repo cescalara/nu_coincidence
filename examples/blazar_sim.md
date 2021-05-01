@@ -37,7 +37,123 @@ from cosmic_coincidence.populations.aux_samplers import (VariabilityAuxSampler,
 from cosmic_coincidence.populations.selection import GalacticPlaneSelection
 ```
 
-## BL Lac LDDE
+## General population models
+
+```python
+from popsynth.populations.bpl_population import BPLZPowerCosmoPopulation
+
+from cosmic_coincidence.populations.sbpl_population import SBPLZPowerCosmoPopulation
+```
+
+### BL Lac
+
+```python
+pop_gen = BPLZPowerCosmoPopulation(Lambda=7300, delta=-6, Lmin=7e43, Lmax=1e50, 
+                                    alpha=-1.5, Lbreak=1e47, beta=-2.5, r_max=6, 
+                                    is_rate=False, seed=42)
+```
+
+```python
+# Plot distributions
+z = np.linspace(0, 6)
+fig, ax = plt.subplots()
+ax.plot(z, pop_gen.spatial_distribution.dNdV(z) * (1e-9 / (4*np.pi)), color="k") 
+ax.set_yscale("log")
+ax.set_xlabel("z")
+ax.set_ylabel("dNdV [Mpc^-3]")
+ax.grid()
+ax.set_xlim(0, 3.5)
+ax.set_ylim(1e-11, 1e-6)
+
+for i in range(100):
+    tmp_gen = BPLZPowerCosmoPopulation(Lambda=np.random.normal(7300, 500), 
+                                        delta=np.random.normal(-6, 1), 
+                                        Lmin=7e43, Lmax=1e50, 
+                                        alpha=-1.5, Lbreak=1e47, beta=-2.5, r_max=6, 
+                                        is_rate=False, seed=42)
+    ax.plot(z, tmp_gen.spatial_distribution.dNdV(z) * (1e-9 / (4*np.pi)), color="g", 
+            alpha=0.1) 
+```
+
+```python
+L = 10**np.linspace(44, 50)
+fig, ax = plt.subplots()
+ax.plot(L/1e48, pop_gen.luminosity_distribution.phi(L), color="k")
+ax.set_xscale("log")
+ax.set_yscale("log")
+ax.set_xlabel("L [1e48 erg s^-1]")
+ax.set_ylabel("dNdL")
+ax.grid()
+
+for i in range(100):
+    tmp_gen = BPLZPowerCosmoPopulation(Lambda=7300, 
+                                        delta=-6, 
+                                        Lmin=7e43, Lmax=1e50, 
+                                        alpha=-np.random.normal(1.5, 0.3), 
+                                        Lbreak=np.random.normal(1e47, 1e46), 
+                                        beta=-np.random.normal(2.5, 0.2), 
+                                        r_max=6, 
+                                        is_rate=False, seed=42)
+    ax.plot(L/1e48, tmp_gen.luminosity_distribution.phi(L), color="g", alpha=0.1) 
+```
+
+```python
+# Test r_max, Lmin, Lmax, BPL
+pop_gen = BPLZPowerCosmoPopulation(Lambda=7300, delta=-6, Lmin=7e43, Lmax=1e52, 
+                                    alpha=-1.5, Lbreak=1e47, beta=-2.5, r_max=6, 
+                                    is_rate=False, seed=42)
+flux_selector = SoftFluxSelection()
+flux_selector.boundary = 4e-12
+flux_selector.strength = 2
+
+pop_gen.set_flux_selection(flux_selector)
+
+pop = pop_gen.draw_survey(flux_sigma=0.1)
+print("Total objects: %i \t Detected objects: %i" % (pop.distances.size, 
+                                                    pop.distances[pop.selection].size))
+```
+
+```python
+# Test number of objects
+Ntot = []
+Ndet = []
+for i in range(100):
+    pop_gen = BPLZPowerCosmoPopulation(Lambda=np.random.normal(7300, 500), 
+                                       delta=np.random.normal(-6, 1), 
+                                       Lmin=7e43, Lmax=1e52, 
+                                       alpha=np.random.normal(-1.5, 0.3), 
+                                       Lbreak=np.random.normal(1e47, 1e46), 
+                                       beta=np.random.normal(-2.5, 0.2), 
+                                       r_max=6, 
+                                       is_rate=False, 
+                                       seed=np.random.randint(100, 10000))
+    
+    flux_selector = SoftFluxSelection()
+    flux_selector.boundary = 4e-12
+    flux_selector.strength = 2
+
+    pop_gen.set_flux_selection(flux_selector)
+
+    pop = pop_gen.draw_survey(flux_sigma=0.1)
+    Ntot.append(pop.distances.size)
+    Ndet.append(pop.distances[pop.selection].size)
+```
+
+```python
+print("Min Ntot: %i \t Max Ntot: %i" % (min(Ntot), max(Ntot)))
+print("Min Ndet: %i \t Max Ndet: %i" % (min(Ndet), max(Ndet)))
+```
+
+### FSRQ
+
+```python
+
+```
+
+# Old stuff
+
+
+## Fermi BL Lac LDDE
 
 ```python
 # Best fit
