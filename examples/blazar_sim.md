@@ -27,7 +27,6 @@ import sys
 sys.path.append("../")
 from cosmic_coincidence.populations.sbpl_population import SBPLZPowExpCosmoPopulation
 from cosmic_coincidence.distributions.sbpl_distribution import SBPLDistribution
-from cosmic_coincidence.blazars.fermi_interface import Ajello14PDEModel, _sbpl
 from cosmic_coincidence.blazars.bllac import BLLacLDDEModel
 from cosmic_coincidence.blazars.fsrq import FSRQLDDEModel
 from cosmic_coincidence.populations.aux_samplers import (VariabilityAuxSampler, 
@@ -42,6 +41,7 @@ from cosmic_coincidence.populations.selection import GalacticPlaneSelection
 ```python
 from popsynth.populations.bpl_population import (BPLZPowerCosmoPopulation, 
                                                  BPLSFRPopulation)
+from popsynth.population_synth import PopulationSynth
 
 from cosmic_coincidence.populations.sbpl_population import (SBPLZPowerCosmoPopulation, 
                                                             SBPLSFRPopulation)
@@ -58,9 +58,56 @@ BCU = 1310
 
 ```python
 # Standard values
-pop_gen = BPLZPowerCosmoPopulation(Lambda=8700, delta=-6, Lmin=7e43, Lmax=1e50, 
+pop_gen = BPLZPowerCosmoPopulation(Lambda=9000, delta=-6, Lmin=7e43, Lmax=1e52, 
                                     alpha=-1.5, Lbreak=1e47, beta=-2.5, r_max=6, 
-                                    is_rate=False, seed=42)
+                                    is_rate=False, seed=100)
+
+flux_selector = SoftFluxSelection()
+flux_selector.boundary = 4e-12
+flux_selector.strength = 2
+
+galactic_plane_selector = GalacticPlaneSelection()
+galactic_plane_selector.b_limit = 10
+
+pop_gen.set_flux_selection(flux_selector)
+pop_gen.add_spatial_selector(galactic_plane_selector)
+
+variability = VariabilityAuxSampler()
+variability.weight = 0.05
+
+flare_rate = FlareRateAuxSampler()
+flare_rate.xmin = 1/7.5
+flare_rate.xmax = 15
+flare_rate.index = 1.5
+
+flare_times = FlareTimeAuxSampler()
+flare_times.obs_time = 7.5 # years
+
+flare_durations = FlareDurationAuxSampler()
+
+flare_rate.set_secondary_sampler(variability)
+flare_times.set_secondary_sampler(flare_rate)
+flare_durations.set_secondary_sampler(flare_times)
+
+pop_gen.add_observed_quantity(flare_durations)
+
+pop = pop_gen.draw_survey(flux_sigma=0.1)
+print("Total objects: %i \t Detected objects: %i" % (pop.distances.size, 
+                                        pop.distances[pop.selection].size))
+```
+
+```python
+pop_gen.write_to("output/test_pop_gen.yaml")
+```
+
+```python
+new_pop_gen = PopulationSynth.from_file("output/test_pop_gen.yaml")
+```
+
+```python
+pop = new_pop_gen.draw_survey(flux_sigma=0.1)
+print("Total objects: %i \t Detected objects: %i" % (pop.distances.size, 
+                                        pop.distances[pop.selection].size))
 ```
 
 ```python
