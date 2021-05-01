@@ -13,7 +13,7 @@ jupyter:
     name: cosmic_coincidence
 ---
 
-# Testing
+# Blazar pop simulations
 
 ```python
 import numpy as np
@@ -40,21 +40,31 @@ from cosmic_coincidence.populations.selection import GalacticPlaneSelection
 ## General population models
 
 ```python
-from popsynth.populations.bpl_population import BPLZPowerCosmoPopulation
+from popsynth.populations.bpl_population import (BPLZPowerCosmoPopulation, 
+                                                 BPLSFRPopulation)
 
-from cosmic_coincidence.populations.sbpl_population import SBPLZPowerCosmoPopulation
+from cosmic_coincidence.populations.sbpl_population import (SBPLZPowerCosmoPopulation, 
+                                                            SBPLSFRPopulation)
+```
+
+```python
+# Numbers from 4FGL
+FSRQ = 694
+BLLac = 1131
+BCU = 1310
 ```
 
 ### BL Lac
 
 ```python
-pop_gen = BPLZPowerCosmoPopulation(Lambda=7300, delta=-6, Lmin=7e43, Lmax=1e50, 
+# Standard values
+pop_gen = BPLZPowerCosmoPopulation(Lambda=8700, delta=-6, Lmin=7e43, Lmax=1e50, 
                                     alpha=-1.5, Lbreak=1e47, beta=-2.5, r_max=6, 
                                     is_rate=False, seed=42)
 ```
 
 ```python
-# Plot distributions
+# Plot redshift distribution and range
 z = np.linspace(0, 6)
 fig, ax = plt.subplots()
 ax.plot(z, pop_gen.spatial_distribution.dNdV(z) * (1e-9 / (4*np.pi)), color="k") 
@@ -66,7 +76,7 @@ ax.set_xlim(0, 3.5)
 ax.set_ylim(1e-11, 1e-6)
 
 for i in range(100):
-    tmp_gen = BPLZPowerCosmoPopulation(Lambda=np.random.normal(7300, 500), 
+    tmp_gen = BPLZPowerCosmoPopulation(Lambda=np.random.normal(8700, 500), 
                                         delta=np.random.normal(-6, 1), 
                                         Lmin=7e43, Lmax=1e50, 
                                         alpha=-1.5, Lbreak=1e47, beta=-2.5, r_max=6, 
@@ -76,6 +86,7 @@ for i in range(100):
 ```
 
 ```python
+# Plot luminosity distribution and range
 L = 10**np.linspace(44, 50)
 fig, ax = plt.subplots()
 ax.plot(L/1e48, pop_gen.luminosity_distribution.phi(L), color="k")
@@ -86,7 +97,7 @@ ax.set_ylabel("dNdL")
 ax.grid()
 
 for i in range(100):
-    tmp_gen = BPLZPowerCosmoPopulation(Lambda=7300, 
+    tmp_gen = BPLZPowerCosmoPopulation(Lambda=8700, 
                                         delta=-6, 
                                         Lmin=7e43, Lmax=1e50, 
                                         alpha=-np.random.normal(1.5, 0.3), 
@@ -98,27 +109,38 @@ for i in range(100):
 ```
 
 ```python
-# Test r_max, Lmin, Lmax, BPL
-pop_gen = BPLZPowerCosmoPopulation(Lambda=7300, delta=-6, Lmin=7e43, Lmax=1e52, 
-                                    alpha=-1.5, Lbreak=1e47, beta=-2.5, r_max=6, 
-                                    is_rate=False, seed=42)
-flux_selector = SoftFluxSelection()
-flux_selector.boundary = 4e-12
-flux_selector.strength = 2
+# Check avergae number of expected detected objects 
+Ndet = []
+for i in range(100):
+    pop_gen = BPLZPowerCosmoPopulation(Lambda=5300, delta=-6, Lmin=7e43, Lmax=1e52, 
+                                        alpha=-1.5, Lbreak=1e47, beta=-2.5, r_max=6, 
+                                        is_rate=False, seed=np.random.randint(100, 
+                                                                              10000))
+    flux_selector = SoftFluxSelection()
+    flux_selector.boundary = 4e-12
+    flux_selector.strength = 2
 
-pop_gen.set_flux_selection(flux_selector)
+    pop_gen.set_flux_selection(flux_selector)
 
-pop = pop_gen.draw_survey(flux_sigma=0.1)
-print("Total objects: %i \t Detected objects: %i" % (pop.distances.size, 
-                                                    pop.distances[pop.selection].size))
+    pop = pop_gen.draw_survey(flux_sigma=0.1)
+    #print("Total objects: %i \t Detected objects: %i" % (pop.distances.size, 
+    #                             pop.distances[pop.selection].size))
+    Ndet.append(pop.distances[pop.selection].size)
 ```
 
 ```python
-# Test number of objects
+fig, ax = plt.subplots()
+ax.hist(Ndet)
+#ax.axvline(BLLac + 0.62 * BCU, color="k")
+ax.axvline(BLLac, color="k")
+```
+
+```python
+# Test number of objects with param ranges
 Ntot = []
 Ndet = []
 for i in range(100):
-    pop_gen = BPLZPowerCosmoPopulation(Lambda=np.random.normal(7300, 500), 
+    pop_gen = BPLZPowerCosmoPopulation(Lambda=np.random.normal(8700, 500), 
                                        delta=np.random.normal(-6, 1), 
                                        Lmin=7e43, Lmax=1e52, 
                                        alpha=np.random.normal(-1.5, 0.3), 
@@ -147,10 +169,119 @@ print("Min Ndet: %i \t Max Ndet: %i" % (min(Ndet), max(Ndet)))
 ### FSRQ
 
 ```python
-
+# Standard values
+pop_gen = BPLSFRPopulation(r0=60, a=1, rise=11, decay=4.7, peak=0.6, 
+                            Lmin=7e43, alpha=-1.1, Lbreak=1e48, beta=-2.5, Lmax=1e52,
+                            r_max=6, is_rate=False, seed=42)
 ```
 
-# Old stuff
+```python
+# Plot resdhift distribution and range
+z = np.geomspace(0.001, 6)
+fig, ax = plt.subplots()
+ax.plot(z, pop_gen.spatial_distribution.dNdV(z) * (1e-9 / (4*np.pi)), color="k") 
+ax.set_yscale("log")
+ax.set_xlabel("z")
+ax.set_ylabel("dNdV [Mpc^-3]")
+ax.grid()
+ax.set_xlim(0, 5)
+#ax.set_ylim(1e-12, 1e-8)
+
+for i in range(100):
+    tmp_gen = BPLSFRPopulation(r0=np.random.normal(60, 3), a=1, 
+                               rise=np.random.normal(11, 0.3),
+                               decay=np.random.normal(4.7, 0.1),
+                               peak=np.random.normal(0.6, 0.1),
+                               Lmin=7e43, Lmax=1e52, alpha=-1.1, Lbreak=1e48,
+                               beta=-2.5, r_max=6, is_rate=False, seed=42)
+    ax.plot(z, tmp_gen.spatial_distribution.dNdV(z) * (1e-9 / (4*np.pi)), color="g", 
+            alpha=0.1) 
+```
+
+```python
+# Plot luminosity distribution and range
+L = 10**np.linspace(44, 50)
+fig, ax = plt.subplots()
+ax.plot(L/1e48, pop_gen.luminosity_distribution.phi(L), color="k")
+ax.set_xscale("log")
+ax.set_yscale("log")
+ax.set_xlabel("L [1e48 erg s^-1]")
+ax.set_ylabel("dNdL")
+ax.grid()
+
+for i in range(100):
+    tmp_gen = BPLSFRPopulation(r0=20, a=1, 
+                               rise=10.6,
+                               decay=3.14,
+                               peak=0.51,
+                               Lmin=7e43, Lmax=1e52, alpha=np.random.normal(-1.1, 0.3),
+                               Lbreak=np.random.normal(1e48, 1e47),
+                               beta=np.random.normal(-2.5, 0.2), 
+                               r_max=6, is_rate=False, seed=42)
+    ax.plot(L/1e48, tmp_gen.luminosity_distribution.phi(L), color="g", alpha=0.1) 
+```
+
+```python
+# Number of detected objects
+Ndet = []
+for i in range(100):
+    pop_gen = BPLSFRPopulation(r0=30, a=1, rise=11, decay=4.7, peak=0.6, 
+                               Lmin=7e43, alpha=-1.1, Lbreak=1e48, beta=-2.5,
+                               Lmax=1e52, r_max=6, is_rate=False, 
+                               seed=np.random.randint(100, 10000))
+
+    flux_selector = SoftFluxSelection()
+    flux_selector.boundary = 4e-12
+    flux_selector.strength = 2
+
+    pop_gen.set_flux_selection(flux_selector)
+
+    pop = pop_gen.draw_survey(flux_sigma=0.1)
+    #print("Total objects: %i \t Detected objects: %i" % (pop.distances.size, 
+    #                                             pop.distances[pop.selection].size))
+    Ndet.append(pop.distances[pop.selection].size)
+```
+
+```python
+fig, ax = plt.subplots()
+ax.hist(Ndet)
+#ax.axvline(FSRQ + 0.32 * BCU, color="k")
+ax.axvline(FSRQ, color="k")
+```
+
+```python
+# Test number of objects with param ranges
+Ntot = []
+Ndet = []
+for i in range(100):
+    pop_gen = BPLSFRPopulation(r0=np.random.normal(20, 3), a=1, 
+                               rise=np.random.normal(10.6, 0.3),
+                               decay=np.random.normal(3.14, 0.1),
+                               peak=np.random.normal(0.51, 0.1),
+                               Lmin=7e43, Lmax=1e52, 
+                               alpha=np.random.normal(-1.1, 0.3),
+                               Lbreak=np.random.normal(1e48, 1e47),
+                               beta=np.random.normal(-2.5, 0.2), 
+                               r_max=6, is_rate=False,
+                               seed=np.random.randint(100, 10000))
+    
+    flux_selector = SoftFluxSelection()
+    flux_selector.boundary = 4e-12
+    flux_selector.strength = 2
+
+    pop_gen.set_flux_selection(flux_selector)
+
+    pop = pop_gen.draw_survey(flux_sigma=0.1)
+    Ntot.append(pop.distances.size)
+    Ndet.append(pop.distances[pop.selection].size)
+```
+
+```python
+print("Min Ntot: %i \t Max Ntot: %i" % (min(Ntot), max(Ntot)))
+print("Min Ndet: %i \t Max Ndet: %i" % (min(Ndet), max(Ndet)))
+```
+
+# Old stuff with Fermi interface
 
 
 ## Fermi BL Lac LDDE
@@ -495,101 +626,6 @@ bins=10**np.linspace(44, 52)
 fig, ax = plt.subplots()
 ax.hist(pop.luminosities_latent[pop.selection], bins=bins);
 ax.set_xscale("log")
-```
-
-## Coincidence check with simplistic nu model
-
-```python
-from popsynth.utils.spherical_geometry import sample_theta_phi
-import ligo.skymap.plot
-from astropy import units as u
-
-from cosmic_coincidence.utils.plotting import SphericalCircle
-```
-
-```python
-obs_time = 7.5
-```
-
-```python
-N_nu = np.random.poisson(7.1 * obs_time) 
-theta, phi = sample_theta_phi(N_nu)
-ra = np.rad2deg(phi)
-dec = np.rad2deg(theta) - 90
-nu_times = np.random.uniform(0, obs_time, N_nu)
-```
-
-```python
-fig, ax = plt.subplots(subplot_kw={"projection": "astro degrees mollweide"})
-fig.set_size_inches((7,5))
-ax.scatter(pop.ra[pop.selection], pop.dec[pop.selection], 
-           transform=ax.get_transform("icrs"), alpha=0.1)
-match_ind = []
-i = 0
-for pop_r, pop_d in zip(pop.ra[pop.selection], pop.dec[pop.selection]):
-    j = 0
-    for r, d in zip(ra, dec):
-        circle = SphericalCircle((r*u.deg, d*u.deg), 3.0*u.deg, color='r', alpha=0.5,
-                             transform=ax.get_transform("icrs"))
-        ax.add_patch(circle)
-        if circle.contains_point((pop_r, pop_d)):
-            match_ind.append((i, j))
-        j+=1
-    i+=1        
-#ax.scatter(ra, dec, transform=ax.get_transform("icrs"))
-```
-
-```python
-match_ind[0]
-```
-
-```python
-fig, ax = plt.subplots()
-i = 0
-fts, ds = (pop.flare_times_selected[match_ind[0][0]],
-           pop.flare_durations_selected[match_ind[0][0]])
-if fts != []:
-    for ft, d in zip(fts, ds):
-        ax.plot([ft, ft+d], [i, i], color='k')
-    i += 1
-ax.set_xlabel("time [years]")
-ax.vlines(nu_times[match_ind[0][1]], 0, 2, color='r')
-```
-
-## PDE
-
-```python
-pde = Ajello14PDEModel()
-pde.A = 78.53 # 1e-13 Mpc^-3 erg^-1 s
-pde.Lstar = 0.58e48 # erg s^-1
-pde.gamma1 = 1.32
-pde.gamma2 = 1.25
-pde.kstar = 11.47
-pde.xi = -0.21
-pde.mustar = 2.15
-pde.sigma = 0.27
-
-# For SBPL
-pde.Lmax = 1e50
-```
-
-```python
-pop = pde.popsynth()
-```
-
-```python
-z = np.linspace(0, 6)
-fig, ax = plt.subplots()
-ax.plot(z, pop.spatial_distribution.dNdV(z) * pop.spatial_distribution.differential_volume(z) )
-```
-
-```python
-pde.local_density()
-```
-
-```python
-# Expects like 2e6 objects!?
-#pop.draw_survey(boundary=1e2, no_selection=True)
 ```
 
 ## Testing SBPL
