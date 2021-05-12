@@ -178,6 +178,8 @@ class FlareDurationAuxSampler(AuxiliarySampler):
 
     _auxiliary_sampler_name = "FlareDurationAuxSampler"
 
+    index = AuxiliaryParameter(vmin=1, default=1.5)
+
     def __init__(self, name="flare_durations", observed=False):
 
         super(FlareDurationAuxSampler, self).__init__(name=name, observed=observed)
@@ -213,7 +215,9 @@ class FlareDurationAuxSampler(AuxiliarySampler):
 
                 durations[i] = np.array(
                     [
-                        bounded_pl_inv_cdf(np.random.uniform(0, 1), 1 / 52, md, 1.5)
+                        bounded_pl_inv_cdf(
+                            np.random.uniform(0, 1), 1 / 52, md, self.index
+                        )
                         for md in max_durations
                     ],
                     dtype=np.dtype("float64"),
