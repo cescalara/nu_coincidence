@@ -6,7 +6,7 @@ jupyter:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.11.0
+      jupytext_version: 1.11.2
   kernelspec:
     display_name: cosmic_coincidence
     language: python
@@ -27,7 +27,7 @@ hdul.info()
 ```
 
 ```python
-hdul[2].header
+#hdul[2].header
 ```
 
 ```python
@@ -58,17 +58,19 @@ for i in range(N):
     selection = np.where(hdul[2].data['FAVASRC']==i+1)[0]   
     sig_le = hdul[2].data['LESIGNIF'][selection]
     sig_he = hdul[2].data['HESIGNIF'][selection]
-    condition = ((sig_le < -4) & (sig_he < -4)) | ((sig_he < -6) | (sig_le < -6))
+    #condition = ((sig_le > -4) & (sig_he > -4)) |  ((sig_he > -6) | (sig_le > -6))
+    condition = (sig_le > 0) | (sig_he > 0)
+    #condition = sig_le > -100
     
     # Get non-negative flares
-    non_neg_sel = selection #np.where(~condition)[0]
-    tstart = hdul[2].data['TSTART'][non_neg_sel].astype(int)
-    tstop = hdul[2].data['TSTOP'][non_neg_sel].astype(int)     
+    non_neg_sel = condition #selection
+    tstart = hdul[2].data['TSTART'][selection].astype(int)[condition]
+    tstop = hdul[2].data['TSTOP'][selection].astype(int)[condition]     
     
     # Get Expected events vs observed
-    lowE_expected = hdul[2].data['LEAVNEV'][non_neg_sel]
-    lowE_observed = hdul[2].data['LENEV'][non_neg_sel]
-    count_excess = lowE_observed / lowE_expected
+    lowE_expected = hdul[2].data['LEAVNEV'][selection]
+    lowE_observed = hdul[2].data['LENEV'][selection]
+    count_excess = lowE_observed[condition] / lowE_expected[condition]
     
     # Merge adjacent flare periods
     eq_ind = np.where(np.equal(tstart[1:], tstop[:-1]))[0]
@@ -93,6 +95,15 @@ for i in range(N):
 ```
 
 ```python
+# Flare number
+fig, ax = plt.subplots()
+ax.hist(n_flares['bll'])
+ax.hist(n_flares['bcu'])
+ax.hist(n_flares['fsrq'])
+```
+
+```python
+# Duration
 fig, ax = plt.subplots()
 bins=np.linspace(1, 110)
 ax.hist(duration['fsrq'], label='fsrq', alpha=0.7, bins=bins, density=True)
@@ -131,72 +142,23 @@ ax.set_xscale('log')
 ```
 
 ```python
-from scipy import stats
-```
-
-```python
+# Photon count excess
 fig, ax = plt.subplots()
 bins = np.linspace(0, 15, 100)
-#ax.hist(ph_count_excess['bll'], alpha=0.7, density=True, bins=bins);
+ax.hist(ph_count_excess['bll'], alpha=0.7, density=True, bins=bins);
 ax.hist(ph_count_excess['fsrq'], alpha=0.7, density=True, bins=bins);
-#ax.hist(ph_count_excess['bcu'], alpha=0.7, density=True, bins=bins);
+ax.hist(ph_count_excess['bcu'], alpha=0.7, density=True, bins=bins);
 #ax.set_yscale("log")
 #ax.set_yscale("log")
 #ax.hist(stats.skewnorm(a=10, loc=1, scale=2).rvs(100000), density=True, 
 #        alpha=0.7, bins=bins);
-ax.hist(stats.pareto(3).rvs(10000) * 1.2, alpha=0.7, bins=bins, density=True)
+#ax.hist(stats.pareto(3).rvs(10000) * 1.2, alpha=0.7, bins=bins, density=True)
 ax.axvline(1, color="k")
 ax.set_xlim(0, 5)
 ```
 
 ```python
-min(stats.pareto(6).rvs(10000) * 1.2)
-```
-
-## rough
-
-```python
-fig, ax = plt.subplots()
-x = np.linspace(0.1, 4)
-#ax.plot(x, stats.pareto(1).pdf(x))
-ax.hist(stats.pareto(0.1).rvs(10000) * 0.1, bins=x)
-ax.hist((np.random.pareto(0.1, 10000) + 1) * 0.1, bins=x)
-ax.set_xscale('log')
-ax.set_yscale('log')
-```
-
-```python
-min(stats.pareto(1).rvs(10000))
-```
-
-```python
-np.random.choice([True, False], p=[0.8, 0.2])
-```
-
-```python
 sum(hdul[1].data['FLARES'])
-```
-
-```python
-# Finding negative flares
-total_neg = 0
-for i in range(N):
-    selection = np.where(hdul[2].data['FAVASRC'] == i+1)[0]
-    N_neg = 0
-    for s in selection:
-        sig_le = hdul[2].data['LESIGNIF'][s]
-        sig_he = hdul[2].data['HESIGNIF'][s]
-
-        if ((sig_he <= -6) or (sig_le <= -6)) or ((sig_he <= -4) and (sig_le <= -4)):
-            N_neg += 1
-            
-    if N_neg != hdul[1].data['NEGFLR'][i]:
-        print(N_neg, hdul[1].data['NEGFLR'][i])
-    total_neg += N_neg
-```
-
-```python
-total_neg - sum(hdul[1].data['NEGFLR'])
 ```
 
 ```python
