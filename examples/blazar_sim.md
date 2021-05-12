@@ -5,8 +5,8 @@ jupyter:
     text_representation:
       extension: .md
       format_name: markdown
-      format_version: '1.2'
-      jupytext_version: 1.9.1
+      format_version: '1.3'
+      jupytext_version: 1.11.2
   kernelspec:
     display_name: cosmic_coincidence
     language: python
@@ -54,9 +54,9 @@ pop.distances[pop.selection].size
 ```
 
 ```python
-N_flares = [len(_) for _ in pop.flare_times]
-N_flares_det = [len(_) for _ in pop.flare_times_selected]
-N_assoc = len([_ for _ in pop.flare_times_selected if _ != []])
+N_flares = [_.size for _ in pop.flare_times]
+N_flares_det = [_.size for _ in pop.flare_times_selected]
+N_assoc = len([_ for _ in pop.flare_times_selected if _.size != 0])
 fig, ax = plt.subplots()
 bins = np.linspace(0, 80)
 ax.hist(N_flares, bins=bins, alpha=0.7, label="All")
@@ -126,13 +126,17 @@ BLLac = 1131
 BCU = 1310
 ```
 
+```python
+BLLac / (FSRQ+BLLac)
+```
+
 ### BL Lac
 
 ```python
 # Standard values
 pop_gen = BPLZPowerCosmoPopulation(Lambda=9000, delta=-6, Lmin=7e43, Lmax=1e52, 
                                     alpha=-1.5, Lbreak=1e47, beta=-2.5, r_max=6, 
-                                    is_rate=False, seed=100)
+                                    is_rate=False, seed=np.random.randint(100000))
 
 flux_selector = SoftFluxSelection()
 flux_selector.boundary = 4e-12
@@ -142,7 +146,7 @@ galactic_plane_selector = GalacticPlaneSelection()
 galactic_plane_selector.b_limit = 10
 
 pop_gen.set_flux_selection(flux_selector)
-pop_gen.add_spatial_selector(galactic_plane_selector)
+#pop_gen.add_spatial_selector(galactic_plane_selector)
 
 spectral_index = SpectralIndexAuxSampler()
 spectral_index.mu = 2.1
@@ -150,17 +154,18 @@ spectral_index.tau = 0.25
 spectral_index.sigma = 0.1
 
 variability = VariabilityAuxSampler()
-variability.weight = 0.05
+variability.weight = 0.07
 
 flare_rate = FlareRateAuxSampler()
-flare_rate.xmin = 1/7.5
-flare_rate.xmax = 15
-flare_rate.index = 1.5
+flare_rate.xmin = 0.1
+flare_rate.xmax = 10
+flare_rate.index = 1.95
 
 flare_times = FlareTimeAuxSampler()
-flare_times.obs_time = 10 # years
+flare_times.obs_time = 7.4 # years
 
 flare_durations = FlareDurationAuxSampler()
+flare_durations.index = 2.0
 
 flare_rate.set_secondary_sampler(variability)
 flare_times.set_secondary_sampler(flare_rate)
@@ -172,6 +177,32 @@ pop_gen.add_observed_quantity(spectral_index)
 pop = pop_gen.draw_survey(flux_sigma=0.1)
 print("Total objects: %i \t Detected objects: %i" % (pop.distances.size, 
                                         pop.distances[pop.selection].size))
+```
+
+```python
+N_flares = [_.size for _ in pop.flare_times]
+N_flares_det = [_.size for _ in pop.flare_times_selected]
+N_assoc = len([_ for _ in pop.flare_times_selected if _.size != 0])
+fig, ax = plt.subplots()
+bins = np.linspace(0, 80)
+ax.hist(N_flares, bins=bins, alpha=0.7, label="All")
+ax.hist(N_flares_det, bins=bins, alpha=0.7, label="Detected")
+ax.set_yscale("log")
+ax.set_xlabel("Total number of flares")
+ax.legend();
+print("N detected flares:", sum(N_flares_det))
+print("N associated sources:", N_assoc)
+```
+
+```python
+durations = []
+for _ in pop.flare_durations_selected:
+    if _.size != 0:
+        durations.extend(_)
+
+fig, ax = plt.subplots()
+ax.hist(np.array(durations) * (52), bins=20);
+ax.set_yscale("log")
 ```
 
 ```python
@@ -299,7 +330,7 @@ print("Min Ndet: %i \t Max Ndet: %i" % (min(Ndet), max(Ndet)))
 # Standard values
 pop_gen = BPLSFRPopulation(r0=55, a=1, rise=11, decay=4.7, peak=0.6, 
                             Lmin=7e43, alpha=-1.1, Lbreak=1e48, beta=-2.5, Lmax=1e52,
-                            r_max=6, is_rate=False, seed=42)
+                            r_max=6, is_rate=False, seed=np.random.randint(1000))
 
 flux_selector = SoftFluxSelection()
 flux_selector.boundary = 4e-12
@@ -309,7 +340,7 @@ galactic_plane_selector = GalacticPlaneSelection()
 galactic_plane_selector.b_limit = 10
 
 pop_gen.set_flux_selection(flux_selector)
-pop_gen.add_spatial_selector(galactic_plane_selector)
+#pop_gen.add_spatial_selector(galactic_plane_selector)
 
 spectral_index = SpectralIndexAuxSampler()
 spectral_index.mu = 2.5
@@ -317,17 +348,18 @@ spectral_index.tau = 0.2
 spectral_index.sigma = 0.1
 
 variability = VariabilityAuxSampler()
-variability.weight = 0.05
+variability.weight = 0.4
 
 flare_rate = FlareRateAuxSampler()
-flare_rate.xmin = 1/7.5
-flare_rate.xmax = 15
-flare_rate.index = 1.5
+flare_rate.xmin = 0.1
+flare_rate.xmax = 10
+flare_rate.index = 2.0
 
 flare_times = FlareTimeAuxSampler()
-flare_times.obs_time = 10 # years
+flare_times.obs_time = 7.4 # years
 
 flare_durations = FlareDurationAuxSampler()
+flare_durations.index = 2.0
 
 flare_rate.set_secondary_sampler(variability)
 flare_times.set_secondary_sampler(flare_rate)
@@ -339,6 +371,32 @@ pop_gen.add_observed_quantity(spectral_index)
 pop = pop_gen.draw_survey(flux_sigma=0.1)
 print("Total objects: %i \t Detected objects: %i" % (pop.distances.size, 
                                         pop.distances[pop.selection].size))
+```
+
+```python
+N_flares = [_.size for _ in pop.flare_times]
+N_flares_det = [_.size for _ in pop.flare_times_selected]
+N_assoc = len([_ for _ in pop.flare_times_selected if _.size != 0])
+fig, ax = plt.subplots()
+bins = np.linspace(0, 80)
+ax.hist(N_flares, bins=bins, alpha=0.7, label="All")
+ax.hist(N_flares_det, bins=bins, alpha=0.7, label="Detected")
+ax.set_yscale("log")
+ax.set_xlabel("Total number of flares")
+ax.legend();
+print("N detected flares:", sum(N_flares_det))
+print("N associated sources:", N_assoc)
+```
+
+```python
+durations = []
+for _ in pop.flare_durations_selected:
+    if _.size != 0:
+        durations.extend(_)
+
+fig, ax = plt.subplots()
+ax.hist(np.array(durations) * (52), bins=20);
+ax.set_yscale("log")
 ```
 
 ```python
