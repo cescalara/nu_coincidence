@@ -1,5 +1,6 @@
 auxiliary samplers:
   flare_durations:
+    index: 2.0
     observed: false
     secondary:
     - flare_times
@@ -7,17 +8,17 @@ auxiliary samplers:
       UnitySelection: {}
     type: FlareDurationAuxSampler
   flare_rate:
-    index: 1.5
+    index: 1.95
     observed: false
     secondary:
     - variability
     selection:
       UnitySelection: {}
     type: FlareRateAuxSampler
-    xmax: 15
-    xmin: 0.13333333333333333
+    xmax: 10
+    xmin: 0.1
   flare_times:
-    obs_time: 10
+    obs_time: 7.4
     observed: false
     secondary:
     - flare_rate
@@ -39,13 +40,11 @@ auxiliary samplers:
     selection:
       UnitySelection: {}
     type: VariabilityAuxSampler
-    weight: 0.05
-
+    weight: 0.07
 flux selection:
   SoftFluxSelection:
     boundary: 4.0e-12
     strength: 2
-
 luminosity distribution:
   BPLDistribution:
     Lbreak: 1.0e+47
@@ -53,16 +52,10 @@ luminosity distribution:
     Lmin: 7.0e+43
     alpha: -1.5
     beta: -2.5
-
-seed: 42
-
+seed: 34998
 spatial distribution:
   ZPowerCosmoDistribution:
     Lambda: 9000
     delta: -6
     r_max: 6
   is_rate: false
-
-# spatial selection:
-#   GalacticPlaneSelection:
-#     b_limit: 10
