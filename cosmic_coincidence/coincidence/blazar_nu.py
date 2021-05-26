@@ -192,10 +192,11 @@ class BlazarNuCoincidence(object):
         self.fsrq_coincidence["n_flaring"] = n_match_flaring
 
 
-class BlazarNuSimulation(Simulation):
+class BlazarNuCoincidenceSim(Simulation):
     """
     Set up and run simulations for blazar-neutrino
-    coincidences.
+    coincidences. Assumes blazars and neutrinos have
+    no underlying connection.
     """
 
     def __init__(
@@ -240,6 +241,13 @@ class BlazarNuSimulation(Simulation):
             self._fsrq_param_servers.append(fsrq_param_server)
 
             # Neutrinos
+            # Coming soon!
+            """
+            nu_hese_spec = get_path_to_data("diffuse_hese_nu.yml")
+            nu_ehe_spec = get_path_to_data("diffuse_ehe_nu.yml")
+            nu_param_server = IceCubeAlertsParams(nu_hese_spec, nu_ehe_spec)
+            """
+
             nu_param_server = IceCubeAlertsParams(
                 hese_Emin=1e4,
                 ehe_Emin=5e4,
@@ -328,3 +336,54 @@ class BlazarNuSimulation(Simulation):
                 result.write()
 
                 del result
+
+
+def BlazarNuConnectedSim(Simulation):
+    """
+    Set up and run simulations of neutrinos produced
+    by blazars.
+    """
+
+    def __init__(
+        self,
+        file_name="output/test_sim.h5",
+        group_base_name="survey",
+        N=1,
+    ):
+
+        super().__init__(
+            file_name=file_name,
+            group_base_name=group_base_name,
+            N=N,
+        )
+
+    def _setup_param_servers(self):
+
+        self._bllac_param_servers = []
+        self._fsrq_param_servers = []
+        self._nu_param_servers = []
+
+        for i in range(self._N):
+
+            seed = i * 100
+
+            # BL Lacs
+            bllac_spec = get_path_to_data("bllac.yml")
+            bllac_param_server = PopsynthParams(bllac_spec)
+            bllac_param_server.seed = seed
+            bllac_param_server.file_name = self._file_name
+            bllac_param_server.group_name = self._group_base_name + "_%i" % i
+
+            self._bllac_param_servers.append(bllac_param_server)
+
+            # FSRQs
+            fsrq_spec = get_path_to_data("fsrq.yml")
+            fsrq_param_server = PopsynthParams(fsrq_spec)
+            fsrq_param_server.seed = i
+            fsrq_param_server.file_name = self._file_name
+            fsrq_param_server.group_name = self._group_base_name + "_%i" % i
+
+            self._fsrq_param_servers.append(fsrq_param_server)
+
+            # Neutrinos
+            # Coming soon!

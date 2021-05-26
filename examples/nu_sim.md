@@ -5,8 +5,8 @@ jupyter:
     text_representation:
       extension: .md
       format_name: markdown
-      format_version: '1.2'
-      jupytext_version: 1.9.1
+      format_version: '1.3'
+      jupytext_version: 1.11.2
   kernelspec:
     display_name: cosmic_coincidence
     language: python
@@ -29,6 +29,41 @@ sys.path.append("../")
 from cosmic_coincidence.utils.plotting import SphericalCircle
 from cosmic_coincidence.neutrinos.icecube import IceCubeAlertsWrapper
 from cosmic_coincidence.neutrinos.icecube import IceCubeAlertsParams
+```
+
+## Testing new config file interface
+
+```python
+from cosmic_coincidence.neutrinos.icecube import IceCubeGenerator
+```
+
+```python
+detector = {}
+detector["Emin_det"] = 4e5
+detector["max_cosz"] = 0.1
+detector["obs_time"] = 10
+
+atmospheric_flux = {}
+atmospheric_flux["normalisation"] = 2.5e-18
+atmospheric_flux["normalisation_energy"] = 1e5
+atmospheric_flux["index"] = 3.7
+atmospheric_flux["lower_energy"] = 1e5
+atmospheric_flux["upper_energy"] = 1e8
+
+diffuse_flux = {}
+diffuse_flux["normalisation"] = 1e-18
+diffuse_flux["normalisation_energy"] = 1e5
+diffuse_flux["index"] = 2.19
+diffuse_flux["lower_energy"] = 1e5
+diffuse_flux["upper_energy"] = 1e8
+```
+
+```python
+my_gen = IceCubeGenerator(detector, atmospheric_flux, diffuse_flux)
+```
+
+```python
+my_gen.to_dict()
 ```
 
 ## From cosmic_coincidence

@@ -1,7 +1,9 @@
 import numpy as np
 import h5py
+import yaml
 from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass
+from typing import Any, Dict, Optional
 
 from icecube_tools.detector.effective_area import EffectiveArea
 from icecube_tools.detector.energy_resolution import EnergyResolution
@@ -28,6 +30,120 @@ class IceCubeObservation(object):
     selection: bool
     source_label: int
     name: str = "icecube_obs"
+
+
+class IceCubeGenerator(object, metaclass=ABCMeta):
+    """
+    All the info you need to recreate a
+    simulation of neutrinos in IceCube.
+    """
+
+    def __init__(
+        self,
+        detector: Dict[str, Any],
+        atmospheric_flux: Optional[Dict[str, Any]] = None,
+        diffuse_flux: Optional[Dict[str, Any]] = None,
+        connection: Optional[Dict[str, Any]] = None,
+    ):
+
+        self._detector = detector
+
+        self._atmospheric_flux = atmospheric_flux
+
+        self._diffuse_flux = diffuse_flux
+
+        self._connection = connection
+
+    def to_dict(self) -> Dict[str, Any]:
+
+        output: Dict[str, Any] = {}
+
+        output["detector"] = self._detector
+
+        if self._atmospheric_flux is not None:
+
+            output["atmospheric flux"] = self._atmospheric_flux
+
+        if self._diffuse_flux is not None:
+
+            output["diffuse flux"] = self._diffuse_flux
+
+        if self._connection is not None:
+
+            output["connection"] = self._connection
+
+        return output
+
+    @classmethod
+    def from_dict(cls, input: Dict[str, Any]) -> "IceCubeGenerator":
+
+        detector = input["detector"]
+
+        if "atmospheric flux" in input:
+
+            atmospheric_flux = input["atmospheric flux"]
+
+        else:
+
+            atmospheric_flux = None
+
+        if "diffuse flux" in input:
+
+            diffuse_flux = input["diffuse flux"]
+
+        else:
+
+            diffuse_flux = None
+
+        if "connection" in input:
+
+            connection = input["connection"]
+
+        else:
+
+            connection = None
+
+        return cls(detector, atmospheric_flux, diffuse_flux, connection)
+
+    def write_to(self, file_name: str):
+
+        with open(file_name, "w") as f:
+
+            yaml.dump(
+                stream=f,
+                data=self.to_dict(),
+                # default_flow_style=False,
+                Dumper=yaml.SafeDumper,
+            )
+
+    @classmethod
+    def from_file(cls, file_name: str) -> "IceCubeGenerator":
+
+        with open(file_name) as f:
+
+            input: Dict[str, Any] = yaml.load(f, Loader=yaml.SafeLoader)
+
+        return cls.from_dict(input)
+
+    @property
+    def detector(self):
+
+        return self._detector
+
+    @property
+    def atmospheric_flux(self):
+
+        return self._atmospheric_flux
+
+    @property
+    def diffuse_flux(self):
+
+        return self._diffuse_flux
+
+    @property
+    def connection(self):
+
+        return self._connection
 
 
 class IceCubeObsWrapper(object, metaclass=ABCMeta):
