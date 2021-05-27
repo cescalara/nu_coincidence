@@ -34,7 +34,7 @@ from cosmic_coincidence.neutrinos.icecube import IceCubeAlertsParams
 ## Testing new config file interface
 
 ```python
-from cosmic_coincidence.neutrinos.icecube import IceCubeGenerator
+from cosmic_coincidence.neutrinos.icecube import IceCubeObsParams, IceCubeTracksWrapper
 ```
 
 ```python
@@ -59,25 +59,84 @@ diffuse_flux["upper_energy"] = 1e8
 ```
 
 ```python
-my_gen = IceCubeGenerator(detector, atmospheric_flux, diffuse_flux)
+param_server = IceCubeObsParams(detector, atmospheric_flux, diffuse_flux)
 ```
 
 ```python
-my_gen.to_dict()
+param_server.write_to("output/test_nu_spec_tracks.yml")
+```
+
+```python
+param_server = IceCubeObsParams.from_file("output/test_nu_spec.yml")
+param_server.seed = 42
+```
+
+```python
+nu_obs = IceCubeTracksWrapper(param_server)
+```
+
+```python
+obs = nu_obs.observation
+len(obs.ra)
+```
+
+## Generate config files for alerts case
+
+```python
+# HESE
+detector = {}
+detector["Emin_det"] = 1e4
+detector["max_cosz"] = 1
+detector["obs_time"] = 7.5
+
+atmospheric_flux = {}
+atmospheric_flux["normalisation"] = 4e-18
+atmospheric_flux["normalisation_energy"] = 1e5
+atmospheric_flux["index"] = 3.7
+atmospheric_flux["lower_energy"] = 1e4
+atmospheric_flux["upper_energy"] = 1e8
+
+diffuse_flux = {}
+diffuse_flux["normalisation"] = 2e-18
+diffuse_flux["normalisation_energy"] = 1e5
+diffuse_flux["index"] = 2.6
+diffuse_flux["lower_energy"] = 1e4
+diffuse_flux["upper_energy"] = 1e8
+
+hese_param_server = IceCubeObsParams(detector, atmospheric_flux, diffuse_flux)
+hese_param_server.write_to("output/diffuse_hese_nu.yml")
+```
+
+```python
+# EHE
+detector = {}
+detector["Emin_det"] = 2.5e5
+detector["max_cosz"] = 1
+detector["obs_time"] = 7.5
+
+atmospheric_flux = {}
+atmospheric_flux["normalisation"] = 4e-18 / 3
+atmospheric_flux["normalisation_energy"] = 1e5
+atmospheric_flux["index"] = 3.7
+atmospheric_flux["lower_energy"] = 5e4
+atmospheric_flux["upper_energy"] = 1e8
+
+diffuse_flux = {}
+diffuse_flux["normalisation"] = 2e-18 / 3
+diffuse_flux["normalisation_energy"] = 1e5
+diffuse_flux["index"] = 2.6
+diffuse_flux["lower_energy"] = 5e4
+diffuse_flux["upper_energy"] = 1e8
+
+ehe_param_server = IceCubeObsParams(detector, atmospheric_flux, diffuse_flux)
+ehe_param_server.write_to("output/diffuse_ehe_nu.yml")
 ```
 
 ## From cosmic_coincidence
 
 ```python
-param_server = IceCubeAlertsParams(hese_Emin=1e4, ehe_Emin=5e4, Emax=1e8, Enorm=1e5, 
-                                    hese_Emin_det=1e4, ehe_Emin_det=2.5e5,
-                                    hese_atmo_flux_norm=4e-18, 
-                                    ehe_atmo_flux_norm=4e-18/3,
-                                    atmo_index=3.7, 
-                                    hese_diff_flux_norm=2e-18,
-                                    ehe_diff_flux_norm=2e-18/3,
-                                    diff_index=2.6,
-                                    max_cosz=1, obs_time=7.5)
+param_server = IceCubeAlertsParams("output/diffuse_hese_nu.yml", 
+                                   "output/diffuse_ehe_nu.yml")
 param_server.seed = 567
 ```
 
@@ -123,10 +182,7 @@ from cosmic_coincidence.neutrinos.icecube import IceCubeObsParams
 ```
 
 ```python
-param_server = IceCubeObsParams(Emin=1e5, Emax=1e8, Enorm=1e5, Emin_det=4e5,
-                               atmo_flux_norm=2.5e-18, atmo_index=3.7,
-                               diff_flux_norm=1e-18, diff_index=2.19,
-                               obs_time=10, max_cosz=0.1)
+param_server = IceCubeObsParams.from_file("output/test_nu_spec_tracks.yml")
 param_server.seed = 42
 ```
 

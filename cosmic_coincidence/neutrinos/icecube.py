@@ -32,120 +32,6 @@ class IceCubeObservation(object):
     name: str = "icecube_obs"
 
 
-class IceCubeGenerator(object, metaclass=ABCMeta):
-    """
-    All the info you need to recreate a
-    simulation of neutrinos in IceCube.
-    """
-
-    def __init__(
-        self,
-        detector: Dict[str, Any],
-        atmospheric_flux: Optional[Dict[str, Any]] = None,
-        diffuse_flux: Optional[Dict[str, Any]] = None,
-        connection: Optional[Dict[str, Any]] = None,
-    ):
-
-        self._detector = detector
-
-        self._atmospheric_flux = atmospheric_flux
-
-        self._diffuse_flux = diffuse_flux
-
-        self._connection = connection
-
-    def to_dict(self) -> Dict[str, Any]:
-
-        output: Dict[str, Any] = {}
-
-        output["detector"] = self._detector
-
-        if self._atmospheric_flux is not None:
-
-            output["atmospheric flux"] = self._atmospheric_flux
-
-        if self._diffuse_flux is not None:
-
-            output["diffuse flux"] = self._diffuse_flux
-
-        if self._connection is not None:
-
-            output["connection"] = self._connection
-
-        return output
-
-    @classmethod
-    def from_dict(cls, input: Dict[str, Any]) -> "IceCubeGenerator":
-
-        detector = input["detector"]
-
-        if "atmospheric flux" in input:
-
-            atmospheric_flux = input["atmospheric flux"]
-
-        else:
-
-            atmospheric_flux = None
-
-        if "diffuse flux" in input:
-
-            diffuse_flux = input["diffuse flux"]
-
-        else:
-
-            diffuse_flux = None
-
-        if "connection" in input:
-
-            connection = input["connection"]
-
-        else:
-
-            connection = None
-
-        return cls(detector, atmospheric_flux, diffuse_flux, connection)
-
-    def write_to(self, file_name: str):
-
-        with open(file_name, "w") as f:
-
-            yaml.dump(
-                stream=f,
-                data=self.to_dict(),
-                # default_flow_style=False,
-                Dumper=yaml.SafeDumper,
-            )
-
-    @classmethod
-    def from_file(cls, file_name: str) -> "IceCubeGenerator":
-
-        with open(file_name) as f:
-
-            input: Dict[str, Any] = yaml.load(f, Loader=yaml.SafeLoader)
-
-        return cls.from_dict(input)
-
-    @property
-    def detector(self):
-
-        return self._detector
-
-    @property
-    def atmospheric_flux(self):
-
-        return self._atmospheric_flux
-
-    @property
-    def diffuse_flux(self):
-
-        return self._diffuse_flux
-
-    @property
-    def connection(self):
-
-        return self._connection
-
-
 class IceCubeObsWrapper(object, metaclass=ABCMeta):
     """
     Abstract base class for IceCube-like
@@ -221,10 +107,10 @@ class IceCubeAlertsWrapper(IceCubeObsWrapper):
     def _hese_simulation_setup(self):
 
         # Sources - all flavor flux
-        atmo_power_law = PowerLawFlux(**self._parameter_server.hese.atmospheric)
+        atmo_power_law = PowerLawFlux(**self._parameter_server.hese.atmospheric_flux)
         atmo_source = DiffuseSource(flux_model=atmo_power_law)
 
-        diffuse_power_law = PowerLawFlux(**self._parameter_server.hese.diffuse)
+        diffuse_power_law = PowerLawFlux(**self._parameter_server.hese.diffuse_flux)
         diffuse_source = DiffuseSource(flux_model=diffuse_power_law)
 
         hese_sources = [atmo_source, diffuse_source]
@@ -249,16 +135,16 @@ class IceCubeAlertsWrapper(IceCubeObsWrapper):
         hese_detector = IceCube(hese_aeff, self._energy_res, hese_ang_res)
 
         self._hese_simulator = Simulator(hese_sources, hese_detector)
-        self._hese_simulator.time = self._parameter_server.hese.obs_time
-        self._hese_simulator.max_cosz = self._parameter_server.hese.max_cosz
+        self._hese_simulator.time = self._parameter_server.hese.detector["obs_time"]
+        self._hese_simulator.max_cosz = self._parameter_server.hese.detector["max_cosz"]
 
     def _ehe_simulation_setup(self):
 
         # Sources - only numu flux
-        atmo_power_law = PowerLawFlux(**self._parameter_server.ehe.atmospheric)
+        atmo_power_law = PowerLawFlux(**self._parameter_server.ehe.atmospheric_flux)
         atmo_source = DiffuseSource(flux_model=atmo_power_law)
 
-        diffuse_power_law = PowerLawFlux(**self._parameter_server.ehe.diffuse)
+        diffuse_power_law = PowerLawFlux(**self._parameter_server.ehe.diffuse_flux)
         diffuse_source = DiffuseSource(flux_model=diffuse_power_law)
 
         ehe_sources = [atmo_source, diffuse_source]
@@ -278,32 +164,32 @@ class IceCubeAlertsWrapper(IceCubeObsWrapper):
         ehe_detector = IceCube(ehe_aeff, self._energy_res, ehe_ang_res)
 
         self._ehe_simulator = Simulator(ehe_sources, ehe_detector)
-        self._ehe_simulator.time = self._parameter_server.ehe.obs_time
-        self._ehe_simulator.max_cosz = self._parameter_server.ehe.max_cosz
+        self._ehe_simulator.time = self._parameter_server.ehe.detector["obs_time"]
+        self._ehe_simulator.max_cosz = self._parameter_server.ehe.detector["max_cosz"]
 
     def _run(self):
 
         # HESE
         self._hese_simulator.run(show_progress=False, seed=self._parameter_server.seed)
 
-        hese_Emin_det = self._parameter_server.hese.Emin_det
+        hese_Emin_det = self._parameter_server.hese.detector["Emin_det"]
         hese_selection = np.array(self._hese_simulator.reco_energy) > hese_Emin_det
 
         hese_times = np.random.uniform(
             0,
-            self._parameter_server.hese.obs_time,
+            self._parameter_server.hese.detector["obs_time"],
             self._hese_simulator.N,
         )
 
         # EHE
         self._ehe_simulator.run(show_progress=False, seed=self._parameter_server.seed)
 
-        ehe_Emin_det = self._parameter_server.ehe.Emin_det
+        ehe_Emin_det = self._parameter_server.ehe.detector["Emin_det"]
         ehe_selection = np.array(self._ehe_simulator.reco_energy) > ehe_Emin_det
 
         ehe_times = np.random.uniform(
             0,
-            self._parameter_server.ehe.obs_time,
+            self._parameter_server.ehe.detector["obs_time"],
             self._ehe_simulator.N,
         )
 
@@ -356,10 +242,10 @@ class IceCubeTracksWrapper(IceCubeObsWrapper):
     def _simulation_setup(self):
 
         # Sources
-        atmo_power_law = PowerLawFlux(**self._parameter_server.atmospheric)
+        atmo_power_law = PowerLawFlux(**self._parameter_server.atmospheric_flux)
         atmo_source = DiffuseSource(flux_model=atmo_power_law)
 
-        diffuse_power_law = PowerLawFlux(**self._parameter_server.diffuse)
+        diffuse_power_law = PowerLawFlux(**self._parameter_server.diffuse_flux)
         diffuse_source = DiffuseSource(flux_model=diffuse_power_law)
 
         sources = [atmo_source, diffuse_source]
@@ -386,8 +272,8 @@ class IceCubeTracksWrapper(IceCubeObsWrapper):
         )
 
         self._simulator = Simulator(sources, detector)
-        self._simulator.time = self._parameter_server.obs_time
-        self._simulator.max_cosz = self._parameter_server.max_cosz
+        self._simulator.time = self._parameter_server.detector["obs_time"]
+        self._simulator.max_cosz = self._parameter_server.detector["max_cosz"]
 
     def _run(self):
 
@@ -397,7 +283,7 @@ class IceCubeTracksWrapper(IceCubeObsWrapper):
         )
 
         # Select neutrinos above reco energy threshold
-        Emin_det = self._parameter_server.Emin_det
+        Emin_det = self._parameter_server.detector["Emin_det"]
         selection = np.array(self._simulator.reco_energy) > Emin_det
         ra = np.rad2deg(self._simulator.ra)[selection]
         dec = np.rad2deg(self._simulator.dec)[selection]
@@ -406,7 +292,7 @@ class IceCubeTracksWrapper(IceCubeObsWrapper):
         source_labels = np.array(self._simulator.source_label)[selection]
         times = np.random.uniform(
             0,
-            self._parameter_server.obs_time,
+            self._parameter_server.detector["obs_time"],
             self._simulator.N,
         )
 
@@ -423,81 +309,118 @@ class IceCubeTracksWrapper(IceCubeObsWrapper):
 
 class IceCubeObsParams(ParameterServer):
     """
-    Parameter server for simulations of
-    IceCube observations.
+    All the info you need to recreate a
+    simulation of neutrinos in IceCube.
     """
 
     def __init__(
         self,
-        Emin,
-        Emax,
-        Enorm,
-        Emin_det,
-        atmo_flux_norm,
-        atmo_index,
-        diff_flux_norm,
-        diff_index,
-        max_cosz,
-        obs_time,
+        detector: Dict[str, Any],
+        atmospheric_flux: Optional[Dict[str, Any]] = None,
+        diffuse_flux: Optional[Dict[str, Any]] = None,
+        connection: Optional[Dict[str, Any]] = None,
     ):
 
         super().__init__()
 
-        self._parameters = dict(
-            Emin=Emin,
-            Emax=Emax,
-            Enorm=Enorm,
-            Emin_det=Emin_det,
-            max_cosz=max_cosz,
-            obs_time=obs_time,
-        )
+        self._detector = detector
 
-        self._atmospheric = dict(
-            normalisation=atmo_flux_norm,
-            normalisation_energy=Enorm,
-            index=atmo_index,
-            lower_energy=Emin,
-            upper_energy=Emax,
-        )
+        self._atmospheric_flux = atmospheric_flux
 
-        self._diffuse = dict(
-            normalisation=diff_flux_norm,
-            normalisation_energy=Enorm,
-            index=diff_index,
-            lower_energy=Emin,
-            upper_energy=Emax,
-        )
+        self._diffuse_flux = diffuse_flux
 
-        self._obs_time = obs_time
+        self._connection = connection
 
-        self._max_cosz = max_cosz
+    def to_dict(self) -> Dict[str, Any]:
 
-        self._Emin_det = Emin_det
+        output: Dict[str, Any] = {}
+
+        output["detector"] = self._detector
+
+        if self._atmospheric_flux is not None:
+
+            output["atmospheric flux"] = self._atmospheric_flux
+
+        if self._diffuse_flux is not None:
+
+            output["diffuse flux"] = self._diffuse_flux
+
+        if self._connection is not None:
+
+            output["connection"] = self._connection
+
+        return output
+
+    @classmethod
+    def from_dict(cls, input: Dict[str, Any]) -> "IceCubeObsParams":
+
+        detector = input["detector"]
+
+        if "atmospheric flux" in input:
+
+            atmospheric_flux = input["atmospheric flux"]
+
+        else:
+
+            atmospheric_flux = None
+
+        if "diffuse flux" in input:
+
+            diffuse_flux = input["diffuse flux"]
+
+        else:
+
+            diffuse_flux = None
+
+        if "connection" in input:
+
+            connection = input["connection"]
+
+        else:
+
+            connection = None
+
+        return cls(detector, atmospheric_flux, diffuse_flux, connection)
+
+    def write_to(self, file_name: str):
+
+        with open(file_name, "w") as f:
+
+            yaml.dump(
+                stream=f,
+                data=self.to_dict(),
+                # default_flow_style=False,
+                Dumper=yaml.SafeDumper,
+            )
+
+    @classmethod
+    def from_file(cls, file_name: str) -> "IceCubeObsParams":
+
+        with open(file_name) as f:
+
+            input: Dict[str, Any] = yaml.load(f, Loader=yaml.SafeLoader)
+
+        return cls.from_dict(input)
 
     @property
-    def atmospheric(self):
+    def detector(self):
 
-        return self._atmospheric
-
-    @property
-    def diffuse(self):
-
-        return self._diffuse
+        return self._detector
 
     @property
-    def obs_time(self):
+    def atmospheric_flux(self):
 
-        return self._obs_time
-
-    @property
-    def max_cosz(self):
-
-        return self._max_cosz
+        return self._atmospheric_flux
 
     @property
-    def Emin_det(self):
+    def diffuse_flux(self):
 
-        return self._Emin_det
+        return self._diffuse_flux
+
+    @property
+    def connection(self):
+
+        return self._connection
 
 
 class IceCubeAlertsParams(ParameterServer):
@@ -510,49 +433,15 @@ class IceCubeAlertsParams(ParameterServer):
 
     def __init__(
         self,
-        hese_Emin,
-        ehe_Emin,
-        Emax,
-        Enorm,
-        hese_Emin_det,
-        ehe_Emin_det,
-        hese_atmo_flux_norm,
-        ehe_atmo_flux_norm,
-        atmo_index,
-        hese_diff_flux_norm,
-        ehe_diff_flux_norm,
-        diff_index,
-        max_cosz,
-        obs_time,
+        hese_config_file: str,
+        ehe_config_file: str,
     ):
 
         super().__init__()
 
-        self._hese = IceCubeObsParams(
-            hese_Emin,
-            Emax,
-            Enorm,
-            hese_Emin_det,
-            hese_atmo_flux_norm,
-            atmo_index,
-            hese_diff_flux_norm,
-            diff_index,
-            max_cosz,
-            obs_time,
-        )
+        self._hese = IceCubeObsParams.from_file(hese_config_file)
 
-        self._ehe = IceCubeObsParams(
-            ehe_Emin,
-            Emax,
-            Enorm,
-            ehe_Emin_det,
-            ehe_atmo_flux_norm,
-            atmo_index,
-            ehe_diff_flux_norm,
-            diff_index,
-            max_cosz,
-            obs_time,
-        )
+        self._ehe = IceCubeObsParams.from_file(ehe_config_file)
 
     @property
     def hese(self):
