@@ -241,29 +241,9 @@ class BlazarNuCoincidenceSim(Simulation):
             self._fsrq_param_servers.append(fsrq_param_server)
 
             # Neutrinos
-            # Coming soon!
-            """
             nu_hese_spec = get_path_to_data("diffuse_hese_nu.yml")
             nu_ehe_spec = get_path_to_data("diffuse_ehe_nu.yml")
             nu_param_server = IceCubeAlertsParams(nu_hese_spec, nu_ehe_spec)
-            """
-
-            nu_param_server = IceCubeAlertsParams(
-                hese_Emin=1e4,
-                ehe_Emin=5e4,
-                Emax=1e8,
-                Enorm=1e5,
-                hese_Emin_det=1e4,
-                ehe_Emin_det=3e5,
-                hese_atmo_flux_norm=4e-18,
-                ehe_atmo_flux_norm=4e-18 / 3,
-                atmo_index=3.7,
-                hese_diff_flux_norm=2e-18,
-                ehe_diff_flux_norm=2e-18 / 3,
-                diff_index=2.6,
-                obs_time=10,
-                max_cosz=1,
-            )
 
             nu_param_server.seed = i
             nu_param_server.file_name = self._file_name
