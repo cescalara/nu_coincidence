@@ -28,7 +28,45 @@ sys.path.append("../")
 
 from cosmic_coincidence.utils.plotting import SphericalCircle
 from cosmic_coincidence.neutrinos.icecube import IceCubeAlertsWrapper
-from cosmic_coincidence.neutrinos.icecube import IceCubeAlertsParams
+from cosmic_coincidence.neutrinos.icecube import IceCubeAlertsParams, IceCubeObsParams
+```
+
+## Test connected params
+
+```python
+from cosmic_coincidence.neutrinos.icecube import IceCubeTracksWrapper
+```
+
+```python
+detector = {}
+detector["Emin_det"] = 2.5e5
+detector["max_cosz"] = 1
+detector["obs_time"] = 7.5
+
+connection = {}
+connection["lower_energy"] = 5e4
+connection["upper_energy"] = 1e8
+connection["flux_factor"] = 0.1
+
+param_server = IceCubeObsParams(detector, connection=connection)
+param_server.write_to("output/connected_ehe_nu.yml")
+```
+
+```python
+param_server = IceCubeAlertsParams("output/connected_hese_nu.yml", 
+                                   "output/connected_hese_nu.yml")
+```
+
+```python
+nu_obs = IceCubeAlertsWrapper(param_server)
+```
+
+```python
+nu_obs._ehe_simulator
+```
+
+```python
+nu_obs.observation
 ```
 
 ## From cosmic_coincidence

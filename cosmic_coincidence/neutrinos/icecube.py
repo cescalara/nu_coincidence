@@ -107,13 +107,21 @@ class IceCubeAlertsWrapper(IceCubeObsWrapper):
     def _hese_simulation_setup(self):
 
         # Sources - all flavor flux
-        atmo_power_law = PowerLawFlux(**self._parameter_server.hese.atmospheric_flux)
-        atmo_source = DiffuseSource(flux_model=atmo_power_law)
+        hese_sources = []
 
-        diffuse_power_law = PowerLawFlux(**self._parameter_server.hese.diffuse_flux)
-        diffuse_source = DiffuseSource(flux_model=diffuse_power_law)
+        if self._parameter_server.hese.atmospheric_flux is not None:
 
-        hese_sources = [atmo_source, diffuse_source]
+            atmo_power_law = PowerLawFlux(
+                **self._parameter_server.hese.atmospheric_flux
+            )
+            atmo_source = DiffuseSource(flux_model=atmo_power_law)
+            hese_sources.append(atmo_source)
+
+        if self._parameter_server.hese.diffuse_flux is not None:
+
+            diffuse_power_law = PowerLawFlux(**self._parameter_server.hese.diffuse_flux)
+            diffuse_source = DiffuseSource(flux_model=diffuse_power_law)
+            hese_sources.append(diffuse_source)
 
         # Detector
         hese_aeff = EffectiveArea.from_dataset(
@@ -141,13 +149,19 @@ class IceCubeAlertsWrapper(IceCubeObsWrapper):
     def _ehe_simulation_setup(self):
 
         # Sources - only numu flux
-        atmo_power_law = PowerLawFlux(**self._parameter_server.ehe.atmospheric_flux)
-        atmo_source = DiffuseSource(flux_model=atmo_power_law)
+        ehe_sources = []
 
-        diffuse_power_law = PowerLawFlux(**self._parameter_server.ehe.diffuse_flux)
-        diffuse_source = DiffuseSource(flux_model=diffuse_power_law)
+        if self._parameter_server.ehe.atmospheric_flux is not None:
 
-        ehe_sources = [atmo_source, diffuse_source]
+            atmo_power_law = PowerLawFlux(**self._parameter_server.ehe.atmospheric_flux)
+            atmo_source = DiffuseSource(flux_model=atmo_power_law)
+            ehe_sources.append(atmo_source)
+
+        if self._parameter_server.ehe.diffuse_flux is not None:
+
+            diffuse_power_law = PowerLawFlux(**self._parameter_server.ehe.diffuse_flux)
+            diffuse_source = DiffuseSource(flux_model=diffuse_power_law)
+            ehe_sources.append(diffuse_source)
 
         ehe_aeff = EffectiveArea.from_dataset("20181018", fetch=False)
 
@@ -169,65 +183,81 @@ class IceCubeAlertsWrapper(IceCubeObsWrapper):
 
     def _run(self):
 
-        # HESE
-        self._hese_simulator.run(show_progress=False, seed=self._parameter_server.seed)
+        # Only run independent sim if neutrinos are not
+        # connected to another population.
 
-        hese_Emin_det = self._parameter_server.hese.detector["Emin_det"]
-        hese_selection = np.array(self._hese_simulator.reco_energy) > hese_Emin_det
+        if (
+            self._parameter_server.hese.connection is None
+            and self._parameter_server.ehe.connection is None
+        ):
 
-        hese_times = np.random.uniform(
-            0,
-            self._parameter_server.hese.detector["obs_time"],
-            self._hese_simulator.N,
-        )
+            # HESE
+            self._hese_simulator.run(
+                show_progress=False, seed=self._parameter_server.seed
+            )
 
-        # EHE
-        self._ehe_simulator.run(show_progress=False, seed=self._parameter_server.seed)
+            hese_Emin_det = self._parameter_server.hese.detector["Emin_det"]
+            hese_selection = np.array(self._hese_simulator.reco_energy) > hese_Emin_det
 
-        ehe_Emin_det = self._parameter_server.ehe.detector["Emin_det"]
-        ehe_selection = np.array(self._ehe_simulator.reco_energy) > ehe_Emin_det
+            hese_times = np.random.uniform(
+                0,
+                self._parameter_server.hese.detector["obs_time"],
+                self._hese_simulator.N,
+            )
 
-        ehe_times = np.random.uniform(
-            0,
-            self._parameter_server.ehe.detector["obs_time"],
-            self._ehe_simulator.N,
-        )
+            # EHE
+            self._ehe_simulator.run(
+                show_progress=False, seed=self._parameter_server.seed
+            )
 
-        # Combine
-        selection = np.concatenate((hese_selection, ehe_selection))
+            ehe_Emin_det = self._parameter_server.ehe.detector["Emin_det"]
+            ehe_selection = np.array(self._ehe_simulator.reco_energy) > ehe_Emin_det
 
-        ra = np.concatenate((self._hese_simulator.ra, self._ehe_simulator.ra))
-        ra = np.rad2deg(ra[selection])
+            ehe_times = np.random.uniform(
+                0,
+                self._parameter_server.ehe.detector["obs_time"],
+                self._ehe_simulator.N,
+            )
 
-        dec = np.concatenate((self._hese_simulator.dec, self._ehe_simulator.dec))
-        dec = np.rad2deg(dec[selection])
+            # Combine
+            selection = np.concatenate((hese_selection, ehe_selection))
 
-        ang_err = np.concatenate(
-            (self._hese_simulator.ang_err, self._ehe_simulator.ang_err)
-        )
-        ang_err = ang_err[selection]
+            ra = np.concatenate((self._hese_simulator.ra, self._ehe_simulator.ra))
+            ra = np.rad2deg(ra[selection])
 
-        energies = np.concatenate(
-            (self._hese_simulator.reco_energy, self._ehe_simulator.reco_energy)
-        )
-        energies = energies[selection]
+            dec = np.concatenate((self._hese_simulator.dec, self._ehe_simulator.dec))
+            dec = np.rad2deg(dec[selection])
 
-        source_labels = np.concatenate(
-            (self._hese_simulator.source_label, self._ehe_simulator.source_label)
-        )
-        source_labels = source_labels[selection]
+            ang_err = np.concatenate(
+                (self._hese_simulator.ang_err, self._ehe_simulator.ang_err)
+            )
+            ang_err = ang_err[selection]
 
-        times = np.concatenate((hese_times, ehe_times))[selection]
+            energies = np.concatenate(
+                (self._hese_simulator.reco_energy, self._ehe_simulator.reco_energy)
+            )
+            energies = energies[selection]
 
-        self._observation = IceCubeObservation(
-            energies,
-            ra,
-            dec,
-            ang_err,
-            times,
-            selection,
-            source_labels,
-        )
+            source_labels = np.concatenate(
+                (self._hese_simulator.source_label, self._ehe_simulator.source_label)
+            )
+            source_labels = source_labels[selection]
+
+            times = np.concatenate((hese_times, ehe_times))[selection]
+
+            self._observation = IceCubeObservation(
+                energies,
+                ra,
+                dec,
+                ang_err,
+                times,
+                selection,
+                source_labels,
+            )
+
+        else:
+
+            self._observation = None
 
 
 class IceCubeTracksWrapper(IceCubeObsWrapper):
@@ -242,13 +272,19 @@ class IceCubeTracksWrapper(IceCubeObsWrapper):
     def _simulation_setup(self):
 
         # Sources
-        atmo_power_law = PowerLawFlux(**self._parameter_server.atmospheric_flux)
-        atmo_source = DiffuseSource(flux_model=atmo_power_law)
+        sources = []
 
-        diffuse_power_law = PowerLawFlux(**self._parameter_server.diffuse_flux)
-        diffuse_source = DiffuseSource(flux_model=diffuse_power_law)
+        if self._parameter_server.atmospheric_flux is not None:
 
-        sources = [atmo_source, diffuse_source]
+            atmo_power_law = PowerLawFlux(**self._parameter_server.atmospheric_flux)
+            atmo_source = DiffuseSource(flux_model=atmo_power_law)
+            sources.append(atmo_source)
+
+        if self._parameter_server.diffuse_flux is not None:
+
+            diffuse_power_law = PowerLawFlux(**self._parameter_server.diffuse_flux)
+            diffuse_source = DiffuseSource(flux_model=diffuse_power_law)
+            sources.append(diffuse_source)
 
         # Detector
         effective_area = EffectiveArea.from_dataset("20181018", fetch=False)
@@ -277,34 +313,43 @@ class IceCubeTracksWrapper(IceCubeObsWrapper):
 
     def _run(self):
 
-        self._simulator.run(
-            show_progress=False,
-            seed=self._parameter_server.seed,
-        )
+        # Only run independent simulation if neutrinos are not
+        # connected to another population
 
-        # Select neutrinos above reco energy threshold
-        Emin_det = self._parameter_server.detector["Emin_det"]
-        selection = np.array(self._simulator.reco_energy) > Emin_det
-        ra = np.rad2deg(self._simulator.ra)[selection]
-        dec = np.rad2deg(self._simulator.dec)[selection]
-        ang_err = np.array(self._simulator.ang_err)[selection]
-        energies = np.array(self._simulator.reco_energy)[selection]
-        source_labels = np.array(self._simulator.source_label)[selection]
-        times = np.random.uniform(
-            0,
-            self._parameter_server.detector["obs_time"],
-            self._simulator.N,
-        )
+        if self._parameter_server.connection is None:
 
-        self._observation = IceCubeObservation(
-            energies,
-            ra,
-            dec,
-            ang_err,
-            times,
-            selection,
-            source_labels,
-        )
+            self._simulator.run(
+                show_progress=False,
+                seed=self._parameter_server.seed,
+            )
+
+            # Select neutrinos above reco energy threshold
+            Emin_det = self._parameter_server.detector["Emin_det"]
+            selection = np.array(self._simulator.reco_energy) > Emin_det
+            ra = np.rad2deg(self._simulator.ra)[selection]
+            dec = np.rad2deg(self._simulator.dec)[selection]
+            ang_err = np.array(self._simulator.ang_err)[selection]
+            energies = np.array(self._simulator.reco_energy)[selection]
+            source_labels = np.array(self._simulator.source_label)[selection]
+            times = np.random.uniform(
+                0,
+                self._parameter_server.detector["obs_time"],
+                self._simulator.N,
+            )
+
+            self._observation = IceCubeObservation(
+                energies,
+                ra,
+                dec,
+                ang_err,
+                times,
+                selection,
+                source_labels,
+            )
+
+        else:
+
+            self._observation = None
 
 
 class IceCubeObsParams(ParameterServer):

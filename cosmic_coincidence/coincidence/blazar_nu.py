@@ -201,7 +201,7 @@ class BlazarNuCoincidenceSim(Simulation):
 
     def __init__(
         self,
-        file_name="output/test_sim.h5",
+        file_name="output/test_coincidence_sim.h5",
         group_base_name="survey",
         N=1,
     ):
@@ -234,7 +234,7 @@ class BlazarNuCoincidenceSim(Simulation):
             # FSRQs
             fsrq_spec = get_path_to_data("fsrq.yml")
             fsrq_param_server = PopsynthParams(fsrq_spec)
-            fsrq_param_server.seed = i
+            fsrq_param_server.seed = seed
             fsrq_param_server.file_name = self._file_name
             fsrq_param_server.group_name = self._group_base_name + "_%i" % i
 
@@ -244,8 +244,7 @@ class BlazarNuCoincidenceSim(Simulation):
             nu_hese_spec = get_path_to_data("diffuse_hese_nu.yml")
             nu_ehe_spec = get_path_to_data("diffuse_ehe_nu.yml")
             nu_param_server = IceCubeAlertsParams(nu_hese_spec, nu_ehe_spec)
-
-            nu_param_server.seed = i
+            nu_param_server.seed = seed
             nu_param_server.file_name = self._file_name
             nu_param_server.group_name = self._group_base_name + "_%i" % i
 
@@ -326,7 +325,7 @@ def BlazarNuConnectedSim(Simulation):
 
     def __init__(
         self,
-        file_name="output/test_sim.h5",
+        file_name="output/test_connected_sim.h5",
         group_base_name="survey",
         N=1,
     ):
@@ -359,11 +358,34 @@ def BlazarNuConnectedSim(Simulation):
             # FSRQs
             fsrq_spec = get_path_to_data("fsrq.yml")
             fsrq_param_server = PopsynthParams(fsrq_spec)
-            fsrq_param_server.seed = i
+            fsrq_param_server.seed = seed
             fsrq_param_server.file_name = self._file_name
             fsrq_param_server.group_name = self._group_base_name + "_%i" % i
 
             self._fsrq_param_servers.append(fsrq_param_server)
 
             # Neutrinos
-            # Coming soon!
+            nu_hese_spec = get_path_to_data("connected_hese_nu.yml")
+            nu_ehe_spec = get_path_to_data("connected_ehe_nu.yml")
+            nu_param_server = IceCubeAlertsParams(nu_hese_spec, nu_ehe_spec)
+            nu_param_server.seed = seed
+            nu_param_server.file_name = self._file_name
+            nu_param_server.group_name = self._group_base_name + "_%i" % i
+
+            self._nu_param_servers.append(nu_param_server)
+
+    def _bllac_pop_wrapper(self, param_server):
+
+        return PopsynthWrapper(param_server)
+
+    def _fsrq_pop_wrapper(self, param_server):
+
+        return PopsynthWrapper(param_server)
+
+    def _nu_obs_wrapper(self, param_server):
+
+        return IceCubeAlertsWrapper(param_server)
+
+    def _connected_nu_wrapper(self, nu_obs, bllac_pop, fsrq_pop):
+
+        return BlazarNuConnection(nu_obs, bllac_pop, fsrq_pop)
