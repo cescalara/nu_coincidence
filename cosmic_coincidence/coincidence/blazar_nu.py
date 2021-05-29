@@ -280,9 +280,12 @@ class BlazarNuConnectedSim(BlazarNuSim):
         return BlazarNuConnection(nu_obs, bllac_pop, fsrq_pop)
 
 
-class BlazarNuCoincidence(object):
+class BlazarNuAction(object, metaclass=ABCMeta):
     """
-    Check for coincidences of interest.
+    Abstract base class for different actions
+    that can be applied to blazar and neutrino
+    observations e.g. coincidence checks or
+    connected simulations.
     """
 
     def __init__(
@@ -290,7 +293,7 @@ class BlazarNuCoincidence(object):
         bllac_pop,
         fsrq_pop,
         nu_obs,
-        name="blazar_nu_coincidence",
+        name="blazar_nu_action",
     ):
 
         self._name = name
@@ -305,22 +308,53 @@ class BlazarNuCoincidence(object):
 
         self._group_name = nu_obs._parameter_server.group_name
 
+        self._run()
+
+    @abstractmethod
+    def _run(self):
+
+        raise NotImplementedError()
+
+    @abstractmethod
+    def write(self):
+
+        raise NotImplementedError()
+
+    @property
+    def name(self):
+
+        return self._name
+
+
+class BlazarNuCoincidence(BlazarNuAction):
+    """
+    Check for coincidences of interest.
+    """
+
+    def __init__(
+        self,
+        bllac_pop,
+        fsrq_pop,
+        nu_obs,
+        name="blazar_nu_coincidence",
+    ):
+
         self._bllac_coincidence = OrderedDict()
 
         self._fsrq_coincidence = OrderedDict()
 
-        self._run()
+        super().__init__(
+            bllac_pop=bllac_pop,
+            fsrq_pop=fsrq_pop,
+            nu_obs=nu_obs,
+            name=name,
+        )
 
     def _run(self):
 
         self._check_spatial()
 
         self._check_temporal()
-
-    @property
-    def name(self):
-
-        return self._name
 
     @property
     def bllac_coincidence(self):
@@ -438,12 +472,31 @@ class BlazarNuCoincidence(object):
         self.fsrq_coincidence["n_flaring"] = n_match_flaring
 
 
-class BlazarNuConnection(object):
+class BlazarNuConnection(BlazarNuAction):
     """
     Handle connected blazar and neutrino
     observations.
     """
 
-    def __init__(self):
+    def __init__(
+        self,
+        bllac_pop,
+        fsrq_pop,
+        nu_obs,
+        name="blazar_nu_connection",
+    ):
 
-        raise NotImplementedError()
+        super().__init__(
+            bllac_pop=bllac_pop,
+            fsrq_pop=fsrq_pop,
+            nu_obs=nu_obs,
+            name=name,
+        )
+
+    def _run(self):
+
+        pass
+
+    def write(self):
+
+        pass
