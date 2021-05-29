@@ -9,6 +9,8 @@ from joblib import (
 )
 from collections import OrderedDict
 
+from icecube_tools.neutrino_calculator import NeutrinoCalculator
+
 from cosmic_coincidence.coincidence.coincidence import (
     check_spatial_coincidence,
     check_temporal_coincidence,
@@ -26,14 +28,20 @@ from cosmic_coincidence.populations.aux_samplers import (
 from cosmic_coincidence.populations.selection import GalacticPlaneSelection
 from cosmic_coincidence.neutrinos.icecube import (
     IceCubeObsParams,
+    IceCubeObsWrapper,
+    IceCubeTracksWrapper,
     IceCubeAlertsParams,
     IceCubeAlertsWrapper,
+    _get_point_source,
+    _run_sim_for,
 )
 from cosmic_coincidence.simulation import Simulation
 from cosmic_coincidence.utils.package_data import get_path_to_data
 from cosmic_coincidence.utils.parallel import FileWritingBackend
 
 register_parallel_backend("file_write", FileWritingBackend)
+
+erg_to_GeV = 624.151
 
 
 class BlazarNuSim(Simulation, metaclass=ABCMeta):
@@ -116,20 +124,23 @@ class BlazarNuSim(Simulation, metaclass=ABCMeta):
 
             self._nu_param_servers.append(nu_param_server)
 
-    @abstractmethod
     def _bllac_pop_wrapper(self, param_server):
 
-        raise NotImplementedError()
+        return PopsynthWrapper(param_server)
 
-    @abstractmethod
     def _fsrq_pop_wrapper(self, param_server):
 
-        raise NotImplementedError()
+        return PopsynthWrapper(param_server)
 
-    @abstractmethod
-    def _nu_pop_wrapper(self, param_server):
+    def _nu_obs_wrapper(self, param_server):
 
-        raise NotImplementedError()
+        if self._nu_config is not None:
+
+            return IceCubeTracksWrapper(param_server)
+
+        else:
+
+            return IceCubeAlertsWrapper(param_server)
 
     @abstractmethod
     def _blazar_nu_wrapper(self, bllac_pop, fsrq_pop, nu_obs):
@@ -217,18 +228,6 @@ class BlazarNuCoincidenceSim(BlazarNuSim):
             nu_ehe_config=nu_ehe_config,
         )
 
-    def _bllac_pop_wrapper(self, param_server):
-
-        return PopsynthWrapper(param_server)
-
-    def _fsrq_pop_wrapper(self, param_server):
-
-        return PopsynthWrapper(param_server)
-
-    def _nu_obs_wrapper(self, param_server):
-
-        return IceCubeAlertsWrapper(param_server)
-
     def _blazar_nu_wrapper(self, bllac_pop, fsrq_pop, nu_obs):
 
         return BlazarNuCoincidence(bllac_pop, fsrq_pop, nu_obs)
@@ -263,18 +262,6 @@ class BlazarNuConnectedSim(BlazarNuSim):
             nu_ehe_config=nu_ehe_config,
         )
 
-    def _bllac_pop_wrapper(self, param_server):
-
-        return PopsynthWrapper(param_server)
-
-    def _fsrq_pop_wrapper(self, param_server):
-
-        return PopsynthWrapper(param_server)
-
-    def _nu_obs_wrapper(self, param_server):
-
-        return IceCubeAlertsWrapper(param_server)
-
     def _blazar_nu_wrapper(self, nu_obs, bllac_pop, fsrq_pop):
 
         return BlazarNuConnection(nu_obs, bllac_pop, fsrq_pop)
@@ -290,9 +277,9 @@ class BlazarNuAction(object, metaclass=ABCMeta):
 
     def __init__(
         self,
-        bllac_pop,
-        fsrq_pop,
-        nu_obs,
+        bllac_pop: PopsynthWrapper,
+        fsrq_pop: PopsynthWrapper,
+        nu_obs: IceCubeObsWrapper,
         name="blazar_nu_action",
     ):
 
@@ -333,9 +320,9 @@ class BlazarNuCoincidence(BlazarNuAction):
 
     def __init__(
         self,
-        bllac_pop,
-        fsrq_pop,
-        nu_obs,
+        bllac_pop: PopsynthWrapper,
+        fsrq_pop: PopsynthWrapper,
+        nu_obs: IceCubeObsWrapper,
         name="blazar_nu_coincidence",
     ):
 
@@ -480,11 +467,15 @@ class BlazarNuConnection(BlazarNuAction):
 
     def __init__(
         self,
-        bllac_pop,
-        fsrq_pop,
-        nu_obs,
+        bllac_pop: PopsynthWrapper,
+        fsrq_pop: PopsynthWrapper,
+        nu_obs: IceCubeObsWrapper,
         name="blazar_nu_connection",
     ):
+
+        self._bllac_connection = OrderedDict()
+
+        self._fsrq_connection = OrderedDict()
 
         super().__init__(
             bllac_pop=bllac_pop,
@@ -493,9 +484,101 @@ class BlazarNuConnection(BlazarNuAction):
             name=name,
         )
 
+    @property
+    def bllac_connection(self):
+
+        return self._bllac_connection
+
+    @property
+    def fsrq_connection(self):
+
+        return self._fsrq_connection
+
     def _run(self):
 
-        pass
+        # Need to implement alerts case
+        if isinstance(self._nu_obs, IceCubeAlertsWrapper):
+
+            raise NotImplementedError()
+
+        # Neutrino info
+        nu_params = self._nu_obs._parameter_server
+        Emin = nu_params.connection["lower_energy"]
+        Emax = nu_params.connection["upper_energy"]
+        Enorm = nu_params.connection["normalisation_energy"]
+        effective_area = self._nu_obs.detector.effective_area
+
+        # Loop over BL Lacs
+        survey = self._bllac_pop.survey
+        self.bllac_connection["Nnu_ex"] = np.zeros(survey.N)
+        self.bllac_connection["Nnu"] = np.zeros(survey.N)
+
+        for i in range(survey.N):
+
+            ra = np.deg2rad(survey.ra[i])
+            dec = np.deg2rad(survey.dec[i])
+            z = survey.distances[i]
+            spectral_index = survey.spectral_index[i]
+
+            # Calculate steady emission
+            # Coming soon!
+
+            # Calculate flared emission
+            if survey.variability[i] and survey.flare_times[i].size > 0:
+
+                # Loop over flares
+                for time, duration, amp in zip(
+                    survey.flare_times[i],
+                    survey.flare_durations[i],
+                    survey.flare_amplitudes[i],
+                ):
+
+                    L_flare = survey.luminosities_latent[i] * amp  # erg s^-1
+                    L_flare = L_flare * erg_to_GeV  # GeV s^-1
+                    L_flare_nu = L_flare * self._nu_obs.flux_factor  # Neutrinos
+
+                    source = _get_point_source(
+                        L_flare_nu,
+                        spectral_index,
+                        z,
+                        ra,
+                        dec,
+                        Emin,
+                        Emax,
+                        Enorm,
+                    )
+
+                    # Calulate expected neutrino number per source
+                    nu_calc = NeutrinoCalculator([source], effective_area)
+                    self.bllac_connection["Nnu_ex"][i] += nu_calc(
+                        time=duration, min_energy=Emin, max_energy=Emax
+                    )[0]
+
+            # Sample actual number of neutrinos per source
+            self.bllac_connection["Nnu"][i] = np.random.poisson(
+                self.bllac_connection["Nnu_ex"][i]
+            )
+
+            # Sample times of nu?
+
+            # Simulate neutrino observations
+            if self.bllac_connection["Nnu"][i] > 0:
+
+                obs = _run_sim_for(
+                    self.bllac_connection["Nnu"][i],
+                    spectral_index,
+                    Emin,
+                    Emax,
+                    Enorm,
+                )
+
+        # Loop over FSRQs
+
+        # Calculate steady emission
+
+        # Calculate flared emission
+
+        # Simulate neutrino observations
 
     def write(self):
 

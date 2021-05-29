@@ -10,8 +10,10 @@ from icecube_tools.detector.energy_resolution import EnergyResolution
 from icecube_tools.detector.angular_resolution import AngularResolution
 from icecube_tools.detector.detector import IceCube
 from icecube_tools.source.flux_model import PowerLawFlux
-from icecube_tools.source.source_model import DiffuseSource
+from icecube_tools.source.source_model import DiffuseSource, PointSource
 from icecube_tools.simulator import Simulator
+
+from popsynth.utils.cosmology import cosmology
 
 from cosmic_coincidence.utils.parameter_server import ParameterServer
 
@@ -60,6 +62,11 @@ class IceCubeObsWrapper(object, metaclass=ABCMeta):
     def observation(self):
 
         return self._observation
+
+    @property
+    def detector(self):
+
+        return self._detector
 
     def write(self):
 
@@ -140,9 +147,9 @@ class IceCubeAlertsWrapper(IceCubeObsWrapper):
             fetch=False,
         )
 
-        hese_detector = IceCube(hese_aeff, self._energy_res, hese_ang_res)
+        self._hese_detector = IceCube(hese_aeff, self._energy_res, hese_ang_res)
 
-        self._hese_simulator = Simulator(hese_sources, hese_detector)
+        self._hese_simulator = Simulator(hese_sources, self._hese_detector)
         self._hese_simulator.time = self._parameter_server.hese.detector["obs_time"]
         self._hese_simulator.max_cosz = self._parameter_server.hese.detector["max_cosz"]
 
@@ -175,9 +182,9 @@ class IceCubeAlertsWrapper(IceCubeObsWrapper):
             fetch=False,
         )
 
-        ehe_detector = IceCube(ehe_aeff, self._energy_res, ehe_ang_res)
+        self._ehe_detector = IceCube(ehe_aeff, self._energy_res, ehe_ang_res)
 
-        self._ehe_simulator = Simulator(ehe_sources, ehe_detector)
+        self._ehe_simulator = Simulator(ehe_sources, self._ehe_detector)
         self._ehe_simulator.time = self._parameter_server.ehe.detector["obs_time"]
         self._ehe_simulator.max_cosz = self._parameter_server.ehe.detector["max_cosz"]
 
@@ -301,13 +308,13 @@ class IceCubeTracksWrapper(IceCubeObsWrapper):
             fetch=False,
         )
 
-        detector = IceCube(
+        self._detector = IceCube(
             effective_area,
             energy_resolution,
             angular_resolution,
         )
 
-        self._simulator = Simulator(sources, detector)
+        self._simulator = Simulator(sources, self._detector)
         self._simulator.time = self._parameter_server.detector["obs_time"]
         self._simulator.max_cosz = self._parameter_server.detector["max_cosz"]
 
@@ -497,3 +504,89 @@ class IceCubeAlertsParams(ParameterServer):
     def ehe(self):
 
         return self._ehe
+
+
+def _get_point_source(
+    luminosity,
+    spectral_index,
+    z,
+    ra,
+    dec,
+    Emin,
+    Emax,
+    Enorm,
+):
+    """
+    Define a neutrino point source from
+    a luminosity and spectral index.
+
+    :param luminosity: L in GeV s^-1
+    :param spectral_index: Spectral index of power law
+    :param z: Redshift
+    :param ra: Right ascension
+    :param dec: Declination
+    :param Emin: Minimum energy in GeV
+    :param Emax: Maximum energy in GeV
+    :param Enorm: Normalisation energy in GeV
+    """
+
+    energy_flux = luminosity / (4 * np.pi * cosmology.luminosity_distance(z) ** 2)
+
+    tmp = PowerLawFlux(
+        1,
+        Enorm,
+        spectral_index,
+        lower_energy=Emin,
+        upper_energy=Emax,
+    )
+
+    power = tmp.total_flux_density()
+
+    norm = energy_flux / power
+
+    power_law = PowerLawFlux(
+        norm, Enorm, spectral_index, lower_energy=Emin, upper_energy=Emax
+    )
+
+    source = PointSource(flux_model=power_law, coord=(ra, dec))
+
+    return source
+
+
+def _run_sim_for(
+    N,
+    spectral_index,
+    ra,
+    dec,
+    Emin,
+    Emax,
+    Enorm,
+    detector,
+    seed,
+):
+    """
+    Run a simulation of N events with the provided
+    spectral model and detector info.
+
+    :param N: Integer number of neutrinos
+    :param spectral_index: Spectral index of power law
+    :param ra: Right ascension
+    :param dec: Declination
+    :param Emin: Minimum energy in GeV
+    :param Emax: Maximum energy in GeV
+    :param Enorm: Normalisation energy in GeV
+    :param Detector: IceCube detector
+    :param seed: Random seed
+    """
+
+    tmp = PowerLawFlux(1, Enorm, spectral_index, lower_energy=Emin, upper_energy=Emax)
+
+    source = PointSource(flux_model=tmp, coord=(ra, dec))
+
+    sim = Simulator(source, detector)
+
+    sim.run(
+        N=N,
+        show_progress=False,
+        seed=seed,
+    )

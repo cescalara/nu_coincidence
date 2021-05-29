@@ -39,17 +39,35 @@ from cosmic_coincidence.neutrinos.icecube import IceCubeTracksWrapper
 
 ```python
 detector = {}
-detector["Emin_det"] = 2.5e5
+detector["Emin_det"] = 1e5
 detector["max_cosz"] = 1
 detector["obs_time"] = 7.5
 
 connection = {}
-connection["lower_energy"] = 5e4
+connection["lower_energy"] = 4e5
 connection["upper_energy"] = 1e8
+connection["normalisation_energy"] = 1e5
 connection["flux_factor"] = 0.1
 
 param_server = IceCubeObsParams(detector, connection=connection)
-param_server.write_to("output/connected_ehe_nu.yml")
+param_server.write_to("output/connected_tracks.yml")
+```
+
+```python
+param_server = IceCubeObsParams.from_file("output/connected_tracks.yml")
+param_server.connection
+```
+
+```python
+nu_obs = IceCubeTracksWrapper(param_server)
+```
+
+```python
+nu_obs._parameter_server.connection
+```
+
+```python
+nu_obs.detector.effective_area
 ```
 
 ```python

@@ -1,0 +1,9 @@
+connection:
+  flux_factor: 0.1
+  lower_energy: 400000.0
+  normalisation_energy: 100000.0
+  upper_energy: 100000000.0
+detector:
+  Emin_det: 100000.0
+  max_cosz: 1
+  obs_time: 7.5
