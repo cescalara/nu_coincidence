@@ -506,14 +506,24 @@ class BlazarNuConnection(BlazarNuAction):
         Emin = nu_params.connection["lower_energy"]
         Emax = nu_params.connection["upper_energy"]
         Enorm = nu_params.connection["normalisation_energy"]
+        flux_factor = nu_params.connection["flux_factor"]
         effective_area = self._nu_obs.detector.effective_area
+        seed = nu_params.seed
 
         # Loop over BL Lacs
         survey = self._bllac_pop.survey
-        self.bllac_connection["Nnu_ex"] = np.zeros(survey.N)
-        self.bllac_connection["Nnu"] = np.zeros(survey.N)
+        N = len(survey.distances)
 
-        for i in range(survey.N):
+        self.bllac_connection["Nnu"] = np.zeros(N)
+        self.bllac_connection["nu_Erecos"] = []
+        self.bllac_connection["nu_ras"] = []
+        self.bllac_connection["nu_decs"] = []
+        self.bllac_connection["nu_ang_errs"] = []
+        self.bllac_connection["nu_times"] = []
+        self.bllac_connection["src_detected"] = []
+        self.bllac_connection["src_flare"] = []
+
+        for i in range(N):
 
             ra = np.deg2rad(survey.ra[i])
             dec = np.deg2rad(survey.dec[i])
@@ -535,7 +545,7 @@ class BlazarNuConnection(BlazarNuAction):
 
                     L_flare = survey.luminosities_latent[i] * amp  # erg s^-1
                     L_flare = L_flare * erg_to_GeV  # GeV s^-1
-                    L_flare_nu = L_flare * self._nu_obs.flux_factor  # Neutrinos
+                    L_flare_nu = L_flare * flux_factor  # Neutrinos
 
                     source = _get_point_source(
                         L_flare_nu,
@@ -550,26 +560,44 @@ class BlazarNuConnection(BlazarNuAction):
 
                     # Calulate expected neutrino number per source
                     nu_calc = NeutrinoCalculator([source], effective_area)
-                    self.bllac_connection["Nnu_ex"][i] += nu_calc(
+                    Nnu_ex_flare = nu_calc(
                         time=duration, min_energy=Emin, max_energy=Emax
                     )[0]
 
-            # Sample actual number of neutrinos per source
-            self.bllac_connection["Nnu"][i] = np.random.poisson(
-                self.bllac_connection["Nnu_ex"][i]
-            )
+                    # Sample actual number of neutrinos per flare
+                    Nnu_flare = np.random.poisson(Nnu_ex_flare)
+                    self.bllac_connection["Nnu"][i] += Nnu_flare
 
-            # Sample times of nu?
+                    # Sample times of nu
+                    if Nnu_flare > 0:
+                        self.bllac_connection["nu_times"].extend(
+                            np.random.uniform(time, time + duration, Nnu_flare)
+                        )
 
             # Simulate neutrino observations
             if self.bllac_connection["Nnu"][i] > 0:
 
-                obs = _run_sim_for(
+                sim = _run_sim_for(
                     self.bllac_connection["Nnu"][i],
                     spectral_index,
+                    ra,
+                    dec,
                     Emin,
                     Emax,
                     Enorm,
+                    self._nu_obs.detector,
+                    seed,
+                )
+
+                self.bllac_connection["nu_Erecos"].extend(sim.reco_energy)
+                self.bllac_connection["nu_ras"].extend(sim.ra)
+                self.bllac_connection["nu_decs"].extend(sim.dec)
+                self.bllac_connection["nu_ang_errs"].extend(sim.ang_err)
+                self.bllac_connection["src_detected"].extend(
+                    np.repeat(survey.selection[i], self.bllac_connection["Nnu"][i])
+                )
+                self.bllac_connection["src_flare"].extend(
+                    np.repeat(True, self.bllac_connection["Nnu"][i])
                 )
 
         # Loop over FSRQs

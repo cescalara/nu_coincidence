@@ -63,14 +63,6 @@ nu_obs = IceCubeTracksWrapper(param_server)
 ```
 
 ```python
-nu_obs._parameter_server.connection
-```
-
-```python
-nu_obs.detector.effective_area
-```
-
-```python
 param_server = IceCubeAlertsParams("output/connected_hese_nu.yml", 
                                    "output/connected_hese_nu.yml")
 ```

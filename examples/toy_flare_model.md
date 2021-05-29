@@ -18,7 +18,69 @@ from scipy import stats
 from matplotlib import pyplot as plt
 import ligo.skymap.plot
 from astropy import units as u
+```
 
+```python
+import sys
+sys.path.append("../")
+```
+
+## Using cosmic_coincidence
+
+```python
+from cosmic_coincidence.coincidence.blazar_nu import BlazarNuConnection
+from cosmic_coincidence.popsynth_wrapper import PopsynthParams, PopsynthWrapper
+from cosmic_coincidence.neutrinos.icecube import IceCubeObsParams, IceCubeTracksWrapper
+from cosmic_coincidence.utils.package_data import get_path_to_data
+from cosmic_coincidence.utils.plotting import SphericalCircle
+```
+
+```python
+bllac_spec = get_path_to_data("bllac_connected.yml")
+bllac_param_server = PopsynthParams(bllac_spec)
+bllac_pop = PopsynthWrapper(bllac_param_server)
+
+fsrq_spec = get_path_to_data("fsrq.yml")
+fsrq_param_server = PopsynthParams(fsrq_spec)
+fsrq_pop = PopsynthWrapper(fsrq_param_server)
+```
+
+```python
+nu_spec = "output/connected_tracks.yml"
+nu_param_server = IceCubeObsParams.from_file(nu_spec)
+nu_obs = IceCubeTracksWrapper(nu_param_server)
+```
+
+```python
+blazar_nu = BlazarNuConnection(bllac_pop, fsrq_pop, nu_obs)
+```
+
+```python
+bc = blazar_nu.bllac_connection
+```
+
+```python
+len(bc["nu_ras"])
+```
+
+```python
+fig, ax = plt.subplots(subplot_kw={"projection": "astro degrees mollweide"})
+fig.set_size_inches((12, 7))
+for r, d, e, det in zip(np.rad2deg(bc["nu_ras"]), np.rad2deg(bc["nu_decs"]), 
+                   bc["nu_ang_errs"], bc["src_detected"]):
+    if det:
+        color = "green"
+    else:
+        color = "red"
+    circle = SphericalCircle((r * u.deg, d * u.deg), e * 2 * u.deg,
+                             transform=ax.get_transform("icrs"), alpha=0.7, 
+                             color=color)
+    ax.add_patch(circle)
+```
+
+## Old style
+
+```python
 from popsynth.utils.cosmology import cosmology
 from icecube_tools.detector.effective_area import EffectiveArea
 from icecube_tools.detector.energy_resolution import EnergyResolution
@@ -28,11 +90,6 @@ from icecube_tools.source.flux_model import PowerLawFlux
 from icecube_tools.source.source_model import PointSource
 from icecube_tools.neutrino_calculator import NeutrinoCalculator
 from icecube_tools.simulator import Simulator
-```
-
-```python
-import sys
-sys.path.append("../")
 ```
 
 ```python
@@ -109,6 +166,10 @@ flare_amplitudes.set_secondary_sampler(flare_times)
 
 bllac_popsynth.add_observed_quantity(flare_durations)
 bllac_popsynth.add_observed_quantity(flare_amplitudes)
+```
+
+```python
+bllac_popsynth.to_dict()
 ```
 
 ```python

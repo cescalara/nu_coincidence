@@ -590,3 +590,5 @@ def _run_sim_for(
         show_progress=False,
         seed=seed,
     )
+
+    return sim
