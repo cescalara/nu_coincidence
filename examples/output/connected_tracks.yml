@@ -1,5 +1,5 @@
 connection:
-  flux_factor: 1
+  flux_factor: 0.01
   lower_energy: 50000.0
   normalisation_energy: 100000.0
   upper_energy: 100000000.0
