@@ -558,7 +558,7 @@ def _get_point_source(
         norm, Enorm, spectral_index, lower_energy=Emin, upper_energy=Emax
     )
 
-    source = PointSource(flux_model=power_law, coord=(ra, dec))
+    source = PointSource(flux_model=power_law, z=z, coord=(ra, dec))
 
     return source
 
@@ -566,6 +566,7 @@ def _get_point_source(
 def _run_sim_for(
     N,
     spectral_index,
+    z,
     ra,
     dec,
     Emin,
@@ -580,6 +581,7 @@ def _run_sim_for(
 
     :param N: Integer number of neutrinos
     :param spectral_index: Spectral index of power law
+    :param z: Redshift
     :param ra: Right ascension
     :param dec: Declination
     :param Emin: Minimum energy in GeV
@@ -591,7 +593,7 @@ def _run_sim_for(
 
     tmp = PowerLawFlux(1, Enorm, spectral_index, lower_energy=Emin, upper_energy=Emax)
 
-    source = PointSource(flux_model=tmp, coord=(ra, dec))
+    source = PointSource(flux_model=tmp, z=z, coord=(ra, dec))
 
     sim = Simulator(source, detector)
 

@@ -224,6 +224,11 @@ ehe_param_server.write_to("output/diffuse_ehe_nu.yml")
 ## From icecube_tools
 
 ```python
+import numpy as np
+from matplotlib import pyplot as plt
+```
+
+```python
 import sys
 sys.path.append("../../icecube_tools/")
 
@@ -267,8 +272,12 @@ power_law_atmo = PowerLawFlux(4e-18, 1e5, 3.7, lower_energy=Emin,
                               upper_energy=Emax)
 atmospheric = DiffuseSource(flux_model=power_law_atmo)
 power_law = PowerLawFlux(2e-18, 1e5, 2.6, lower_energy=Emin, upper_energy=Emax)
-astrophysical_bg = DiffuseSource(flux_model=power_law)
+astrophysical_bg = DiffuseSource(flux_model=power_law, z=0.0)
 sources = [atmospheric, astrophysical_bg]
+```
+
+```python
+sources[1].z
 ```
 
 ```python
@@ -287,8 +296,9 @@ simulator.N
 ```python
 bins = 10**np.linspace(2, 8)
 fig, ax = plt.subplots()
-ax.hist(simulator.true_energy, bins=bins)
-ax.hist(simulator.reco_energy, bins=bins)
+ax.hist(simulator.true_energy, bins=bins, alpha=0.7)
+ax.hist(simulator.arrival_energy, bins=bins, alpha=0.7)
+ax.hist(simulator.reco_energy, bins=bins, alpha=0.7)
 ax.set_xscale("log")
 ```
 

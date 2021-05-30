@@ -559,6 +559,7 @@ class BlazarNuConnection(BlazarNuAction):
         connection["nu_times"] = np.array([])
         connection["src_detected"] = np.array([])
         connection["src_flare"] = np.array([])
+        connection["src_id"] = np.array([], dtype=np.int64)
 
     def _connected_sim(self, pop, nu_params, nu_detector, connection):
         """
@@ -640,6 +641,7 @@ class BlazarNuConnection(BlazarNuAction):
                 sim = _run_sim_for(
                     connection["Nnu_steady"][i],
                     spectral_index,
+                    z,
                     ra,
                     dec,
                     Emin,
@@ -664,6 +666,9 @@ class BlazarNuConnection(BlazarNuAction):
                 connection["src_flare"] = np.append(
                     connection["src_flare"],
                     np.repeat(False, connection["Nnu_steady"][i]),
+                )
+                connection["src_id"] = np.append(
+                    connection["src_id"], np.repeat(i, connection["Nnu_steady"][i])
                 )
 
             # Calculate flared emission
@@ -715,6 +720,7 @@ class BlazarNuConnection(BlazarNuAction):
                 sim = _run_sim_for(
                     connection["Nnu_flare"][i],
                     spectral_index,
+                    z,
                     ra,
                     dec,
                     Emin,
@@ -740,6 +746,9 @@ class BlazarNuConnection(BlazarNuAction):
                     connection["src_flare"],
                     np.repeat(True, connection["Nnu_flare"][i]),
                 )
+                connection["src_id"] = np.append(
+                    connection["src_id"], np.repeat(i, connection["Nnu_flare"][i])
+                )
 
             # Select above Emin_det
             selection = connection["nu_Erecos"] > Emin_det
@@ -751,6 +760,7 @@ class BlazarNuConnection(BlazarNuAction):
             connection["nu_times"] = connection["nu_times"][selection]
             connection["src_detected"] = connection["src_detected"][selection]
             connection["src_flare"] = connection["src_flare"][selection]
+            connection["src_id"] = connection["src_id"][selection]
 
     def write(self):
 
