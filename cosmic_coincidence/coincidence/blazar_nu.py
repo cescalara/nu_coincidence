@@ -517,6 +517,7 @@ class BlazarNuConnection(BlazarNuAction):
         nu_params = self._nu_obs._parameter_server
         Emin = nu_params.connection["lower_energy"]
         Emax = nu_params.connection["upper_energy"]
+        Emin_det = nu_params.detector["Emin_det"]
         Enorm = nu_params.connection["normalisation_energy"]
         flux_factor = nu_params.connection["flux_factor"]
         effective_area = self._nu_obs.detector.effective_area
@@ -529,13 +530,13 @@ class BlazarNuConnection(BlazarNuAction):
 
         connection["Nnu_steady"] = np.zeros(N)
         connection["Nnu_flare"] = np.zeros(N)
-        connection["nu_Erecos"] = []
-        connection["nu_ras"] = []
-        connection["nu_decs"] = []
-        connection["nu_ang_errs"] = []
-        connection["nu_times"] = []
-        connection["src_detected"] = []
-        connection["src_flare"] = []
+        connection["nu_Erecos"] = np.array([])
+        connection["nu_ras"] = np.array([])
+        connection["nu_decs"] = np.array([])
+        connection["nu_ang_errs"] = np.array([])
+        connection["nu_times"] = np.array([])
+        connection["src_detected"] = np.array([])
+        connection["src_flare"] = np.array([])
 
         for i in range(N):
 
@@ -581,14 +582,16 @@ class BlazarNuConnection(BlazarNuAction):
                 # TODO: remove flare periods
                 if steady_duration < total_duration:
 
-                    connection["nu_times"].extend(
-                        np.random.uniform(0, total_duration, Nnu_steady)
+                    connection["nu_times"] = np.append(
+                        connection["nu_times"],
+                        np.random.uniform(0, total_duration, Nnu_steady),
                     )
 
                 else:
 
-                    connection["nu_times"].extend(
-                        np.random.uniform(0, total_duration, Nnu_steady)
+                    connection["nu_times"] = np.append(
+                        connection["nu_times"],
+                        np.random.uniform(0, total_duration, Nnu_steady),
                     )
 
                 sim = _run_sim_for(
@@ -603,15 +606,21 @@ class BlazarNuConnection(BlazarNuAction):
                     seed,
                 )
 
-                connection["nu_Erecos"].extend(sim.reco_energy)
-                connection["nu_ras"].extend(sim.ra)
-                connection["nu_decs"].extend(sim.dec)
-                connection["nu_ang_errs"].extend(sim.ang_err)
-                connection["src_detected"].extend(
-                    np.repeat(survey.selection[i], connection["Nnu_steady"][i])
+                connection["nu_Erecos"] = np.append(
+                    connection["nu_Erecos"], sim.reco_energy
                 )
-                self.bllac_connection["src_flare"].extend(
-                    np.repeat(False, connection["Nnu_steady"][i])
+                connection["nu_ras"] = np.append(connection["nu_ras"], sim.ra)
+                connection["nu_decs"] = np.append(connection["nu_decs"], sim.dec)
+                connection["nu_ang_errs"] = np.append(
+                    connection["nu_ang_errs"], sim.ang_err
+                )
+                connection["src_detected"] = np.append(
+                    connection["src_detected"],
+                    np.repeat(survey.selection[i], connection["Nnu_steady"][i]),
+                )
+                connection["src_flare"] = np.append(
+                    connection["src_flare"],
+                    np.repeat(False, connection["Nnu_steady"][i]),
                 )
 
             # Calculate flared emission
@@ -651,8 +660,9 @@ class BlazarNuConnection(BlazarNuAction):
 
                     # Sample times of nu
                     if Nnu_flare > 0:
-                        connection["nu_times"].extend(
-                            np.random.uniform(time, time + duration, Nnu_flare)
+                        connection["nu_times"] = np.append(
+                            connection["nu_times"],
+                            np.random.uniform(time, time + duration, Nnu_flare),
                         )
 
             # Simulate neutrino observations
@@ -670,16 +680,33 @@ class BlazarNuConnection(BlazarNuAction):
                     seed,
                 )
 
-                connection["nu_Erecos"].extend(sim.reco_energy)
-                connection["nu_ras"].extend(sim.ra)
-                connection["nu_decs"].extend(sim.dec)
-                connection["nu_ang_errs"].extend(sim.ang_err)
-                connection["src_detected"].extend(
-                    np.repeat(survey.selection[i], connection["Nnu_flare"][i])
+                connection["nu_Erecos"] = np.append(
+                    connection["nu_Erecos"], sim.reco_energy
                 )
-                connection["src_flare"].extend(
-                    np.repeat(True, connection["Nnu_flare"][i])
+                connection["nu_ras"] = np.append(connection["nu_ras"], sim.ra)
+                connection["nu_decs"] = np.append(connection["nu_decs"], sim.dec)
+                connection["nu_ang_errs"] = np.append(
+                    connection["nu_ang_errs"], sim.ang_err
                 )
+                connection["src_detected"] = np.append(
+                    connection["src_detected"],
+                    np.repeat(survey.selection[i], connection["Nnu_flare"][i]),
+                )
+                connection["src_flare"] = np.append(
+                    connection["src_flare"],
+                    np.repeat(True, connection["Nnu_flare"][i]),
+                )
+
+            # Select above Emin_det
+            selection = connection["nu_Erecos"] > Emin_det
+
+            connection["nu_Erecos"] = connection["nu_Erecos"][selection]
+            connection["nu_ras"] = connection["nu_ras"][selection]
+            connection["nu_decs"] = connection["nu_decs"][selection]
+            connection["nu_ang_errs"] = connection["nu_ang_errs"][selection]
+            connection["nu_times"] = connection["nu_times"][selection]
+            connection["src_detected"] = connection["src_detected"][selection]
+            connection["src_flare"] = connection["src_flare"][selection]
 
     def write(self):
 
