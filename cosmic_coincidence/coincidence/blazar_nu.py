@@ -501,6 +501,18 @@ class BlazarNuConnection(BlazarNuAction):
 
             raise NotImplementedError()
 
+        # BL Lacs
+        self._connected_sim(self._bllac_pop, self._bllac_connection)
+
+        # FSRQs
+        self._connected_sim(self._fsrq_pop, self._fsrq_connection)
+
+    def _connected_sim(self, pop, connection):
+        """
+        Run a connected sim for pop and store
+        the results in connection.
+        """
+
         # Neutrino info
         nu_params = self._nu_obs._parameter_server
         Emin = nu_params.connection["lower_energy"]
@@ -510,19 +522,20 @@ class BlazarNuConnection(BlazarNuAction):
         effective_area = self._nu_obs.detector.effective_area
         seed = nu_params.seed
 
-        # Loop over BL Lacs
-        survey = self._bllac_pop.survey
+        np.random.seed(seed)
+
+        survey = pop.survey
         N = len(survey.distances)
 
-        self.bllac_connection["Nnu_steady"] = np.zeros(N)
-        self.bllac_connection["Nnu_flare"] = np.zeros(N)
-        self.bllac_connection["nu_Erecos"] = []
-        self.bllac_connection["nu_ras"] = []
-        self.bllac_connection["nu_decs"] = []
-        self.bllac_connection["nu_ang_errs"] = []
-        self.bllac_connection["nu_times"] = []
-        self.bllac_connection["src_detected"] = []
-        self.bllac_connection["src_flare"] = []
+        connection["Nnu_steady"] = np.zeros(N)
+        connection["Nnu_flare"] = np.zeros(N)
+        connection["nu_Erecos"] = []
+        connection["nu_ras"] = []
+        connection["nu_decs"] = []
+        connection["nu_ang_errs"] = []
+        connection["nu_times"] = []
+        connection["src_detected"] = []
+        connection["src_flare"] = []
 
         for i in range(N):
 
@@ -548,7 +561,7 @@ class BlazarNuConnection(BlazarNuAction):
 
             # Time spent not flaring
             total_duration = (
-                self._bllac_pop._pop_gen._auxiliary_observations["flare_durations"]
+                pop._pop_gen._auxiliary_observations["flare_durations"]
                 .secondary_samplers["flare_times"]
                 .obs_time
             )
@@ -561,17 +574,25 @@ class BlazarNuConnection(BlazarNuAction):
                 max_energy=Emax,
             )[0]
             Nnu_steady = np.random.poisson(Nnu_ex_steady)
-            self.bllac_connection["Nnu_steady"][i] += Nnu_steady
+            connection["Nnu_steady"][i] += Nnu_steady
 
             if Nnu_steady > 0:
 
                 # TODO: remove flare periods
-                self.bllac_connection["nu_times"].extend(
-                    np.random.uniform(0, total_duration, Nnu_steady)
-                )
+                if steady_duration < total_duration:
+
+                    connection["nu_times"].extend(
+                        np.random.uniform(0, total_duration, Nnu_steady)
+                    )
+
+                else:
+
+                    connection["nu_times"].extend(
+                        np.random.uniform(0, total_duration, Nnu_steady)
+                    )
 
                 sim = _run_sim_for(
-                    self.bllac_connection["Nnu_steady"][i],
+                    connection["Nnu_steady"][i],
                     spectral_index,
                     ra,
                     dec,
@@ -582,17 +603,15 @@ class BlazarNuConnection(BlazarNuAction):
                     seed,
                 )
 
-                self.bllac_connection["nu_Erecos"].extend(sim.reco_energy)
-                self.bllac_connection["nu_ras"].extend(sim.ra)
-                self.bllac_connection["nu_decs"].extend(sim.dec)
-                self.bllac_connection["nu_ang_errs"].extend(sim.ang_err)
-                self.bllac_connection["src_detected"].extend(
-                    np.repeat(
-                        survey.selection[i], self.bllac_connection["Nnu_steady"][i]
-                    )
+                connection["nu_Erecos"].extend(sim.reco_energy)
+                connection["nu_ras"].extend(sim.ra)
+                connection["nu_decs"].extend(sim.dec)
+                connection["nu_ang_errs"].extend(sim.ang_err)
+                connection["src_detected"].extend(
+                    np.repeat(survey.selection[i], connection["Nnu_steady"][i])
                 )
                 self.bllac_connection["src_flare"].extend(
-                    np.repeat(False, self.bllac_connection["Nnu_steady"][i])
+                    np.repeat(False, connection["Nnu_steady"][i])
                 )
 
             # Calculate flared emission
@@ -628,19 +647,19 @@ class BlazarNuConnection(BlazarNuAction):
 
                     # Sample actual number of neutrinos per flare
                     Nnu_flare = np.random.poisson(Nnu_ex_flare)
-                    self.bllac_connection["Nnu_flare"][i] += Nnu_flare
+                    connection["Nnu_flare"][i] += Nnu_flare
 
                     # Sample times of nu
                     if Nnu_flare > 0:
-                        self.bllac_connection["nu_times"].extend(
+                        connection["nu_times"].extend(
                             np.random.uniform(time, time + duration, Nnu_flare)
                         )
 
             # Simulate neutrino observations
-            if self.bllac_connection["Nnu_flare"][i] > 0:
+            if connection["Nnu_flare"][i] > 0:
 
                 sim = _run_sim_for(
-                    self.bllac_connection["Nnu_flare"][i],
+                    connection["Nnu_flare"][i],
                     spectral_index,
                     ra,
                     dec,
@@ -651,27 +670,39 @@ class BlazarNuConnection(BlazarNuAction):
                     seed,
                 )
 
-                self.bllac_connection["nu_Erecos"].extend(sim.reco_energy)
-                self.bllac_connection["nu_ras"].extend(sim.ra)
-                self.bllac_connection["nu_decs"].extend(sim.dec)
-                self.bllac_connection["nu_ang_errs"].extend(sim.ang_err)
-                self.bllac_connection["src_detected"].extend(
-                    np.repeat(
-                        survey.selection[i], self.bllac_connection["Nnu_flare"][i]
-                    )
+                connection["nu_Erecos"].extend(sim.reco_energy)
+                connection["nu_ras"].extend(sim.ra)
+                connection["nu_decs"].extend(sim.dec)
+                connection["nu_ang_errs"].extend(sim.ang_err)
+                connection["src_detected"].extend(
+                    np.repeat(survey.selection[i], connection["Nnu_flare"][i])
                 )
-                self.bllac_connection["src_flare"].extend(
-                    np.repeat(True, self.bllac_connection["Nnu_flare"][i])
+                connection["src_flare"].extend(
+                    np.repeat(True, connection["Nnu_flare"][i])
                 )
-
-        # Loop over FSRQs
-
-        # Calculate steady emission
-
-        # Calculate flared emission
-
-        # Simulate neutrino observations
 
     def write(self):
 
-        pass
+        with h5py.File(self._file_name, "r+") as f:
+
+            if self._group_name not in f.keys():
+
+                group = f.create_group(self._group_name)
+
+            else:
+
+                group = f[self._group_name]
+
+            subgroup = group.create_group(self.name)
+
+            bllac_group = subgroup.create_group("bllac")
+
+            for key, value in self.bllac_connection.items():
+
+                bllac_group.create_dataset(key, data=value)
+
+            fsrq_group = subgroup.create_group("fsrq")
+
+            for key, value in self.fsrq_connection.items():
+
+                fsrq_group.create_dataset(key, data=value)

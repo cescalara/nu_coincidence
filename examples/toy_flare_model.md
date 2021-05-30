@@ -38,16 +38,20 @@ from cosmic_coincidence.utils.plotting import SphericalCircle
 ```python
 bllac_spec = get_path_to_data("bllac_connected.yml")
 bllac_param_server = PopsynthParams(bllac_spec)
+bllac_param_server.seed = 42
 bllac_pop = PopsynthWrapper(bllac_param_server)
 
-fsrq_spec = get_path_to_data("fsrq.yml")
+
+fsrq_spec = get_path_to_data("fsrq_connected.yml")
 fsrq_param_server = PopsynthParams(fsrq_spec)
+fsrq_param_server.seed = 42
 fsrq_pop = PopsynthWrapper(fsrq_param_server)
 ```
 
 ```python
 nu_spec = "output/connected_tracks.yml"
 nu_param_server = IceCubeObsParams.from_file(nu_spec)
+nu_param_server.seed = 42
 nu_obs = IceCubeTracksWrapper(nu_param_server)
 ```
 
@@ -57,10 +61,10 @@ blazar_nu = BlazarNuConnection(bllac_pop, fsrq_pop, nu_obs)
 
 ```python
 bc = blazar_nu.bllac_connection
-```
+fc = blazar_nu.fsrq_connection
 
-```python
-len(bc["nu_ras"])
+print("BL Lac nu:", len(bc["nu_ras"]))
+print("FSRQ nu:", len(fc["nu_ras"]))
 ```
 
 ```python
@@ -68,6 +72,21 @@ fig, ax = plt.subplots(subplot_kw={"projection": "astro degrees mollweide"})
 fig.set_size_inches((12, 7))
 for r, d, e, det in zip(np.rad2deg(bc["nu_ras"]), np.rad2deg(bc["nu_decs"]), 
                    bc["nu_ang_errs"], bc["src_detected"]):
+    if det:
+        color = "green"
+    else:
+        color = "red"
+    circle = SphericalCircle((r * u.deg, d * u.deg), e * 2 * u.deg,
+                             transform=ax.get_transform("icrs"), alpha=0.7, 
+                             color=color)
+    ax.add_patch(circle)
+```
+
+```python
+fig, ax = plt.subplots(subplot_kw={"projection": "astro degrees mollweide"})
+fig.set_size_inches((12, 7))
+for r, d, e, det in zip(np.rad2deg(fc["nu_ras"]), np.rad2deg(fc["nu_decs"]), 
+                   fc["nu_ang_errs"], fc["src_detected"]):
     if det:
         color = "green"
     else:
