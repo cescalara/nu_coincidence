@@ -45,7 +45,8 @@ detector["obs_time"] = 7.5
 detector["flavour_factor"] = 1
 
 connection = {}
-connection["lower_energy"] = 4e5
+connection["sim_lower_energy"] = 4e5
+connection["lower_energy"] = 1e4
 connection["upper_energy"] = 1e8
 connection["normalisation_energy"] = 1e5
 connection["flux_factor"] = 0.1

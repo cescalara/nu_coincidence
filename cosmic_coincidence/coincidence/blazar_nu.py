@@ -570,6 +570,7 @@ class BlazarNuConnection(BlazarNuAction):
         # Neutrino info
         Emin = nu_params.connection["lower_energy"]
         Emax = nu_params.connection["upper_energy"]
+        Emin_sim = nu_params.connection["lower_energy_sim"]
         Emin_det = nu_params.detector["Emin_det"]
         Enorm = nu_params.connection["normalisation_energy"]
         flux_factor = nu_params.connection["flux_factor"]
@@ -615,7 +616,7 @@ class BlazarNuConnection(BlazarNuAction):
             nu_calc = NeutrinoCalculator([source], effective_area)
             Nnu_ex_steady = nu_calc(
                 time=steady_duration,
-                min_energy=Emin,
+                min_energy=Emin_sim,
                 max_energy=Emax,
             )[0]
             Nnu_steady = np.random.poisson(Nnu_ex_steady)
@@ -644,7 +645,7 @@ class BlazarNuConnection(BlazarNuAction):
                     z,
                     ra,
                     dec,
-                    Emin,
+                    Emin_sim,
                     Emax,
                     Enorm,
                     nu_detector,
@@ -700,7 +701,7 @@ class BlazarNuConnection(BlazarNuAction):
                     # Calulate expected neutrino number per source
                     nu_calc = NeutrinoCalculator([source], effective_area)
                     Nnu_ex_flare = nu_calc(
-                        time=duration, min_energy=Emin, max_energy=Emax
+                        time=duration, min_energy=Emin_sim, max_energy=Emax
                     )[0]
 
                     # Sample actual number of neutrinos per flare
@@ -723,7 +724,7 @@ class BlazarNuConnection(BlazarNuAction):
                     z,
                     ra,
                     dec,
-                    Emin,
+                    Emin_sim,
                     Emax,
                     Enorm,
                     nu_detector,
