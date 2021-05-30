@@ -42,6 +42,7 @@ detector = {}
 detector["Emin_det"] = 1e5
 detector["max_cosz"] = 1
 detector["obs_time"] = 7.5
+detector["flavour_factor"] = 1
 
 connection = {}
 connection["lower_energy"] = 4e5
@@ -72,7 +73,11 @@ nu_obs = IceCubeAlertsWrapper(param_server)
 ```
 
 ```python
-nu_obs._ehe_simulator
+nu_obs._parameter_server.hese
+```
+
+```python
+nu_obs.hese_detector
 ```
 
 ```python

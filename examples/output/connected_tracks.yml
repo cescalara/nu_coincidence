@@ -7,3 +7,4 @@ detector:
   Emin_det: 50000.0
   max_cosz: 1
   obs_time: 7.5
+  flavour_factor: 1.0

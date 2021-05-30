@@ -63,11 +63,6 @@ class IceCubeObsWrapper(object, metaclass=ABCMeta):
 
         return self._observation
 
-    @property
-    def detector(self):
-
-        return self._detector
-
     def write(self):
 
         with h5py.File(self._parameter_server.file_name, "r+") as f:
@@ -110,6 +105,16 @@ class IceCubeAlertsWrapper(IceCubeObsWrapper):
         self._hese_simulation_setup()
 
         self._ehe_simulation_setup()
+
+    @property
+    def hese_detector(self):
+
+        return self._hese_detector
+
+    @property
+    def ehe_detector(self):
+
+        return self._ehe_detector
 
     def _hese_simulation_setup(self):
 
@@ -275,6 +280,11 @@ class IceCubeTracksWrapper(IceCubeObsWrapper):
     def __init__(self, param_server):
 
         super().__init__(param_server)
+
+    @property
+    def detector(self):
+
+        return self._detector
 
     def _simulation_setup(self):
 

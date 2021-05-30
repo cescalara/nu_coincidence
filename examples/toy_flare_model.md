@@ -31,6 +31,7 @@ sys.path.append("../")
 from cosmic_coincidence.coincidence.blazar_nu import BlazarNuConnection
 from cosmic_coincidence.popsynth_wrapper import PopsynthParams, PopsynthWrapper
 from cosmic_coincidence.neutrinos.icecube import IceCubeObsParams, IceCubeTracksWrapper
+from cosmic_coincidence.neutrinos.icecube import IceCubeAlertsParams, IceCubeAlertsWrapper
 from cosmic_coincidence.utils.package_data import get_path_to_data
 from cosmic_coincidence.utils.plotting import SphericalCircle
 ```
@@ -53,6 +54,14 @@ nu_spec = "output/connected_tracks.yml"
 nu_param_server = IceCubeObsParams.from_file(nu_spec)
 nu_param_server.seed = 42
 nu_obs = IceCubeTracksWrapper(nu_param_server)
+```
+
+```python
+hese_nu_spec = "output/connected_hese_nu.yml"
+ehe_nu_spec = "output/connected_ehe_nu.yml"
+nu_param_server = IceCubeAlertsParams(hese_nu_spec, ehe_nu_spec)
+nu_param_server.seed = 42
+nu_obs = IceCubeAlertsWrapper(nu_param_server)
 ```
 
 ```python

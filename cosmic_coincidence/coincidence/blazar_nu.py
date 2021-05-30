@@ -496,31 +496,84 @@ class BlazarNuConnection(BlazarNuAction):
 
     def _run(self):
 
-        # Need to implement alerts case
+        self._initialise(self._bllac_connection)
+        self._initialise(self._fsrq_connection)
+
         if isinstance(self._nu_obs, IceCubeAlertsWrapper):
 
-            raise NotImplementedError()
+            hese_nu_params = self._nu_obs._parameter_server.hese
+            ehe_nu_params = self._nu_obs._parameter_server.ehe
 
-        # BL Lacs
-        self._connected_sim(self._bllac_pop, self._bllac_connection)
+            hese_nu_detector = self._nu_obs.hese_detector
+            ehe_nu_detector = self._nu_obs.ehe_detector
 
-        # FSRQs
-        self._connected_sim(self._fsrq_pop, self._fsrq_connection)
+            # BL Lacs
+            self._connected_sim(
+                self._bllac_pop,
+                hese_nu_params,
+                hese_nu_detector,
+                self._bllac_connection,
+            )
+            self._connected_sim(
+                self._bllac_pop,
+                ehe_nu_params,
+                ehe_nu_detector,
+                self._bllac_connection,
+            )
 
-    def _connected_sim(self, pop, connection):
+            # FSRQs
+            self._connected_sim(
+                self._fsrq_pop,
+                hese_nu_params,
+                hese_nu_detector,
+                self._fsrq_connection,
+            )
+            self._connected_sim(
+                self._fsrq_pop,
+                ehe_nu_params,
+                ehe_nu_detector,
+                self._fsrq_connection,
+            )
+
+        else:
+
+            nu_params = self._nu_obs._parameter_server
+            nu_detector = self._nu_obs.detector
+
+            # BL Lacs
+            self._connected_sim(
+                self._bllac_pop, nu_params, nu_detector, self._bllac_connection
+            )
+
+            # FSRQs
+            self._connected_sim(
+                self._fsrq_pop, nu_params, nu_detector, self._fsrq_connection
+            )
+
+    def _initialise(self, connection):
+
+        connection["nu_Erecos"] = np.array([])
+        connection["nu_ras"] = np.array([])
+        connection["nu_decs"] = np.array([])
+        connection["nu_ang_errs"] = np.array([])
+        connection["nu_times"] = np.array([])
+        connection["src_detected"] = np.array([])
+        connection["src_flare"] = np.array([])
+
+    def _connected_sim(self, pop, nu_params, nu_detector, connection):
         """
         Run a connected sim for pop and store
         the results in connection.
         """
 
         # Neutrino info
-        nu_params = self._nu_obs._parameter_server
         Emin = nu_params.connection["lower_energy"]
         Emax = nu_params.connection["upper_energy"]
         Emin_det = nu_params.detector["Emin_det"]
         Enorm = nu_params.connection["normalisation_energy"]
         flux_factor = nu_params.connection["flux_factor"]
-        effective_area = self._nu_obs.detector.effective_area
+        flavour_factor = nu_params.detector["flavour_factor"]
+        effective_area = nu_detector.effective_area
         seed = nu_params.seed
 
         np.random.seed(seed)
@@ -530,13 +583,6 @@ class BlazarNuConnection(BlazarNuAction):
 
         connection["Nnu_steady"] = np.zeros(N)
         connection["Nnu_flare"] = np.zeros(N)
-        connection["nu_Erecos"] = np.array([])
-        connection["nu_ras"] = np.array([])
-        connection["nu_decs"] = np.array([])
-        connection["nu_ang_errs"] = np.array([])
-        connection["nu_times"] = np.array([])
-        connection["src_detected"] = np.array([])
-        connection["src_flare"] = np.array([])
 
         for i in range(N):
 
@@ -548,6 +594,7 @@ class BlazarNuConnection(BlazarNuAction):
             # Calculate steady emission
             L_steady = survey.luminosities_latent[i] * erg_to_GeV  # GeV s^-1
             L_steady = L_steady * flux_factor  # Neutrinos
+            L_steady = L_steady * flavour_factor  # Detected flavours
 
             source = _get_point_source(
                 L_steady,
@@ -561,11 +608,7 @@ class BlazarNuConnection(BlazarNuAction):
             )
 
             # Time spent not flaring
-            total_duration = (
-                pop._pop_gen._auxiliary_observations["flare_durations"]
-                .secondary_samplers["flare_times"]
-                .obs_time
-            )
+            total_duration = nu_params.detector["obs_time"]
             steady_duration = total_duration - sum(survey.flare_durations[i])
 
             nu_calc = NeutrinoCalculator([source], effective_area)
@@ -602,7 +645,7 @@ class BlazarNuConnection(BlazarNuAction):
                     Emin,
                     Emax,
                     Enorm,
-                    self._nu_obs.detector,
+                    nu_detector,
                     seed,
                 )
 
@@ -636,6 +679,7 @@ class BlazarNuConnection(BlazarNuAction):
                     L_flare = survey.luminosities_latent[i] * amp  # erg s^-1
                     L_flare = L_flare * erg_to_GeV  # GeV s^-1
                     L_flare_nu = L_flare * flux_factor  # Neutrinos
+                    L_flare_nu = L_flare_nu * flavour_factor  # Detected flavours
 
                     source = _get_point_source(
                         L_flare_nu,
@@ -676,7 +720,7 @@ class BlazarNuConnection(BlazarNuAction):
                     Emin,
                     Emax,
                     Enorm,
-                    self._nu_obs.detector,
+                    nu_detector,
                     seed,
                 )
 
