@@ -553,5 +553,43 @@ ax.set_xscale("log")
 ```
 
 ```python
+from astropy import units as u
+```
+
+$$
+E_\rm{tot} = \gamma m c^2
+$$
+
+$$
+\gamma = \frac{1}{\sqrt{1 - \beta^2}}, \beta = \frac{v}{c}
+$$
+
+
+$$
+E_\rm{tot} = mc^2 + (\gamma -1) mc^2
+$$
+
+$$
+E_\rm{kin} = (\gamma - 1) m c^2
+$$
+
+```python
+beta = 0.99999999
+gamma = 1 / np.sqrt(1 - beta**2)
+```
+
+```python
+KE = (gamma - 1) * 938 * u.MeV
+```
+
+```python
+KE.to(u.TeV)
+```
+
+```python
+
+```
+
+```python
 
 ```

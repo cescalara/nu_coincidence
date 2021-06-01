@@ -594,7 +594,11 @@ class BlazarNuConnection(BlazarNuAction):
             spectral_index = survey.spectral_index[i]
 
             # Calculate steady emission
-            L_steady = survey.luminosities_latent[i] * erg_to_GeV  # GeV s^-1
+            L_steady = survey.luminosities_latent[i]  # erg s^-1 [0.1 - 100 GeV]
+            L_steady = _convert_energy_range(
+                L_steady, spectral_index, 0.1, 100, 1, 100
+            )  # erg s^-1 [1 - 100 GeV]
+            L_steady = L_steady * erg_to_GeV  # GeV s^-1
             L_steady = L_steady * flux_factor  # Neutrinos
             L_steady = L_steady * flavour_factor  # Detected flavours
 
@@ -682,7 +686,12 @@ class BlazarNuConnection(BlazarNuAction):
                     survey.flare_amplitudes[i],
                 ):
 
-                    L_flare = survey.luminosities_latent[i] * amp  # erg s^-1
+                    L_flare = (
+                        survey.luminosities_latent[i] * amp
+                    )  # erg s^-1 [0.1 - 100 GeV]
+                    L_flare = _convert_energy_range(
+                        L_flare, spectral_index, 0.1, 100, 1, 100
+                    )  # erg s^-1 [1 - 100 GeV]
                     L_flare = L_flare * erg_to_GeV  # GeV s^-1
                     L_flare_nu = L_flare * flux_factor  # Neutrinos
                     L_flare_nu = L_flare_nu * flavour_factor  # Detected flavours
@@ -788,3 +797,36 @@ class BlazarNuConnection(BlazarNuAction):
             for key, value in self.fsrq_connection.items():
 
                 fsrq_group.create_dataset(key, data=value)
+
+
+def _convert_energy_range(luminosity, spectral_index, Emin, Emax, new_Emin, new_Emax):
+    """
+    Convert value of luminosity to be defined
+    over a different energy range. The units of all
+    energy quantities must be consient. Assumes a
+    power-law spectrum.
+
+    :param luminosity: L in erg s^-1
+    :param Emin: Current Emin
+    :param Emax: Current Emax
+    :param new_Emin: New Emin
+    :param new_Emax: New Emax
+    """
+
+    if spectral_index == 2:
+
+        numerator = np.log(new_Emax / new_Emin)
+
+        denominator = np.log(Emax / Emin)
+
+    else:
+
+        numerator = np.power(new_Emin, 2 - spectral_index) - np.power(
+            new_Emax, 2 - spectral_index
+        )
+
+        denominator = np.power(Emin, 2 - spectral_index) - np.power(
+            Emax, 2 - spectral_index
+        )
+
+    return luminosity * (numerator / denominator)

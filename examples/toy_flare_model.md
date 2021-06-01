@@ -77,24 +77,6 @@ print("FSRQ nu:", len(fc["nu_ras"]))
 ```
 
 ```python
-redshifts = []
-for i in bc["src_id"]:
-    z = blazar_nu._bllac_pop.survey.distances[i]
-    redshifts.append(z)
-    
-max(redshifts)
-```
-
-```python
-redshifts = []
-for i in fc["src_id"]:
-    z = blazar_nu._fsrq_pop.survey.distances[i]
-    redshifts.append(z)
-    
-max(redshifts)
-```
-
-```python
 fig, ax = plt.subplots(subplot_kw={"projection": "astro degrees mollweide"})
 fig.set_size_inches((12, 7))
 for r, d, e, det in zip(np.rad2deg(bc["nu_ras"]), np.rad2deg(bc["nu_decs"]), 
@@ -122,6 +104,36 @@ for r, d, e, det in zip(np.rad2deg(fc["nu_ras"]), np.rad2deg(fc["nu_decs"]),
                              transform=ax.get_transform("icrs"), alpha=0.7, 
                              color=color)
     ax.add_patch(circle)
+```
+
+```python
+redshifts = []
+for i in bc["src_id"]:
+    z = blazar_nu._bllac_pop.survey.distances[i]
+    redshifts.append(z)
+    
+max(redshifts)
+```
+
+```python
+redshifts = []
+for i in fc["src_id"]:
+    z = blazar_nu._fsrq_pop.survey.distances[i]
+    redshifts.append(z)
+    
+max(redshifts)
+```
+
+```python
+sum(bc["src_flare"])
+```
+
+```python
+sum(fc["src_flare"])
+```
+
+```python
+1.8e-10 / 1.9e-10
 ```
 
 ```python
