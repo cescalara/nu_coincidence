@@ -57,11 +57,11 @@ nu_obs = IceCubeTracksWrapper(nu_param_server)
 ```
 
 ```python
-hese_nu_spec = "output/connected_hese_nu.yml"
-ehe_nu_spec = "output/connected_ehe_nu.yml"
-nu_param_server = IceCubeAlertsParams(hese_nu_spec, ehe_nu_spec)
-nu_param_server.seed = 42
-nu_obs = IceCubeAlertsWrapper(nu_param_server)
+#hese_nu_spec = "output/connected_hese_nu.yml"
+#ehe_nu_spec = "output/connected_ehe_nu.yml"
+#nu_param_server = IceCubeAlertsParams(hese_nu_spec, ehe_nu_spec)
+#nu_param_server.seed = 42
+#nu_obs = IceCubeAlertsWrapper(nu_param_server)
 ```
 
 ```python
@@ -133,7 +133,7 @@ sum(fc["src_flare"])
 ```
 
 ```python
-1.8e-10 / 1.9e-10
+sum(blazar_nu._bllac_pop.survey.fluxes_observed)
 ```
 
 ```python
