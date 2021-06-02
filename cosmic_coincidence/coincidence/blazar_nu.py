@@ -595,9 +595,9 @@ class BlazarNuConnection(BlazarNuAction):
 
             # Calculate steady emission
             L_steady = survey.luminosities_latent[i]  # erg s^-1 [0.1 - 100 GeV]
-            L_steady = _convert_energy_range(
-                L_steady, spectral_index, 0.1, 100, 1, 100
-            )  # erg s^-1 [1 - 100 GeV]
+            # L_steady = _convert_energy_range(
+            #    L_steady, spectral_index, 0.1, 100, 1, 100
+            # )  # erg s^-1 [1 - 100 GeV]
             L_steady = L_steady * erg_to_GeV  # GeV s^-1
             L_steady = L_steady * flux_factor  # Neutrinos
             L_steady = L_steady * flavour_factor  # Detected flavours
@@ -689,9 +689,9 @@ class BlazarNuConnection(BlazarNuAction):
                     L_flare = (
                         survey.luminosities_latent[i] * amp
                     )  # erg s^-1 [0.1 - 100 GeV]
-                    L_flare = _convert_energy_range(
-                        L_flare, spectral_index, 0.1, 100, 1, 100
-                    )  # erg s^-1 [1 - 100 GeV]
+                    # L_flare = _convert_energy_range(
+                    #   L_flare, spectral_index, 0.1, 100, 1, 100
+                    # )  # erg s^-1 [1 - 100 GeV]
                     L_flare = L_flare * erg_to_GeV  # GeV s^-1
                     L_flare_nu = L_flare * flux_factor  # Neutrinos
                     L_flare_nu = L_flare_nu * flavour_factor  # Detected flavours
