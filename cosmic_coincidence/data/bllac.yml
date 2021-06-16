@@ -18,7 +18,7 @@ auxiliary samplers:
     xmax: 10
     xmin: 0.1
   flare_times:
-    obs_time: 7.5
+    obs_time: 10.0
     observed: false
     secondary:
     - flare_rate

@@ -587,7 +587,7 @@ KE.to(u.TeV)
 ```
 
 ```python
-
+2.5e5 * 1e9 / 1e12
 ```
 
 ```python

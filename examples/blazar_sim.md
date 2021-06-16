@@ -45,41 +45,106 @@ from cosmic_coincidence.popsynth_wrapper import PopsynthParams, PopsynthWrapper
 ```
 
 ```python
-ps = get_path_to_data("bllac.yml")
-param_server = PopsynthParams(ps)
-param_server.seed = 42
-pop_wrapper = PopsynthWrapper(param_server)
-pop = pop_wrapper.survey
-pop.distances[pop.selection].size
+bl_ps = get_path_to_data("bllac.yml")
+bl_param_server = PopsynthParams(bl_ps)
+bl_param_server.seed = 42
+bl_pop_wrapper = PopsynthWrapper(bl_param_server)
+bl_pop = bl_pop_wrapper.survey
+bl_pop.distances[bl_pop.selection].size
 ```
 
 ```python
-N_flares = [_.size for _ in pop.flare_times]
-N_flares_det = [_.size for _ in pop.flare_times_selected]
-N_assoc = len([_ for _ in pop.flare_times_selected if _.size != 0])
-fig, ax = plt.subplots()
+fs_ps = get_path_to_data("fsrq.yml")
+fs_param_server = PopsynthParams(fs_ps)
+fs_param_server.seed = 42
+fs_pop_wrapper = PopsynthWrapper(fs_param_server)
+fs_pop = fs_pop_wrapper.survey
+fs_pop.distances[fs_pop.selection].size
+```
+
+```python
+plt.style.use("minimalist")
+```
+
+```python
+fig, ax = plt.subplots(2, 1)
+fig.set_size_inches((7, 10))
+bl_sel = bl_pop.selection
+fs_sel = fs_pop.selection
+s=15
+ax[1].scatter(bl_pop.distances[~bl_sel], bl_pop.luminosities_latent[~bl_sel], 
+              alpha=0.3, color="blue", s=s, label="BL Lacs")
+ax[0].scatter(bl_pop.distances[bl_sel], bl_pop.luminosities_latent[bl_sel], 
+              alpha=0.3, color="blue", s=s, label="BL Lacs")
+ax[1].scatter(fs_pop.distances[~fs_sel], fs_pop.luminosities_latent[~fs_sel], 
+              alpha=0.3, color="green", s=s, label="FSRQs")
+ax[0].scatter(fs_pop.distances[fs_sel], fs_pop.luminosities_latent[fs_sel], 
+              alpha=0.3, color="green", s=s, label="FSRQs")
+ax[0].set_title("Detected")
+ax[1].set_title("Undetected")
+for axis in ax:
+    axis.set_xscale("log")
+    axis.set_yscale("log")
+    axis.set_xlabel("z")
+    axis.set_ylabel("$L_\gamma$")
+    axis.set_ylim(7e43)
+    axis.legend()
+fig.tight_layout()
+#fig.savefig("figures/blazar_dist.pdf", bbox_inches="tight", dpi=200)
+```
+
+```python
+len(fs_pop.distances[fs_sel])
+```
+
+```python
+bl_N_flares = [_.size for _ in bl_pop.flare_times]
+bl_N_flares_det = [_.size for _ in bl_pop.flare_times_selected]
+bl_N_assoc = len([_ for _ in bl_pop.flare_times_selected if _.size != 0])
+
+fs_N_flares = [_.size for _ in fs_pop.flare_times]
+fs_N_flares_det = [_.size for _ in fs_pop.flare_times_selected]
+fs_N_assoc = len([_ for _ in fs_pop.flare_times_selected if _.size != 0])
+
+print("N detected flares BL Lac:", sum(bl_N_flares_det))
+print("N associated sources BL Lac:", bl_N_assoc)
+print("N detected flares FSRQ:", sum(fs_N_flares_det))
+print("N associated sources FSRQ:", fs_N_assoc)
+```
+
+```python
+bl_d = []
+for i, _ in enumerate(bl_pop.flare_durations):
+    bl_d.extend(_)
+bl_d = np.array(bl_d) * 52 # weeks
+
+fs_d = []
+for i, _ in enumerate(fs_pop.flare_durations):
+    fs_d.extend(_)
+fs_d = np.array(fs_d) * 52 # weeks
+```
+
+```python
+min(bl_d)
+```
+
+```python
+fig, ax = plt.subplots(2, 1)
+fig.set_size_inches((7, 10))
+
 bins = np.linspace(0, 80)
-ax.hist(N_flares, bins=bins, alpha=0.7, label="All")
-ax.hist(N_flares_det, bins=bins, alpha=0.7, label="Detected")
-ax.set_yscale("log")
-ax.set_xlabel("Total number of flares")
-ax.legend();
-print("N detected flares:", sum(N_flares_det))
-print("N associated sources:", N_assoc)
-```
+ax[0].hist(bl_N_flares_det, bins=bins, alpha=0.7, label="BL Lacs", color="blue")
+ax[0].hist(fs_N_flares_det, bins=bins, alpha=0.7, label="FSRQs", color="green")
+ax[0].set_yscale("log")
+ax[0].set_xlabel("Number of flares per detected source")
+ax[0].legend()
 
-```python
-d = []
-for i, _ in enumerate(pop.flare_durations):
-    d.extend(_)
-d = np.array(d) * 52 # weeks
-bins=np.linspace(min(d), max(d))
-fig, ax = plt.subplots()
-ax.hist(d, bins=bins, density=True)
-ax.plot(bins, stats.pareto(1.5).pdf(bins), alpha=0.7, color='k', 
-        label='pareto approx');
-ax.set_yscale("log")
-ax.set_xlabel("Flare duration (weeks)")
+bins=np.linspace(0, 290)
+ax[1].hist(bl_d, bins=bins, label="BL Lacs", color="blue", alpha=0.7)
+ax[1].hist(fs_d, bins=bins, label="FSRQs", color="green", alpha=0.7)
+ax[1].set_yscale("log")
+ax[1].set_xlabel("Flare duration (weeks)")
+#fig.savefig("figures/flare_dist.pdf", bbox_inches="tight", dpi=200)
 ```
 
 ```python
