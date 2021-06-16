@@ -174,6 +174,7 @@ ax[0].plot(L, fs_pop_synth.luminosity_distribution.phi(L), color="green")
 ax[0].set_xscale("log")
 ax[0].set_yscale("log")
 ax[0].legend()
+ax[0].set_xlabel("$L$ [erg $\mathrm{s}^{-1}$]")
 ax[1].fill_between(z, bl_pop_synth_l.spatial_distribution.dNdV(z), 
                   bl_pop_synth_h.spatial_distribution.dNdV(z), color="blue", alpha=0.2)
 ax[1].plot(z, bl_pop_synth.spatial_distribution.dNdV(z), color="blue")
@@ -182,6 +183,10 @@ ax[1].fill_between(z, fs_pop_synth_l.spatial_distribution.dNdV(z),
                    alpha=0.2)
 ax[1].plot(z, fs_pop_synth.spatial_distribution.dNdV(z), color="green") 
 ax[1].set_yscale("log")
+ax[1].set_xlabel("$z$")
+ax[1].set_ylabel("d$N$/d$V$ [$\mathrm{Gpc}^{-3}$]")
+fig.tight_layout()
+fig.savefig("figures/extreme_params.pdf", bbox_inches="tight", dpi=200)
 ```
 
 ```python
