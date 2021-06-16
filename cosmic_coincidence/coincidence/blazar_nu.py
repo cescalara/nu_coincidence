@@ -62,12 +62,6 @@ class BlazarNuSim(Simulation, metaclass=ABCMeta):
         nu_ehe_config: str = None,
     ):
 
-        super().__init__(
-            file_name=file_name,
-            group_base_name=group_base_name,
-            N=N,
-        )
-
         self._bllac_config = bllac_config
         self._fsrq_config = fsrq_config
         self._nu_config = nu_config
@@ -77,6 +71,12 @@ class BlazarNuSim(Simulation, metaclass=ABCMeta):
         self._bllac_param_servers = []
         self._fsrq_param_servers = []
         self._nu_param_servers = []
+
+        super().__init__(
+            file_name=file_name,
+            group_base_name=group_base_name,
+            N=N,
+        )
 
     def _setup_param_servers(self):
 

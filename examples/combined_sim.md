@@ -5,8 +5,8 @@ jupyter:
     text_representation:
       extension: .md
       format_name: markdown
-      format_version: '1.2'
-      jupytext_version: 1.9.1
+      format_version: '1.3'
+      jupytext_version: 1.11.0
   kernelspec:
     display_name: cosmic_coincidence
     language: python
@@ -24,14 +24,17 @@ import numpy as np
 import sys
 sys.path.append("../")
 
-from cosmic_coincidence.coincidence.blazar_nu import BlazarNuSimulation
+from cosmic_coincidence.coincidence.blazar_nu import BlazarNuCoincidenceSim
 ```
 
 ## Main sim in parallel
 
 ```python
 file_name = "output/test_sim.h5"
-sim = BlazarNuSimulation(file_name=file_name, N=4)
+sim = BlazarNuCoincidenceSim(file_name=file_name, N=4, bllac_config="bllac.yml", 
+                             fsrq_config="fsrq.yml", 
+                             nu_hese_config="diffuse_hese_nu.yml", 
+                             nu_ehe_config="diffuse_ehe_nu.yml")
 ```
 
 ```python
@@ -47,8 +50,10 @@ with h5py.File("output/test_sim.h5", "r") as f:
 ## Check coincidence stuff
 
 ```python
-file_name = "output/test_sim.h5"
-sim = BlazarNuSimulation(file_name=file_name, N=16)
+sim = BlazarNuCoincidenceSim(file_name=file_name, N=4, bllac_config="bllac.yml", 
+                             fsrq_config="fsrq.yml", 
+                             nu_hese_config="diffuse_hese_nu.yml", 
+                             nu_ehe_config="diffuse_ehe_nu.yml")
 ```
 
 ```python
