@@ -43,8 +43,10 @@ sim.run(parallel=True, n_jobs=2)
 
 ```python code_folding=[]
 with h5py.File("output/test_sim.h5", "r") as f:
-    for key in f["survey_0/"]:
+    for key in f["survey_0/blazar_nu_coincidence"]:
         print(key)
+    check = f["survey_0/blazar_nu_coincidence/bllac/n_spatial"][()]
+check
 ```
 
 ## Check coincidence stuff
@@ -73,19 +75,20 @@ nu_obs.observation.ang_err
 ```
 
 ```python
-coincidence = sim._coincidence_check(bllac_pop, fsrq_pop, nu_obs)
+coincidence = sim._blazar_nu_wrapper(bllac_pop, fsrq_pop, nu_obs)
 ```
 
 ```python
-bllac_pop.write()
-fsrq_pop.write()
-nu_obs.write()
-coincidence.write()
+# needs fixing
+#bllac_pop.write()
+#fsrq_pop.write()
+#nu_obs.write()
+#coincidence.write()
 ```
 
 ```python
-with h5py.File("output/test_sim.h5", "r") as f:
-        print(f["survey_0/blazar_nu_coincidence/bllac/n_spatial"][()])
+#with h5py.File("output/test_sim.h5", "r") as f:
+#        print(f["survey_0/blazar_nu_coincidence/bllac/n_spatial"][()])
 ```
 
 ## Check old results
