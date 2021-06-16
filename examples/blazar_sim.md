@@ -6,7 +6,7 @@ jupyter:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.11.2
+      jupytext_version: 1.11.0
   kernelspec:
     display_name: cosmic_coincidence
     language: python
@@ -148,6 +148,43 @@ ax[1].set_xlabel("Flare duration (weeks)")
 ```
 
 ```python
+bl_pop_synth = PopulationSynth.from_file("../cosmic_coincidence/data/bllac.yml")
+bl_pop_synth_l = PopulationSynth.from_file("../cosmic_coincidence/data/bllac_low.yml")
+bl_pop_synth_h = PopulationSynth.from_file("../cosmic_coincidence/data/bllac_high.yml")
+
+fs_pop_synth = PopulationSynth.from_file("../cosmic_coincidence/data/fsrq.yml")
+fs_pop_synth_l = PopulationSynth.from_file("../cosmic_coincidence/data/fsrq_low.yml")
+fs_pop_synth_h = PopulationSynth.from_file("../cosmic_coincidence/data/fsrq_high.yml")
+
+L = np.geomspace(7e43, 1e52)
+z = np.linspace(0, 6)
+```
+
+```python
+fig, ax = plt.subplots(2, 1)
+fig.set_size_inches((7, 10))
+ax[0].fill_between(L, bl_pop_synth_l.luminosity_distribution.phi(L),
+                   bl_pop_synth_h.luminosity_distribution.phi(L), color="blue", 
+                   alpha=0.2, label="BL Lac")
+ax[0].plot(L, bl_pop_synth.luminosity_distribution.phi(L), color="blue")
+ax[0].fill_between(L, fs_pop_synth_l.luminosity_distribution.phi(L),
+                   fs_pop_synth_h.luminosity_distribution.phi(L), color="green", 
+                   alpha=0.2, label="FSRQ")
+ax[0].plot(L, fs_pop_synth.luminosity_distribution.phi(L), color="green")
+ax[0].set_xscale("log")
+ax[0].set_yscale("log")
+ax[0].legend()
+ax[1].fill_between(z, bl_pop_synth_l.spatial_distribution.dNdV(z), 
+                  bl_pop_synth_h.spatial_distribution.dNdV(z), color="blue", alpha=0.2)
+ax[1].plot(z, bl_pop_synth.spatial_distribution.dNdV(z), color="blue")
+ax[1].fill_between(z, fs_pop_synth_l.spatial_distribution.dNdV(z), 
+                  fs_pop_synth_h.spatial_distribution.dNdV(z), color="green", 
+                   alpha=0.2)
+ax[1].plot(z, fs_pop_synth.spatial_distribution.dNdV(z), color="green") 
+ax[1].set_yscale("log")
+```
+
+```python
 bins = 10**np.linspace(-18, -6)
 fig, ax = plt.subplots()
 ax.hist(pop.fluxes_latent, bins=bins, alpha=0.5);
@@ -173,6 +210,11 @@ ax.set_xscale("log")
 ```
 
 ## General population models
+
+```python
+import sys
+sys.path.append("../../cosmic_coincidence/")
+```
 
 ```python
 from popsynth.populations.bpl_population import (BPLZPowerCosmoPopulation, 
@@ -271,7 +313,7 @@ ax.set_yscale("log")
 ```
 
 ```python
-pop_gen.write_to("output/bllac.yml")
+#pop_gen.write_to("output/bllac.yml")
 ```
 
 ```python
