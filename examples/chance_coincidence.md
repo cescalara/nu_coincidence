@@ -21,7 +21,7 @@ import h5py
 ### Standard case
 
 ```python
-file_name = "output/test_new_flare_model.h5"
+file_name = "output/test_ref_pop_model.h5"
 with h5py.File(file_name, "r") as f:
     N = f.attrs["N"]
     bllac_n_spatial = np.zeros(N)
@@ -56,9 +56,9 @@ plt.style.use("minimalist")
 ```
 
 ```python
-fig, ax = plt.subplots(2, 1)
+fig, ax = plt.subplots(1, 2)
 bins = np.linspace(0, 25, 26) - 0.5
-fig.set_size_inches((7, 7))
+fig.set_size_inches((10, 5))
 ax[0].hist(bllac_n_spatial, bins=bins, density=True, alpha=0.5, color="blue", 
         label="BL Lac");
 ax[0].hist(fsrq_n_spatial, bins=bins, density=True, alpha=0.5, color="green", 
