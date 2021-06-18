@@ -56,9 +56,9 @@ plt.style.use("minimalist")
 ```
 
 ```python
-fig, ax = plt.subplots(1, 2)
+fig, ax = plt.subplots(2, 1)
 bins = np.linspace(0, 25, 26) - 0.5
-fig.set_size_inches((10, 5))
+fig.set_size_inches((7, 7))
 ax[0].hist(bllac_n_spatial, bins=bins, density=True, alpha=0.5, color="blue", 
         label="BL Lac");
 ax[0].hist(fsrq_n_spatial, bins=bins, density=True, alpha=0.5, color="green", 
