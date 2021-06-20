@@ -227,21 +227,21 @@ fig.savefig("figures/coincidence_dist_high.pdf", bbox_inches="tight", dpi=200)
 bllac_flare_rate = (len(bllac_n_flaring[bllac_n_flaring>=1]) / N) * 100
 bllac_flare_rate_l = (len(bllac_n_flaring_l[bllac_n_flaring_l>=1]) / N) * 100
 bllac_flare_rate_h = (len(bllac_n_flaring_h[bllac_n_flaring_h>=1]) / N) * 100
-bllac_vals = [bllac_flare_rate, bllac_flare_rate_l, bllac_flare_rate_h]
+bllac_vals = [bllac_flare_rate_l, bllac_flare_rate, bllac_flare_rate_h]
 
 fsrq_flare_rate = (len(fsrq_n_flaring[fsrq_n_flaring>=1]) / N) * 100
 fsrq_flare_rate_l = (len(fsrq_n_flaring_l[fsrq_n_flaring_l>=1]) / N) * 100
 fsrq_flare_rate_h = (len(fsrq_n_flaring_h[fsrq_n_flaring_h>=1]) / N) * 100
-fsrq_vals = [fsrq_flare_rate, fsrq_flare_rate_l, fsrq_flare_rate_h]
+fsrq_vals = [fsrq_flare_rate_l, fsrq_flare_rate, fsrq_flare_rate_h]
 ```
 
 ```python
 fig, ax = plt.subplots()
-labels = ["Reference", "Lower", "Higher"]
-ax.bar([0, 1, 2], bllac_vals, tick_label=labels, color="blue", 
-       label="BL Lac", alpha=0.7)
-ax.bar([0, 1, 2], fsrq_vals, tick_label=labels, color="green", label="FSRQ", 
-       alpha=0.7, bottom=bllac_vals)
+labels = ["Lower", "Reference", "Higher"]
+ax.bar([0, 1, 2], fsrq_vals, tick_label=labels, color="green", 
+       label="FSRQ", alpha=0.7)
+ax.bar([0, 1, 2], bllac_vals, tick_label=labels, color="blue", label="BL Lac", 
+       alpha=0.7, bottom=fsrq_vals)
 ax.legend()
 ax.set_ylabel("Percentage \%")
 ax.set_xlabel("Blazar population model")
@@ -254,6 +254,14 @@ from scipy.special import erf
 
 ```python
 (1 - erf(3/np.sqrt(2)))/2
+```
+
+```python
+from astropy.cosmology import Planck15 as cosmo
+```
+
+```python
+cosmo.__doc__
 ```
 
 ```python
