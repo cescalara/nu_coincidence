@@ -6,7 +6,7 @@ jupyter:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.11.0
+      jupytext_version: 1.11.2
   kernelspec:
     display_name: cosmic_coincidence
     language: python
@@ -45,9 +45,13 @@ from cosmic_coincidence.popsynth_wrapper import PopsynthParams, PopsynthWrapper
 ```
 
 ```python
+seed = 100
+```
+
+```python
 bl_ps = get_path_to_data("bllac.yml")
 bl_param_server = PopsynthParams(bl_ps)
-bl_param_server.seed = 42
+bl_param_server.seed = seed
 bl_pop_wrapper = PopsynthWrapper(bl_param_server)
 bl_pop = bl_pop_wrapper.survey
 bl_pop.distances[bl_pop.selection].size
@@ -56,7 +60,7 @@ bl_pop.distances[bl_pop.selection].size
 ```python
 fs_ps = get_path_to_data("fsrq.yml")
 fs_param_server = PopsynthParams(fs_ps)
-fs_param_server.seed = 42
+fs_param_server.seed = seed
 fs_pop_wrapper = PopsynthWrapper(fs_param_server)
 fs_pop = fs_pop_wrapper.survey
 fs_pop.distances[fs_pop.selection].size
