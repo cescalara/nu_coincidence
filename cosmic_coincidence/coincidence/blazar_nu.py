@@ -471,11 +471,14 @@ class BlazarNuConnection(BlazarNuAction):
         fsrq_pop: PopsynthWrapper,
         nu_obs: IceCubeObsWrapper,
         name="blazar_nu_connection",
+        flare_only=False,
     ):
 
         self._bllac_connection = OrderedDict()
 
         self._fsrq_connection = OrderedDict()
+
+        self._flare_only = flare_only
 
         super().__init__(
             bllac_pop=bllac_pop,
@@ -626,7 +629,7 @@ class BlazarNuConnection(BlazarNuAction):
             Nnu_steady = np.random.poisson(Nnu_ex_steady)
             connection["Nnu_steady"][i] += Nnu_steady
 
-            if Nnu_steady > 0:
+            if Nnu_steady > 0 and not self._flare_only:
 
                 # TODO: remove flare periods
                 if steady_duration < total_duration:
