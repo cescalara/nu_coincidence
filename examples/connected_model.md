@@ -171,14 +171,14 @@ max(redshifts)
 ```
 
 ```python
-
-```
-
-```python
 sum(fc["src_flare"])
 ```
 
 ### Testing constraints
+
+```python
+import h5py
+```
 
 ```python
 from cosmic_coincidence.coincidence.blazar_nu import BlazarNuConnection
@@ -190,20 +190,30 @@ from cosmic_coincidence.utils.plotting import SphericalCircle
 ```
 
 ```python
-flux_factors = [0.0001, 0.001, 0.01, 0.1]
+flux_factors = [1e-5, 1e-4, 1e-3, 0.01, 0.1, 1.0]
+ntrials = 10
 n_alerts_tot_bl = []
 n_multi_tot_bl = []
+n_alerts_flare_bl = []
+n_multi_flare_bl = []
+
 n_alerts_tot_fs = []
 n_multi_tot_fs = []
-```
+n_alerts_flare_fs = []
+n_multi_flare_fs = []
 
-```python
 for i, f in enumerate(flux_factors):
     n_alerts_j_bl = []
     n_multi_j_bl = []
+    n_alerts_jflare_bl = []
+    n_multi_jflare_bl = []
+    
     n_alerts_j_fs = []
     n_multi_j_fs = []
-    for j in range(2):
+    n_alerts_jflare_fs = []
+    n_multi_jflare_fs = []
+    
+    for j in range(ntrials):
         
         seed = 100 * j + i
 
@@ -229,22 +239,34 @@ for i, f in enumerate(flux_factors):
 
         bc = blazar_nu.bllac_connection
         fc = blazar_nu.fsrq_connection
+        #det = bc["src_detected"].astype(bool)
+        flare_bl = bc["src_flare"].astype(bool)
+        flare_fs = fc["src_flare"].astype(bool)
 
         n_alerts_j_bl.append(len(bc["nu_ras"]))
+        n_alerts_jflare_bl.append(len(bc["nu_ras"][flare_bl]))
         n_alerts_j_fs.append(len(fc["nu_ras"]))
+        n_alerts_jflare_fs.append(len(fc["nu_ras"][flare_fs]))
                        
-        nu_from_each_bl = bc["Nnu_steady"] + bc["Nnu_flare"]
-        multiplet_bl = len(nu_from_each_bl[nu_from_each_bl > 1])
-        nu_from_each_fs = fc["Nnu_steady"] + fc["Nnu_flare"]
-        multiplet_fs = len(nu_from_each_fs[nu_from_each_fs > 1])
-        n_multi_j_bl.append(multiplet_bl)
-        n_multi_j_fs.append(multiplet_fs)
+        unique, counts = np.unique(bc["src_id"], return_counts=True)
+        n_multi_j_bl.append(len(counts[counts>1]))
+        unique, counts = np.unique(bc["src_id"][flare_bl], return_counts=True)
+        n_multi_jflare_bl.append(len(counts[counts>1]))
+        unique, counts = np.unique(fc["src_id"], return_counts=True)
+        n_multi_j_fs.append(len(counts[counts>1]))
+        unique, counts = np.unique(fc["src_id"][flare_fs], return_counts=True)
+        n_multi_jflare_fs.append(len(counts[counts>1]))
+        
     
     n_alerts_tot_bl.append(n_alerts_j_bl)
     n_alerts_tot_fs.append(n_alerts_j_fs)
+    n_alerts_flare_bl.append(n_alerts_jflare_bl)
+    n_alerts_flare_fs.append(n_alerts_jflare_fs)
     
     n_multi_tot_bl.append(n_multi_j_bl)
     n_multi_tot_fs.append(n_multi_j_fs)
+    n_multi_flare_bl.append(n_multi_jflare_bl)
+    n_multi_flare_fs.append(n_multi_jflare_fs)
 ```
 
 ```python
@@ -253,35 +275,54 @@ multi_th = 0
 ```
 
 ```python
-for n_alert in n_alerts_tot_bl:
-    n_alert = np.array(n_alert)
-    frac = len(n_alert[n_alert > alert_th])
-    print(frac)
+fig, ax = plt.subplots()
+ax.plot(flux_factors, [len(np.array(n_a)[np.array(n_a) > alert_th]) 
+                       for n_a in n_alerts_tot_bl], 
+        label="BL Lac tot")
+ax.plot(flux_factors, [len(np.array(n_a)[np.array(n_a) > alert_th]) 
+                       for n_a in n_alerts_flare_bl], 
+        label="BL Lac flare")
+ax.plot(flux_factors, [len(np.array(n_a)[np.array(n_a) > alert_th]) 
+                       for n_a in n_alerts_tot_fs], 
+        label="FSRQ tot")
+ax.plot(flux_factors, [len(np.array(n_a)[np.array(n_a) > alert_th]) 
+                       for n_a in n_alerts_flare_fs], 
+        label="FSRQ flare")
+ax.set_xscale("log")
+ax.legend()
+```
+
+```python
+fig, ax = plt.subplots()
+ax.plot(flux_factors, [len(np.array(n_m)[np.array(n_m) > multi_th]) 
+                       for n_m in n_multi_tot_bl], 
+        label="BL Lac tot")
+ax.plot(flux_factors, [len(np.array(n_m)[np.array(n_m) > multi_th]) 
+                       for n_m in n_multi_flare_bl], 
+        label="BL Lac flare")
+ax.plot(flux_factors, [len(np.array(n_m)[np.array(n_m) > multi_th]) 
+                       for n_m in n_multi_tot_fs], 
+        label="FSRQ tot")
+ax.plot(flux_factors, [len(np.array(n_m)[np.array(n_m) > multi_th]) 
+                       for n_m in n_multi_flare_fs], 
+        label="FSRQ flare") 
+ax.set_xscale("log")
+ax.legend()
+```
+
+```python
+with h5py.File("output/test_constraints.h5", "w") as f:
+    f.create_dataset("flux_factors", data=flux_factors)
+    f.create_dataset("ntrials", data=ntrials)
+    f.create_dataset("n_alerts_tot_bl", data=n_alerts_tot_bl)
+    f.create_dataset("n_alerts_flare_bl", data=n_alerts_flare_bl)
+    f.create_dataset("n_alerts_tot_fs", data=n_alerts_tot_fs)
+    f.create_dataset("n_alerts_flare_fs", data=n_alerts_flare_fs)
     
-for n_alert in n_alerts_tot_fs:
-    n_alert = np.array(n_alert)
-    frac = len(n_alert[n_alert > alert_th])
-    print(frac)
-```
-
-```python
-for n_multi in n_multi_tot_bl:
-    n_multi = np.array(n_multi)
-    frac = len(n_multi[n_multi > multi_th])
-    print(frac)
-    
-for n_multi in n_multi_tot_fs:
-    n_multi = np.array(n_multi)
-    frac = len(n_multi[n_multi > multi_th])
-    print(frac)
-```
-
-```python
-len(bc["nu_ras"])
-```
-
-```python
-sum(bc["Nnu_steady"]) #+ sum(bc["Nnu_flare"])
+    f.create_dataset("n_multi_tot_bl", data=n_multi_tot_bl)
+    f.create_dataset("n_multi_flare_bl", data=n_multi_flare_bl)
+    f.create_dataset("n_multi_tot_fs", data=n_multi_tot_fs)
+    f.create_dataset("n_multi_flare_fs", data=n_multi_flare_fs)
 ```
 
 ```python
