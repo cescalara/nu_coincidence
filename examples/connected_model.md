@@ -65,11 +65,13 @@ hese_nu_spec = "output/connected_hese_nu.yml"
 ehe_nu_spec = "output/connected_ehe_nu.yml"
 nu_param_server = IceCubeAlertsParams(hese_nu_spec, ehe_nu_spec)
 nu_param_server.seed = seed
+nu_param_server.hese.connection["flux_factor"] = 1.0
+nu_param_server.ehe.connection["flux_factor"] = 1.0
 nu_obs = IceCubeAlertsWrapper(nu_param_server)
 ```
 
 ```python
-blazar_nu = BlazarNuConnection(bllac_pop, fsrq_pop, nu_obs)
+blazar_nu = BlazarNuConnection(bllac_pop, fsrq_pop, nu_obs, flare_only=True)
 ```
 
 ```python
@@ -178,6 +180,7 @@ sum(fc["src_flare"])
 
 ```python
 import h5py
+from joblib import Parallel, delayed
 ```
 
 ```python
@@ -190,28 +193,19 @@ from cosmic_coincidence.utils.plotting import SphericalCircle
 ```
 
 ```python
-flux_factors = [1e-5, 1e-4, 1e-3, 0.01, 0.1, 1.0]
-ntrials = 10
-n_alerts_tot_bl = []
-n_multi_tot_bl = []
-n_alerts_flare_bl = []
-n_multi_flare_bl = []
+def run_sims(flux_factor, ntrials, i):
 
-n_alerts_tot_fs = []
-n_multi_tot_fs = []
-n_alerts_flare_fs = []
-n_multi_flare_fs = []
-
-for i, f in enumerate(flux_factors):
-    n_alerts_j_bl = []
-    n_multi_j_bl = []
-    n_alerts_jflare_bl = []
-    n_multi_jflare_bl = []
+    output = {}
     
-    n_alerts_j_fs = []
-    n_multi_j_fs = []
-    n_alerts_jflare_fs = []
-    n_multi_jflare_fs = []
+    output["n_alerts_j_bl"] = []
+    output["n_alerts_jflare_bl"] = []
+    output["n_alerts_j_fs"] = []
+    output["n_alerts_jflare_fs"] = []
+    
+    output["n_multi_j_bl"] = []
+    output["n_multi_jflare_bl"] = []
+    output["n_multi_j_fs"] = []
+    output["n_multi_jflare_fs"] = []
     
     for j in range(ntrials):
         
@@ -231,8 +225,8 @@ for i, f in enumerate(flux_factors):
         ehe_nu_spec = "output/connected_ehe_nu.yml"
         nu_param_server = IceCubeAlertsParams(hese_nu_spec, ehe_nu_spec)
         nu_param_server.seed = seed
-        nu_param_server.hese.connection["flux_factor"] = f
-        nu_param_server.ehe.connection["flux_factor"] = f
+        nu_param_server.hese.connection["flux_factor"] = flux_factor
+        nu_param_server.ehe.connection["flux_factor"] = flux_factor
         nu_obs = IceCubeAlertsWrapper(nu_param_server)
 
         blazar_nu = BlazarNuConnection(bllac_pop, fsrq_pop, nu_obs)
@@ -243,30 +237,50 @@ for i, f in enumerate(flux_factors):
         flare_bl = bc["src_flare"].astype(bool)
         flare_fs = fc["src_flare"].astype(bool)
 
-        n_alerts_j_bl.append(len(bc["nu_ras"]))
-        n_alerts_jflare_bl.append(len(bc["nu_ras"][flare_bl]))
-        n_alerts_j_fs.append(len(fc["nu_ras"]))
-        n_alerts_jflare_fs.append(len(fc["nu_ras"][flare_fs]))
+        output["n_alerts_j_bl"].append(len(bc["nu_ras"]))
+        output["n_alerts_jflare_bl"].append(len(bc["nu_ras"][flare_bl]))
+        output["n_alerts_j_fs"].append(len(fc["nu_ras"]))
+        output["n_alerts_jflare_fs"].append(len(fc["nu_ras"][flare_fs]))
                        
         unique, counts = np.unique(bc["src_id"], return_counts=True)
-        n_multi_j_bl.append(len(counts[counts>1]))
+        output["n_multi_j_bl"].append(len(counts[counts>1]))
         unique, counts = np.unique(bc["src_id"][flare_bl], return_counts=True)
-        n_multi_jflare_bl.append(len(counts[counts>1]))
+        output["n_multi_jflare_bl"].append(len(counts[counts>1]))
         unique, counts = np.unique(fc["src_id"], return_counts=True)
-        n_multi_j_fs.append(len(counts[counts>1]))
+        output["n_multi_j_fs"].append(len(counts[counts>1]))
         unique, counts = np.unique(fc["src_id"][flare_fs], return_counts=True)
-        n_multi_jflare_fs.append(len(counts[counts>1]))
+        output["n_multi_jflare_fs"].append(len(counts[counts>1]))
         
+        return output
+```
+
+```python
+#flux_factors = [1e-5, 1e-4, 1e-3, 0.01, 0.1, 1.0]
+flux_factors = [1e-4, 1e-2, 0.1]
+ntrials = 1
+n_alerts_tot_bl = []
+n_multi_tot_bl = []
+n_alerts_flare_bl = []
+n_multi_flare_bl = []
+
+n_alerts_tot_fs = []
+n_multi_tot_fs = []
+n_alerts_flare_fs = []
+n_multi_flare_fs = []
+   
+out = Parallel(n_jobs=4)(delayed(run_sims)(f, ntrials, i) for i, f in enumerate(flux_factors))
+
+for output in out:
     
-    n_alerts_tot_bl.append(n_alerts_j_bl)
-    n_alerts_tot_fs.append(n_alerts_j_fs)
-    n_alerts_flare_bl.append(n_alerts_jflare_bl)
-    n_alerts_flare_fs.append(n_alerts_jflare_fs)
+    n_alerts_tot_bl.append(output["n_alerts_j_bl"])
+    n_alerts_tot_fs.append(output["n_alerts_j_fs"])
+    n_alerts_flare_bl.append(output["n_alerts_jflare_bl"])
+    n_alerts_flare_fs.append(output["n_alerts_jflare_fs"])
     
-    n_multi_tot_bl.append(n_multi_j_bl)
-    n_multi_tot_fs.append(n_multi_j_fs)
-    n_multi_flare_bl.append(n_multi_jflare_bl)
-    n_multi_flare_fs.append(n_multi_jflare_fs)
+    n_multi_tot_bl.append(output["n_multi_j_bl"])
+    n_multi_tot_fs.append(output["n_multi_j_fs"])
+    n_multi_flare_bl.append(output["n_multi_jflare_bl"])
+    n_multi_flare_fs.append(output["n_multi_jflare_fs"])
 ```
 
 ```python
@@ -328,6 +342,14 @@ with h5py.File("output/test_constraints.h5", "w") as f:
 ```python
 with h5py.File("output/test_constraints.h5", "r") as f:
     test = f["n_alerts_tot_bl"][()]
+```
+
+```python
+
+```
+
+```python
+
 ```
 
 ```python
