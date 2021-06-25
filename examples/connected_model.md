@@ -326,5 +326,10 @@ with h5py.File("output/test_constraints.h5", "w") as f:
 ```
 
 ```python
+with h5py.File("output/test_constraints.h5", "r") as f:
+    test = f["n_alerts_tot_bl"][()]
+```
+
+```python
 
 ```

@@ -1,8 +1,8 @@
 connection:
   flux_factor: 0.01
-  lower_energy: 200000.0
-  lower_energy_sim: 200000.0
-  upper_energy: 7500000.0
+  lower_energy: 10000.0
+  lower_energy_sim: 50000.0
+  upper_energy: 100000000.0
   normalisation_energy: 100000.0
 detector:
   Emin_det: 250000.0
