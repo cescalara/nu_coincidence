@@ -322,6 +322,11 @@ ax.set_yscale("log")
 ```
 
 ```python
+f_bl = 0.07
+
+```
+
+```python
 #pop_gen.write_to("output/bllac.yml")
 ```
 

@@ -44,6 +44,8 @@ seed = 100
 bllac_spec = get_path_to_data("bllac_connected.yml")
 bllac_param_server = PopsynthParams(bllac_spec)
 bllac_param_server.seed = seed
+aux = bllac_param_server.pop_spec["auxiliary samplers"]
+aux["flare_rate"]["index"] = 1.5
 bllac_pop = PopsynthWrapper(bllac_param_server)
 
 
@@ -80,6 +82,22 @@ fc = blazar_nu.fsrq_connection
 
 print("BL Lac nu:", len(bc["nu_ras"]))
 print("FSRQ nu:", len(fc["nu_ras"]))
+```
+
+```python
+# Effective flare efficiency
+f_var = sum(bllac_pop.survey.variability) / len(bllac_pop.survey.variability)
+#rate_var = bllac_pop.survey.flare_rate[bllac_pop.survey.variability]
+dur_var = [sum(fd) for fd in bllac_pop.survey.flare_durations if fd.size>0]
+f_duty = np.array(dur_var) / bllac_pop.survey.truth["flare_times"]["obs_time"]
+```
+
+```python
+
+```
+
+```python
+f_var * np.mean(f_duty)
 ```
 
 ```python
@@ -193,9 +211,15 @@ from cosmic_coincidence.utils.plotting import SphericalCircle
 ```
 
 ```python
-def run_sims(flux_factor, ntrials, i):
+def run_sims(ntrials, i):
 
     output = {}
+    
+    output["flux_factor"] = []
+    output["f_var_j_bl"] = []
+    output["f_duty_j_bl"] = []
+    output["f_var_j_fs"] = []
+    output["f_duty_j_fs"] = []
     
     output["n_alerts_j_bl"] = []
     output["n_alerts_jflare_bl"] = []
@@ -214,13 +238,23 @@ def run_sims(flux_factor, ntrials, i):
         bllac_spec = get_path_to_data("bllac_connected.yml")
         bllac_param_server = PopsynthParams(bllac_spec)
         bllac_param_server.seed = seed
+        aux = bllac_param_server.pop_spec["auxiliary samplers"]
+        aux["variability"]["weight"] = np.random.uniform(0.02, 0.12)
+        aux["flare_rate"]["index"] = np.random.uniform(1.5, 2.5)
+        aux["flare_durations"]["index"] = np.random.uniform(1.5, 2.5)
         bllac_pop = PopsynthWrapper(bllac_param_server)
 
         fsrq_spec = get_path_to_data("fsrq_connected.yml")
         fsrq_param_server = PopsynthParams(fsrq_spec)
         fsrq_param_server.seed = seed
+        aux = fsrq_param_server.pop_spec["auxiliary samplers"]
+        aux["variability"]["weight"] = np.random.uniform(0.35, 0.45)
+        aux["flare_rate"]["index"] = np.random.uniform(1.5, 2.5)
+        aux["flare_durations"]["index"] = np.random.uniform(1.5, 2.5)
         fsrq_pop = PopsynthWrapper(fsrq_param_server)
 
+        flux_factor = 10**np.random.uniform(-3, -1)
+        output["flux_factor"].append(flux_factor)
         hese_nu_spec = "output/connected_hese_nu.yml"
         ehe_nu_spec = "output/connected_ehe_nu.yml"
         nu_param_server = IceCubeAlertsParams(hese_nu_spec, ehe_nu_spec)
@@ -229,6 +263,18 @@ def run_sims(flux_factor, ntrials, i):
         nu_param_server.ehe.connection["flux_factor"] = flux_factor
         nu_obs = IceCubeAlertsWrapper(nu_param_server)
 
+        # Effective flare efficiency
+        output["f_var_j_bl"].append(sum(bllac_pop.survey.variability) / 
+                                  len(bllac_pop.survey.variability))
+        dur_var = [sum(fd) for fd in bllac_pop.survey.flare_durations if fd.size>0]
+        output["f_duty_j_bl"].append(np.mean(np.array(dur_var) / 
+                bllac_pop.survey.truth["flare_times"]["obs_time"]))
+        output["f_var_j_fs"].append(sum(fsrq_pop.survey.variability) / 
+                                  len(fsrq_pop.survey.variability))
+        dur_var = [sum(fd) for fd in fsrq_pop.survey.flare_durations if fd.size>0]
+        output["f_duty_j_fs"].append(np.mean(np.array(dur_var) / 
+                fsrq_pop.survey.truth["flare_times"]["obs_time"]))
+        
         blazar_nu = BlazarNuConnection(bllac_pop, fsrq_pop, nu_obs)
 
         bc = blazar_nu.bllac_connection
@@ -251,13 +297,21 @@ def run_sims(flux_factor, ntrials, i):
         unique, counts = np.unique(fc["src_id"][flare_fs], return_counts=True)
         output["n_multi_jflare_fs"].append(len(counts[counts>1]))
         
-        return output
+    return output
 ```
 
 ```python
 #flux_factors = [1e-5, 1e-4, 1e-3, 0.01, 0.1, 1.0]
-flux_factors = [1e-4, 1e-2, 0.1]
-ntrials = 1
+flux_factors = [1e-4, 1e-2]
+ntrials = 2
+
+flux_factor = []
+
+f_var_bl = []
+f_var_fs = []
+f_duty_bl = []
+f_duty_fs = []
+
 n_alerts_tot_bl = []
 n_multi_tot_bl = []
 n_alerts_flare_bl = []
@@ -268,9 +322,16 @@ n_multi_tot_fs = []
 n_alerts_flare_fs = []
 n_multi_flare_fs = []
    
-out = Parallel(n_jobs=4)(delayed(run_sims)(f, ntrials, i) for i, f in enumerate(flux_factors))
+out = Parallel(n_jobs=4)(delayed(run_sims)(ntrials, i) for i in range(4))
 
 for output in out:
+    
+    flux_factor.append(output["flux_factor"])
+    
+    f_var_bl.append(output["f_var_j_bl"])
+    f_var_fs.append(output["f_var_j_fs"])
+    f_duty_bl.append(output["f_duty_j_bl"])
+    f_duty_fs.append(output["f_duty_j_fs"])
     
     n_alerts_tot_bl.append(output["n_alerts_j_bl"])
     n_alerts_tot_fs.append(output["n_alerts_j_fs"])
@@ -286,6 +347,23 @@ for output in out:
 ```python
 alert_th = 50
 multi_th = 0
+```
+
+```python
+ff = np.array(flux_factor).flatten()
+fvar = np.array(f_var_bl).flatten()
+alerts = np.array(n_alerts_tot_bl).flatten()
+```
+
+```python
+alerts
+```
+
+```python
+fig, ax = plt.subplots()
+sel = alerts < 20
+ax.scatter(ff, fvar)
+ax.scatter(ff[sel], fvar[sel])
 ```
 
 ```python
