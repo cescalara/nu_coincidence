@@ -1,3 +1,6 @@
+import yaml
+from typing import Dict, Any
+
 from popsynth.population_synth import PopulationSynth
 from cosmic_coincidence.utils.parameter_server import ParameterServer
 
@@ -8,21 +11,25 @@ class PopsynthParams(ParameterServer):
     a popsynth population.
     """
 
-    def __init__(self, popsynth_spec, flux_sigma=0.1):
+    def __init__(self, config_file, flux_sigma=0.1):
         """
         :popsynth_spec: YAML file containing popsynth info.
         """
 
         super().__init__()
 
-        self._popsynth_spec = popsynth_spec
+        self._config_file = config_file
 
         self._flux_sigma = flux_sigma
 
-    @property
-    def popsynth_spec(self):
+        with open(self._config_file) as f:
 
-        return self._popsynth_spec
+            self._pop_spec: Dict[str, Any] = yaml.load(f, Loader=yaml.SafeLoader)
+
+    @property
+    def pop_spec(self):
+
+        return self._pop_spec
 
     @property
     def flux_sigma(self):
@@ -39,11 +46,11 @@ class PopsynthWrapper(object):
 
         self._parameter_server = parameter_server
 
-        ps = parameter_server.popsynth_spec
+        ps = parameter_server.pop_spec
 
         fs = parameter_server.flux_sigma
 
-        self._pop_gen = PopulationSynth.from_file(ps)
+        self._pop_gen = PopulationSynth.from_dict(ps)
 
         self._pop_gen._seed = parameter_server.seed
 
