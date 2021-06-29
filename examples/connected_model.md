@@ -306,7 +306,6 @@ flux_factors = [1e-4, 1e-2]
 ntrials = 2
 
 flux_factor = []
-
 f_var_bl = []
 f_var_fs = []
 f_duty_bl = []
