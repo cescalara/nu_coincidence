@@ -302,7 +302,69 @@ fig.savefig("figures/flare_eff_const.pdf", bbox_inches="tight", dpi=200)
 ```
 
 ```python
+fig, ax = plt.subplots()
+ax.hist(f_duty_fs)
+```
 
+## Simple estimate
+
+```python
+from astropy import units as u
+```
+
+```python
+eps = 0.5
+L_gamma = 1e47 * (u.erg / u.s)
+n = 1e-11 * (1/u.Mpc**3)
+r_max = (10 * u.Gpc).to(u.cm)
+r_txs = 5e27 * u.cm
+E_avg = 1 * u.PeV
+A_eff = 50 * u.m**2
+T_obs = 7.5 * u.yr
+```
+
+```python
+r_max.to(u.Gpc)
+```
+
+```python
+# calibrate
+phi_txs = (eps * L_gamma) / (4*np.pi * r_txs**2)
+print(phi_txs)
+N_txs = (phi_txs / E_avg.to(u.erg)) * A_eff.to(u.cm**2) * T_obs.to(u.s)
+N_txs
+```
+
+```python
+Phi_gamma = n.to(1/u.cm**3) * L_gamma * r_max
+Phi_nu = eps * Phi_gamma
+Phi_nu
+```
+
+```python
+N_nu = (Phi_nu / E_avg.to(u.erg)) * A_eff.to(u.cm**2) * T_obs.to(u.s)
+N_nu
+```
+
+```python
+phi_1_nu = E_avg.to(u.erg) / (A_eff.to(u.cm**2) * T_obs.to(u.s))
+phi_1 = phi_1_nu / eps
+r_1 = np.sqrt(L_gamma / (4*np.pi * phi_1))
+N_multi = np.sqrt(np.pi) * (4/3) * np.pi * r_1.to(u.Mpc)**3 * n
+N_multi
+```
+
+```python
+from popsynth.utils.cosmology import cosmology
+```
+
+```python
+cosmology.luminosity_distance(10)
+```
+
+```python
+r = 1 * u.deg
+(np.pi * r**2).to(u.sr)
 ```
 
 ```python

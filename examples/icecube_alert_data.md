@@ -4,8 +4,8 @@ jupyter:
     text_representation:
       extension: .md
       format_name: markdown
-      format_version: '1.2'
-      jupytext_version: 1.9.1
+      format_version: '1.3'
+      jupytext_version: 1.11.2
   kernelspec:
     display_name: cosmic_coincidence
     language: python
@@ -140,6 +140,23 @@ ax.hist(circle_event_areas, alpha=0.5, density=True);
 min(event_areas)
 ```
 
-```python
+## Simple estimate
 
+```python
+N_blazar = 3000
+f_var = 0.1
+f_flare = 0.1
+Omega_nu = 1e-3
+R_nu = 7
+T_obs = 7.5
+```
+
+```python
+N_spatial = N_blazar * ((R_nu * T_obs * Omega_nu)/(4*np.pi))
+N_spatial
+```
+
+```python
+N_flare = N_spatial * f_var * f_flare
+N_flare
 ```
