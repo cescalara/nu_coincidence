@@ -587,7 +587,9 @@ class BlazarNuConnection(BlazarNuAction):
         N = len(survey.distances)
 
         connection["Nnu_steady"] = np.zeros(N)
+        connection["Nnu_ex_steady"] = np.zeros(N)
         connection["Nnu_flare"] = np.zeros(N)
+        connection["Nnu_ex_flare"] = np.zeros(N)
 
         for i in range(N):
 
@@ -626,6 +628,7 @@ class BlazarNuConnection(BlazarNuAction):
                 min_energy=Emin_sim,
                 max_energy=Emax,
             )[0]
+            connection["Nnu_ex_steady"][i] += Nnu_ex_steady
             Nnu_steady = np.random.poisson(Nnu_ex_steady)
             connection["Nnu_steady"][i] += Nnu_steady
 
@@ -718,6 +721,7 @@ class BlazarNuConnection(BlazarNuAction):
 
                     # Sample actual number of neutrinos per flare
                     Nnu_flare = np.random.poisson(Nnu_ex_flare)
+                    connection["Nnu_ex_flare"][i] += Nnu_ex_flare
                     connection["Nnu_flare"][i] += Nnu_flare
 
                     # Sample times of nu
