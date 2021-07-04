@@ -6,7 +6,7 @@ jupyter:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.11.2
+      jupytext_version: 1.11.0
   kernelspec:
     display_name: cosmic_coincidence
     language: python
@@ -37,6 +37,14 @@ from cosmic_coincidence.populations.selection import GalacticPlaneSelection
 from cosmic_coincidence.populations.aux_samplers import SpectralIndexAuxSampler
 ```
 
+```python
+plt.style.use("minimalist")
+colormap = plt.cm.viridis
+colors = colormap(np.linspace(0, 1, 10))
+c1 = colors[2]
+c2 = colors[5]
+```
+
 ## From file
 
 ```python
@@ -45,7 +53,7 @@ from cosmic_coincidence.popsynth_wrapper import PopsynthParams, PopsynthWrapper
 ```
 
 ```python
-seed = 100
+seed = 42
 ```
 
 ```python
@@ -67,23 +75,19 @@ fs_pop.distances[fs_pop.selection].size
 ```
 
 ```python
-plt.style.use("minimalist")
-```
-
-```python
 fig, ax = plt.subplots(2, 1)
 fig.set_size_inches((7, 10))
 bl_sel = bl_pop.selection
 fs_sel = fs_pop.selection
 s=15
 ax[1].scatter(bl_pop.distances[~bl_sel], bl_pop.luminosities_latent[~bl_sel], 
-              alpha=0.3, color="blue", s=s, label="BL Lacs")
+              alpha=0.3, color=c1, s=s, label="BL Lacs")
 ax[0].scatter(bl_pop.distances[bl_sel], bl_pop.luminosities_latent[bl_sel], 
-              alpha=0.3, color="blue", s=s, label="BL Lacs")
+              alpha=0.3, color=c1, s=s, label="BL Lacs")
 ax[1].scatter(fs_pop.distances[~fs_sel], fs_pop.luminosities_latent[~fs_sel], 
-              alpha=0.3, color="green", s=s, label="FSRQs")
+              alpha=0.3, color=c2, s=s, label="FSRQs")
 ax[0].scatter(fs_pop.distances[fs_sel], fs_pop.luminosities_latent[fs_sel], 
-              alpha=0.3, color="green", s=s, label="FSRQs")
+              alpha=0.3, color=c2, s=s, label="FSRQs")
 ax[0].set_title("Detected")
 ax[1].set_title("Undetected")
 for axis in ax:
@@ -95,6 +99,26 @@ for axis in ax:
     axis.legend()
 fig.tight_layout()
 #fig.savefig("figures/blazar_dist.pdf", bbox_inches="tight", dpi=200)
+```
+
+```python
+ra = np.deg2rad(fs_pop.ra)
+dec = np.deg2rad(90 - fs_pop.dec)
+r = fs_pop.distances / max(fs_pop.distances)
+x = r * np.cos(ra) * np.sin(dec)
+y = r * np.sin(ra) * np.sin(dec)
+z = r * np.cos(dec)
+```
+
+```python
+fig, ax = plt.subplots(subplot_kw = {"projection": "3d"})
+fig.set_size_inches((10, 10))
+ax.set_box_aspect([1,1,1])
+for X, Y, Z, R in zip(x, y, z, r):
+    c = np.digitize(R, bins)-1
+    ax.scatter(X, Y, Z, alpha=R, color=colors[c])
+ax.set_axis_off()
+fig.savefig("figures/universe.pdf", bbox_inches="tight", dpi=200)
 ```
 
 ```python
@@ -137,18 +161,22 @@ fig, ax = plt.subplots(2, 1)
 fig.set_size_inches((7, 10))
 
 bins = np.linspace(0, 80)
-ax[0].hist(bl_N_flares_det, bins=bins, alpha=0.7, label="BL Lacs", color="blue")
-ax[0].hist(fs_N_flares_det, bins=bins, alpha=0.7, label="FSRQs", color="green")
+ax[0].hist(bl_N_flares_det, bins=bins, alpha=0.7, label="BL Lacs", color=c1)
+ax[0].hist(fs_N_flares_det, bins=bins, alpha=0.7, label="FSRQs", color=c2)
 ax[0].set_yscale("log")
 ax[0].set_xlabel("Number of flares per detected source")
 ax[0].legend()
 
 bins=np.linspace(0, 290)
-ax[1].hist(bl_d, bins=bins, label="BL Lacs", color="blue", alpha=0.7)
-ax[1].hist(fs_d, bins=bins, label="FSRQs", color="green", alpha=0.7)
+ax[1].hist(bl_d, bins=bins, label="BL Lacs", color=c2, alpha=0.7)
+ax[1].hist(fs_d, bins=bins, label="FSRQs", color=c2, alpha=0.7)
 ax[1].set_yscale("log")
 ax[1].set_xlabel("Flare duration (weeks)")
 #fig.savefig("figures/flare_dist.pdf", bbox_inches="tight", dpi=200)
+```
+
+```python
+from popsynth import PopulationSynth
 ```
 
 ```python
@@ -161,34 +189,41 @@ fs_pop_synth_l = PopulationSynth.from_file("../cosmic_coincidence/data/fsrq_low.
 fs_pop_synth_h = PopulationSynth.from_file("../cosmic_coincidence/data/fsrq_high.yml")
 
 L = np.geomspace(7e43, 1e52)
-z = np.linspace(0, 6)
+z = np.linspace(0, 4, 100)
 ```
 
 ```python
+df = (1e-9 / (4*np.pi)) * 0.2
+```
+
+```python
+fs = 22
 fig, ax = plt.subplots(2, 1)
 fig.set_size_inches((7, 10))
 ax[0].fill_between(L, bl_pop_synth_l.luminosity_distribution.phi(L),
-                   bl_pop_synth_h.luminosity_distribution.phi(L), color="blue", 
+                   bl_pop_synth_h.luminosity_distribution.phi(L), color=c1, 
                    alpha=0.2, label="BL Lac")
-ax[0].plot(L, bl_pop_synth.luminosity_distribution.phi(L), color="blue")
+ax[0].plot(L, bl_pop_synth.luminosity_distribution.phi(L), color=c1)
 ax[0].fill_between(L, fs_pop_synth_l.luminosity_distribution.phi(L),
-                   fs_pop_synth_h.luminosity_distribution.phi(L), color="green", 
+                   fs_pop_synth_h.luminosity_distribution.phi(L), color=c2, 
                    alpha=0.2, label="FSRQ")
-ax[0].plot(L, fs_pop_synth.luminosity_distribution.phi(L), color="green")
+ax[0].plot(L, fs_pop_synth.luminosity_distribution.phi(L), color=c2)
 ax[0].set_xscale("log")
 ax[0].set_yscale("log")
-ax[0].legend()
-ax[0].set_xlabel("$L$ [erg $\mathrm{s}^{-1}$]")
-ax[1].fill_between(z, bl_pop_synth_l.spatial_distribution.dNdV(z), 
-                  bl_pop_synth_h.spatial_distribution.dNdV(z), color="blue", alpha=0.2)
-ax[1].plot(z, bl_pop_synth.spatial_distribution.dNdV(z), color="blue")
-ax[1].fill_between(z, fs_pop_synth_l.spatial_distribution.dNdV(z), 
-                  fs_pop_synth_h.spatial_distribution.dNdV(z), color="green", 
+ax[0].legend(fontsize=fs)
+ax[0].set_xlabel("$L$ [erg $\mathrm{s}^{-1}$]", fontsize=fs)
+ax[1].fill_between(z, bl_pop_synth_l.spatial_distribution.dNdV(z) * df, 
+                  bl_pop_synth_h.spatial_distribution.dNdV(z) * df, 
+                   color=c1, alpha=0.2)
+ax[1].plot(z, bl_pop_synth.spatial_distribution.dNdV(z) * df, color=c1)
+ax[1].fill_between(z, fs_pop_synth_l.spatial_distribution.dNdV(z) * df, 
+                  fs_pop_synth_h.spatial_distribution.dNdV(z) * df, 
+                   color=c2, 
                    alpha=0.2)
-ax[1].plot(z, fs_pop_synth.spatial_distribution.dNdV(z), color="green") 
+ax[1].plot(z, fs_pop_synth.spatial_distribution.dNdV(z) * df, color=c2) 
 ax[1].set_yscale("log")
-ax[1].set_xlabel("$z$")
-ax[1].set_ylabel("d$N$/d$V$ [$\mathrm{Gpc}^{-3}$]")
+ax[1].set_xlabel("$z$", fontsize=fs)
+ax[1].set_ylabel("d$N$/d$V$ [$\mathrm{Mpc}^{-3}$]", fontsize=fs, labelpad=10)
 fig.tight_layout()
 fig.savefig("figures/extreme_params.pdf", bbox_inches="tight", dpi=200)
 ```
@@ -196,8 +231,8 @@ fig.savefig("figures/extreme_params.pdf", bbox_inches="tight", dpi=200)
 ```python
 bins = 10**np.linspace(-18, -6)
 fig, ax = plt.subplots()
-ax.hist(pop.fluxes_latent, bins=bins, alpha=0.5);
-ax.hist(pop.selected_fluxes_latent, bins=bins, alpha=0.5)
+ax.hist(bl_pop.fluxes_latent, bins=bins, alpha=0.5);
+ax.hist(bl_pop.selected_fluxes_latent, bins=bins, alpha=0.5)
 ax.set_xscale("log")
 ```
 

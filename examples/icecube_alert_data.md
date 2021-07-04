@@ -5,7 +5,7 @@ jupyter:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.11.2
+      jupytext_version: 1.11.0
   kernelspec:
     display_name: cosmic_coincidence
     language: python
@@ -77,7 +77,12 @@ min(dec_errs)
 ```
 
 ```python
+
 import ligo.skymap.plot
+
+import sys
+sys.path.append("../")
+from cosmic_coincidence.utils.plotting import SphericalCircle
 ```
 
 ```python
@@ -86,7 +91,7 @@ decs = df.Dec.values
 
 fig, ax = plt.subplots(subplot_kw={"projection": "astro degrees mollweide"})
 fig.set_size_inches((12, 7))
-ax.scatter(ras, decs, transform=ax.get_transform("icrs"))
+ax.scatter(ras, decs, transform=ax.get_transform("icrs"), alpha=0.5)
 ```
 
 ```python

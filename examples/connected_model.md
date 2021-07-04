@@ -5,7 +5,7 @@ jupyter:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.11.2
+      jupytext_version: 1.11.0
   kernelspec:
     display_name: cosmic_coincidence
     language: python
@@ -37,15 +37,15 @@ from cosmic_coincidence.utils.plotting import SphericalCircle
 ```
 
 ```python
-seed = 100
+seed = 43
 ```
 
 ```python
 bllac_spec = get_path_to_data("bllac_connected.yml")
 bllac_param_server = PopsynthParams(bllac_spec)
 bllac_param_server.seed = seed
-aux = bllac_param_server.pop_spec["auxiliary samplers"]
-aux["flare_rate"]["index"] = 1.5
+#aux = bllac_param_server.pop_spec["auxiliary samplers"]
+#aux["flare_rate"]["index"] = 1.9
 bllac_pop = PopsynthWrapper(bllac_param_server)
 
 
@@ -67,13 +67,14 @@ hese_nu_spec = "output/connected_hese_nu.yml"
 ehe_nu_spec = "output/connected_ehe_nu.yml"
 nu_param_server = IceCubeAlertsParams(hese_nu_spec, ehe_nu_spec)
 nu_param_server.seed = seed
-nu_param_server.hese.connection["flux_factor"] = 1.0
-nu_param_server.ehe.connection["flux_factor"] = 1.0
+flux_factor = 0.0005
+nu_param_server.hese.connection["flux_factor"] = flux_factor
+nu_param_server.ehe.connection["flux_factor"] = flux_factor
 nu_obs = IceCubeAlertsWrapper(nu_param_server)
 ```
 
 ```python
-blazar_nu = BlazarNuConnection(bllac_pop, fsrq_pop, nu_obs, flare_only=True)
+blazar_nu = BlazarNuConnection(bllac_pop, fsrq_pop, nu_obs, flare_only=False)
 ```
 
 ```python
@@ -85,19 +86,51 @@ print("FSRQ nu:", len(fc["nu_ras"]))
 ```
 
 ```python
-# Effective flare efficiency
-f_var = sum(bllac_pop.survey.variability) / len(bllac_pop.survey.variability)
-#rate_var = bllac_pop.survey.flare_rate[bllac_pop.survey.variability]
-dur_var = [sum(fd) for fd in bllac_pop.survey.flare_durations if fd.size>0]
-f_duty = np.array(dur_var) / bllac_pop.survey.truth["flare_times"]["obs_time"]
+colors = plt.cm.viridis(np.linspace(0, 1, 10))
+plt.style.use("minimalist")
 ```
 
 ```python
-
-```
-
-```python
-f_var * np.mean(f_duty)
+fig, ax = plt.subplots(subplot_kw={"projection": "astro degrees mollweide"})
+fig.set_size_inches((12, 7))
+np.random.seed(42)
+factor = 0.1
+fs = 20
+# BL Lacs
+max_nex = max(bc["Nnu_ex_steady"]*factor)
+for ra, dec, nex in zip(bllac_pop.survey.ra, bllac_pop.survey.dec, 
+                   bc["Nnu_ex_steady"]*factor):
+    n = np.random.poisson(nex)
+    if n > 0:
+        if nex/max_nex < 0.1:
+            alpha = 0.1
+        else:
+            alpha = nex/max_nex
+            ax.text(ra+3, dec+3, "%.2f" % nex, transform=ax.get_transform("icrs"), 
+                    fontsize=fs)
+        circle = SphericalCircle((ra * u.deg, dec * u.deg), 1.5 * u.deg,
+                                 transform=ax.get_transform("icrs"), alpha=alpha, 
+                                 color=colors[0])
+        ax.add_patch(circle)
+    
+# FSRQs
+max_nex = max(fc["Nnu_ex_steady"]*factor)
+for ra, dec, nex in zip(fsrq_pop.survey.ra, fsrq_pop.survey.dec, 
+                   fc["Nnu_ex_steady"]*factor):
+    n = np.random.poisson(nex)
+    if n > 0:
+        if nex/max_nex < 0.1:
+            alpha = 0.1
+        else:
+            alpha = nex/max_nex
+            ax.text(ra+3, dec+3, "%.2f" % nex, transform=ax.get_transform("icrs"), 
+                    fontsize=fs)
+        circle = SphericalCircle((ra * u.deg, dec * u.deg), 1.5 * u.deg,
+                                 transform=ax.get_transform("icrs"), alpha=alpha, 
+                                 color=colors[0])
+        ax.add_patch(circle)
+ax.axis("off")
+fig.savefig("figures/sky_template_4.pdf", bbox_inches="tight", dpi=200)
 ```
 
 ```python

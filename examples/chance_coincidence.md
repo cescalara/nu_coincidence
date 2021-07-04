@@ -5,7 +5,7 @@ jupyter:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.11.2
+      jupytext_version: 1.11.0
   kernelspec:
     display_name: cosmic_coincidence
     language: python
@@ -53,6 +53,27 @@ total_n_flaring = bllac_n_flaring + fsrq_n_flaring
 
 ```python
 plt.style.use("minimalist")
+colors = plt.cm.viridis(np.linspace(0, 1, 10))
+c1 = colors[2]
+c2 = colors[5]
+```
+
+```python
+fig, ax = plt.subplots()
+fs=22
+bins = np.linspace(0, 25, 26) - 0.5
+fig.set_size_inches((7, 4))
+ax.hist(bllac_n_spatial, bins=bins, density=True, alpha=0.5, color=c1, 
+        label="BL Lac", histtype="stepfilled");
+ax.hist(fsrq_n_spatial, bins=bins, density=True, alpha=0.5, color=c2, 
+        label="FSRQ", histtype="stepfilled");
+ax.hist(total_n_spatial, bins=bins, density=True, histtype="step", color="k", lw=3,
+           label="Total")
+ax.set_xticks(bins[::2] + 0.5);
+ax.legend(fontsize=fs)
+ax.set_xlabel("Number of spatial coincidences", fontsize=fs)
+fig.tight_layout()
+fig.savefig("figures/coincidence_dist_talk.pdf", bbox_inches="tight", dpi=200)
 ```
 
 ```python

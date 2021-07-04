@@ -5,7 +5,7 @@ jupyter:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.11.2
+      jupytext_version: 1.11.0
   kernelspec:
     display_name: cosmic_coincidence
     language: python
@@ -126,6 +126,42 @@ ax.set_ylim(0)
 fig.savefig("figures/single_event_const.pdf", bbox_inches="tight", dpi=200)
 ```
 
+For talk
+
+```python
+colors = plt.cm.viridis(np.linspace(0, 1, 10))
+fs = 22
+c1 = colors[2]
+c2 = colors[5]
+a1 = 1.0
+a2 = 0.6
+```
+
+```python
+fig, ax = plt.subplots()
+fig.set_size_inches((7,5))
+ax.plot(tot["flux_factors"], frac_ok_smooth, label="All emission", lw=3, alpha=a1, 
+        color=c1)
+ax.plot(tot["flux_factors"], frac_ok_bl_smooth, lw=2, alpha=a2, linestyle="--",
+        color=c1)
+ax.plot(tot["flux_factors"], frac_ok_fs_smooth, lw=2, alpha=a2, linestyle="-.",
+       color=c1)
+
+ax.plot(ffs[::2], frac_ok_flare_smooth, label="Flares only", lw=3, alpha=a1, 
+        color=c2)
+ax.plot(ffs[::2], frac_ok_flare_bl_smooth, lw=2, alpha=a2, linestyle="--",
+        color=c2)
+ax.plot(ffs[::2], frac_ok_flare_fs_smooth, lw=2, alpha=a2, linestyle="-.",
+        color=c2)
+ax.set_xscale("log")
+ax.legend(loc=(0.65,0.8), fontsize=fs)
+ax.set_xlabel(r"$\epsilon_{\gamma\nu}$", fontsize=fs)
+ax.set_title(r"Fraction satisfying $N_\nu^a = 1$", y=1.1, fontsize=fs)
+ax.axhline(0.001, xmin=0.6, xmax=5, lw=3, color=c1, alpha=0.7)
+ax.set_ylim(0)
+fig.savefig("figures/single_event_const_talk.pdf", bbox_inches="tight", dpi=200)
+```
+
 ## Total event constraints 
 
 ```python
@@ -210,6 +246,46 @@ ax.set_xlabel(r"$\epsilon_{\gamma\nu}$")
 ax.set_ylabel(r"Fraction satisfying $N_\nu^a \leq 51$ and $N_\nu^m \leq 1$",
              labelpad=10)
 fig.savefig("figures/total_event_const.pdf", bbox_inches="tight", dpi=200)
+```
+
+For talk
+
+```python
+colors = plt.cm.viridis(np.linspace(0, 1, 10))
+fs = 22
+c1 = colors[2]
+c2 = colors[5]
+a1 = 1.0
+a2 = 0.6
+```
+
+```python
+fig, ax = plt.subplots()
+fig.set_size_inches((7,5))
+ax.plot(tot["flux_factors"], frac_ok_smooth, label="All emission", 
+        color=c1, lw=3, alpha=a1)
+ax.plot(tot["flux_factors"], frac_ok_bl_smooth, color=c1, 
+        lw=2, alpha=a2, linestyle="--")
+ax.plot(tot["flux_factors"], frac_ok_fs_smooth, color=c1, 
+        lw=2, alpha=a2, linestyle="-.")
+ax.plot(flare["flux_factors"], frac_ok_flare_smooth[5:], label="Flares only", 
+        color=c2, lw=3, alpha=a1)
+ax.plot(np.concatenate([flare["flux_factors"],np.linspace(5, 10, 5)]), 
+        frac_ok_bl_flare_smooth, color=c2, 
+        lw=2, alpha=a2, linestyle="--")
+ax.plot(flare["flux_factors"], 
+        frac_ok_fs_flare_smooth, color=c2, 
+        lw=2, alpha=a2, linestyle="-.")
+ax.axhline(1.0, 0, 0.343, color=c2, lw=3, alpha=a1)
+ax.axhline(0.001, xmin=0.6, xmax=5, lw=3, color=c1, alpha=a1)
+ax.set_xscale("log")
+#ax.legend(loc=(0.65,0.8), fontsize=fs)
+ax.set_ylim(0)
+ax.set_xlim(1e-5, 10)
+ax.set_xlabel(r"$\epsilon_{\gamma\nu}$", fontsize=fs)
+ax.set_title(r"Fraction satisfying $N_\nu^a \leq 51$ and $N_\nu^m \leq 1$",
+             fontsize=fs, y=1.1)
+fig.savefig("figures/total_event_const_talk.pdf", bbox_inches="tight", dpi=200)
 ```
 
 ## Flare efficiency

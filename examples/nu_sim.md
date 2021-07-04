@@ -6,7 +6,7 @@ jupyter:
       extension: .md
       format_name: markdown
       format_version: '1.3'
-      jupytext_version: 1.11.2
+      jupytext_version: 1.11.0
   kernelspec:
     display_name: cosmic_coincidence
     language: python
@@ -283,7 +283,7 @@ sources[1].z
 
 ```python
 simulator = Simulator(sources, hese_detector)
-simulator.time = 7.5 # years
+simulator.time = 100 # years
 simulator.max_cosz = 1
 simulator._get_expected_number()
 simulator.run(show_progress=True, seed=42)
@@ -340,7 +340,7 @@ sources = [atmospheric, astrophysical_bg]
 
 ```python
 simulator = Simulator(sources, ehe_detector)
-simulator.time = 7.5 # years
+simulator.time = 100 # years
 simulator.max_cosz = 1
 simulator._get_expected_number()
 simulator.run(show_progress=True, seed=42)
@@ -348,7 +348,7 @@ print(simulator._Nex)
 ```
 
 ```python
-Ereco_min = 3e5
+Ereco_min = 2.5e5
 ```
 
 ```python
@@ -380,17 +380,30 @@ ax.hist(ang_err, bins=bins);
 ```
 
 ```python
-fig, ax = plt.subplots()
+plt.style.use("minimalist")
+colors = plt.cm.viridis(np.linspace(0, 1, 10))
+
 bins = np.linspace(0, 5.5, 100)
-ax.hist(hese_ang_err, bins=bins, cumulative=True, histtype="step", density=True, 
-        label="HESE", color="blue");
-ax.hist(ehe_ang_err, bins=bins, cumulative=True, histtype="step", density=True,
-        label="EHE", color="green");
-ax.set_xlim(0, 5)
-ax.legend()
-ax.set_xlabel("Opening angle [deg]")
-ax.set_ylabel("Cumulative")
-#fig.savefig("figures/realtime_angres_fig9.pdf", bbox_inches="tight", dpi=100)
+hist_hese, _ = np.histogram(hese_ang_err, bins=bins, density=True)
+cumu_hese = np.cumsum(hist_hese) / max(np.cumsum(hist_hese))
+
+hist_ehe, _ = np.histogram(ehe_ang_err, bins=bins, density=True)
+cumu_ehe = np.cumsum(hist_ehe) / max(np.cumsum(hist_ehe))
+```
+
+```python
+fs = 22
+
+fig, ax = plt.subplots()
+fig.set_size_inches(7, 5)
+
+ax.step(bins[:-1], cumu_hese, color=colors[0], lw=3, alpha=0.7, label="HESE")
+ax.step(bins[:-1], cumu_ehe, color=colors[2], lw=3, alpha=0.7, label="EHE")
+ax.set_xlim(0, 4)
+ax.legend(fontsize=fs)
+ax.set_xlabel("Angular resolution [deg]", fontsize=fs)
+ax.set_ylabel("Cumulative distribution", fontsize=fs, labelpad=10)
+fig.savefig("figures/realtime_angres_fig9_talk.pdf", bbox_inches="tight", dpi=100)
 ```
 
 ```python
@@ -537,6 +550,31 @@ for axis in ax:
     axis.grid()
     axis.legend()
 fig.savefig("figures/realtime_aeff_fig7.pdf", bbox_inches="tight", dpi=100)
+```
+
+Talk version...
+
+```python
+plt.style.use("minimalist")
+colors = plt.cm.viridis(np.linspace(0, 1, 10))
+fs = 22
+
+fig, ax = plt.subplots()
+fig.set_size_inches((7, 5))
+
+ax.step(mu.T[0] * 1e-3,  (mu.T[2] + e.T[2] + tau.T[2]) * hese_aeff_fac, 
+          label="HESE", color=colors[0], lw=3, alpha=0.7)
+ax.step(bins[1:] * 1e-3, (Etrue_sel / Einit) * ehe_aeff_fac, 
+           label="EHE", color=colors[2], lw=3, alpha=0.7)
+ax.set_xscale("log")
+ax.set_yscale("log")
+ax.set_xlabel(r"True energy [TeV]", fontsize=fs)
+ax.set_ylabel(r"Effective area [$\mathrm{m}^2$]", fontsize=fs, labelpad=10)
+ax.set_xlim(1e1, 1e4)
+ax.set_ylim(1e-3, 1e3)
+#axis.grid()
+ax.legend()
+fig.savefig("figures/realtime_aeff_fig7_talk.pdf", bbox_inches="tight", dpi=100)
 ```
 
 ## Angular resolution
