@@ -279,7 +279,7 @@ ax.plot(flare["flux_factors"],
 ax.axhline(1.0, 0, 0.343, color=c2, lw=3, alpha=a1)
 ax.axhline(0.001, xmin=0.6, xmax=5, lw=3, color=c1, alpha=a1)
 ax.set_xscale("log")
-#ax.legend(loc=(0.65,0.8), fontsize=fs)
+ax.legend(loc=(0.65,0.8), fontsize=fs)
 ax.set_ylim(0)
 ax.set_xlim(1e-5, 10)
 ax.set_xlabel(r"$\epsilon_{\gamma\nu}$", fontsize=fs)
