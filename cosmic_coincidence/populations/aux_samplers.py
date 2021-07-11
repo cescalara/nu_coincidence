@@ -4,6 +4,7 @@ import h5py
 
 from popsynth.auxiliary_sampler import AuxiliarySampler, AuxiliaryParameter
 from popsynth.aux_samplers.normal_aux_sampler import NormalAuxSampler
+from popsynth.utils.cosmology import cosmology
 
 
 class SpectralIndexAuxSampler(NormalAuxSampler):
@@ -264,6 +265,32 @@ class FlareAmplitudeAuxSampler(AuxiliarySampler):
                 amplitudes[i] = np.array(samples, dtype=np.dtype("float64"))
 
         self._true_values = amplitudes
+
+
+class DemoSampler(AuxiliarySampler):
+    _auxiliary_sampler_name = "DemoSampler"
+
+    def __init__(
+        self,
+    ):
+
+        # this time set observed=True
+        super(DemoSampler, self).__init__(
+            "demo",
+            observed=False,
+            uses_distance=True,
+            uses_luminosity=True,
+        )
+
+    def true_sampler(self, size):
+
+        dl = cosmology.luminosity_distance(self._distance)
+
+        fluxes = self._luminosity / (4 * np.pi * dl ** 2)
+
+        spectral_index = self._secondary_samplers["spectral_index"].obs_values
+
+        self._true_values = -(spectral_index - 3 * np.log10(fluxes))
 
 
 def bounded_pl_inv_cdf(x, xmin, xmax, index):
