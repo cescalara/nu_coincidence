@@ -261,13 +261,17 @@ sys.path.append("../../cosmic_coincidence/")
 ```
 
 ```python
+from astropy import units as u
 from popsynth.populations.bpl_population import (BPLZPowerCosmoPopulation, 
                                                  BPLSFRPopulation)
 from popsynth.population_synth import PopulationSynth
+from popsynth.selection_probability import SoftSelection
 
 from cosmic_coincidence.populations.sbpl_population import (SBPLZPowerCosmoPopulation, 
                                                             SBPLSFRPopulation)
 from cosmic_coincidence.utils.package_data import get_path_to_data
+from cosmic_coincidence.blazars.fermi_selection import FermiSelection
+from cosmic_coincidence.populations.aux_samplers import DemoSampler
 ```
 
 ```python
@@ -281,28 +285,48 @@ BCU = 1310
 BLLac / (FSRQ+BLLac)
 ```
 
+```python
+#ax.plot(z, 3e-7 * (1+z)**-4.5)
+```
+
+```python
+n0 = 3e-7 * (1/u.Mpc**3)
+n0.to(1/u.Gpc**3) * 4 * np.pi
+```
+
 ### BL Lac
 
 ```python
+class DemoSelection(SoftSelection):
+    def draw(self, size, use_log=False):
+        super().draw(size, use_log)
+```
+
+```python
 # Standard values
-pop_gen = BPLZPowerCosmoPopulation(Lambda=9000, delta=-6, Lmin=7e43, Lmax=1e52, 
+pop_gen = BPLZPowerCosmoPopulation(Lambda=3800, delta=-4, Lmin=7e43, Lmax=1e50, 
                                     alpha=-1.5, Lbreak=1e47, beta=-2.5, r_max=6, 
-                                    is_rate=False, seed=np.random.randint(100000))
+                                    is_rate=False, seed=988)
 
 flux_selector = SoftFluxSelection()
-flux_selector.boundary = 4e-12
-flux_selector.strength = 2
+flux_selector.boundary = 2e-12
+flux_selector.strength = 10
+
+#flux_selector = HardFluxSelection()
+#flux_selector.boundary = 1e-12
 
 galactic_plane_selector = GalacticPlaneSelection()
 galactic_plane_selector.b_limit = 10
 
-pop_gen.set_flux_selection(flux_selector)
+#pop_gen.set_flux_selection(flux_selector)
 #pop_gen.add_spatial_selector(galactic_plane_selector)
 
 spectral_index = SpectralIndexAuxSampler()
 spectral_index.mu = 2.1
 spectral_index.tau = 0.25
 spectral_index.sigma = 0.1
+
+#spectral_index.set_selection_probability(index_selector)
 
 variability = VariabilityAuxSampler()
 variability.weight = 0.07
@@ -318,16 +342,33 @@ flare_times.obs_time = 7.4 # years
 flare_durations = FlareDurationAuxSampler()
 flare_durations.index = 2.0
 
+demo = DemoSampler()
+demo_selector = DemoSelection(name="demo_selection", use_obs_value=True)
+demo_selector.boundary=-37.5
+demo_selector.strength=5
+demo.set_selection_probability(demo_selector)
+
 flare_rate.set_secondary_sampler(variability)
 flare_times.set_secondary_sampler(flare_rate)
 flare_durations.set_secondary_sampler(flare_times)
+demo.set_secondary_sampler(spectral_index)
 
 pop_gen.add_observed_quantity(flare_durations)
-pop_gen.add_observed_quantity(spectral_index)
+#pop_gen.add_observed_quantity(spectral_index)
+pop_gen.add_observed_quantity(demo)
 
 pop = pop_gen.draw_survey(flux_sigma=0.1)
 print("Total objects: %i \t Detected objects: %i" % (pop.distances.size, 
                                         pop.distances[pop.selection].size))
+bl_pop=pop
+```
+
+```python
+fig, ax = plt.subplots()
+ax.scatter(pop.fluxes_observed, pop.spectral_index_obs)
+ax.scatter(pop.fluxes_observed[pop.selection], pop.spectral_index_obs[pop.selection])
+ax.set_xscale("log")
+ax.set_xlim(5e-13)
 ```
 
 ```python
@@ -495,7 +536,7 @@ flux_selector.strength = 2
 galactic_plane_selector = GalacticPlaneSelection()
 galactic_plane_selector.b_limit = 10
 
-pop_gen.set_flux_selection(flux_selector)
+#pop_gen.set_flux_selection(flux_selector)
 #pop_gen.add_spatial_selector(galactic_plane_selector)
 
 spectral_index = SpectralIndexAuxSampler()
@@ -517,16 +558,24 @@ flare_times.obs_time = 7.4 # years
 flare_durations = FlareDurationAuxSampler()
 flare_durations.index = 2.0
 
+demo = DemoSampler()
+demo_selector = DemoSelection(name="demo_selection", use_obs_value=True)
+demo_selector.boundary=-37.5
+demo_selector.strength=5
+demo.set_selection_probability(demo_selector)
+
 flare_rate.set_secondary_sampler(variability)
 flare_times.set_secondary_sampler(flare_rate)
 flare_durations.set_secondary_sampler(flare_times)
+demo.set_secondary_sampler(spectral_index)
 
 pop_gen.add_observed_quantity(flare_durations)
-pop_gen.add_observed_quantity(spectral_index)
+pop_gen.add_observed_quantity(demo)
 
 pop = pop_gen.draw_survey(flux_sigma=0.1)
 print("Total objects: %i \t Detected objects: %i" % (pop.distances.size, 
                                         pop.distances[pop.selection].size))
+fs_pop = pop
 ```
 
 ```python
@@ -665,6 +714,33 @@ print("Min Ntot: %i \t Max Ntot: %i" % (min(Ntot), max(Ntot)))
 print("Min Ndet: %i \t Max Ndet: %i" % (min(Ndet), max(Ndet)))
 ```
 
+```python
+from cosmic_coincidence.utils.fluxes import flux_conv
+from astropy import units as u
+```
+
+```python
+E_min = 0.1 * u.GeV
+E_max = 100 * u.GeV
+convs = [flux_conv(ind, E_min.to(u.erg).value, E_max.to(u.erg).value) for ind in bl_pop.spectral_index_obs]
+F_num_bl = bl_pop.fluxes_observed * convs 
+convs = [flux_conv(ind, E_min.to(u.erg).value, E_max.to(u.erg).value) for ind in fs_pop.spectral_index_obs]
+F_num_fs = fs_pop.fluxes_observed * convs 
+```
+
+```python
+fig, ax = plt.subplots()
+#ax.scatter(F_num, bl_pop.spectral_index_obs)
+ax.scatter(F_num_bl[bl_pop.selection], bl_pop.spectral_index_obs[bl_pop.selection], alpha=0.2, label="BL Lac")
+ax.scatter(F_num_fs[fs_pop.selection], fs_pop.spectral_index_obs[fs_pop.selection], alpha=0.2, label="FSRQ")
+#ax.set_xlim(1e-10, 1e-6)
+ax.set_xscale("log")
+ax.set_xlabel("Flux above 100 MeV [cm^-2 s^-1]")
+ax.set_ylabel("Spectral index")
+ax.legend()
+fig.savefig("figures/flux_index_sel.pdf", bbox_inches="tight")
+```
+
 # Old stuff with Fermi interface
 
 
@@ -725,8 +801,13 @@ ldde.sigma = 0.26 - 0.02
 z = np.linspace(ldde.zmin, ldde.zmax)
 fig, ax = plt.subplots()
 ax.plot(z, ldde.dNdV(z))
-ax.plot(z, ldde.dNdV(z, approx=True))
+#ax.plot(z, ldde.dNdV(z, approx=True))
+ax.plot(z, 2e-7 * (1+z)**-3.7)
+ax.plot(z, 3e-7 * (1+z)**-4.5)
 ax.set_yscale("log")
+ax.set_xlim(0, 3.5)
+ax.set_ylim(1e-11)
+ax.grid()
 ```
 
 ```python
@@ -736,6 +817,16 @@ ax.plot(L, ldde.dNdL(L))
 ax.plot(L, ldde.dNdL(L, approx=True))
 ax.set_xscale("log")
 ax.set_yscale("log")
+```
+
+```python
+# Better representation of the evolution
+z = np.linspace(0, 3.5)
+fig, ax = plt.subplots()
+ax.plot(z, 2e-7 * (1+z)**-3.7)
+ax.plot(z, 7e-10 * (1 + 15*z)/(1 + np.power(z/0.7, 4)))
+ax.set_yscale("log")
+ax.grid()
 ```
 
 ```python
@@ -900,7 +991,10 @@ z = np.linspace(0, ldde.zmax)
 fig, ax = plt.subplots()
 ax.plot(z, ldde.dNdV(z))
 ax.plot(z, ldde.dNdV(z, approx=True))
+ax.plot(z, 7e-10 * (1 + 15*z)/(1 + np.power(z/0.7, 4)))
 ax.set_yscale("log")
+ax.set_xlim(0, 3.5)
+ax.set_ylim(1e-11)
 ```
 
 ```python
@@ -910,6 +1004,11 @@ ax.plot(L, ldde.dNdL(L))
 ax.plot(L, ldde.dNdL(L, approx=True))
 ax.set_xscale("log")
 ax.set_yscale("log")
+```
+
+```python
+ldde._get_dNdL_params()
+ldde._popt_dNdL
 ```
 
 ```python
