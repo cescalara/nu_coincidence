@@ -6,6 +6,7 @@ import h5py
 
 from popsynth.distribution import Distribution, DistributionParameter
 from popsynth.selection_probability.flux_selectors import HardFluxSelection
+from popsynth.utils.cosmology import cosmology
 
 from cosmic_coincidence.populations.sbpl_population import SBPLZPowExpCosmoPopulation
 from cosmic_coincidence.distributions.sbpl_distribution import sbpl
@@ -125,7 +126,7 @@ class LDDEFermiModel(FermiModel):
 
         return self.phi_L(L) * self.phi_G(G, L) * self.phi_z(z, L)
 
-    def dNdV(self, z, approx=False):
+    def dNdV(self, z, approx=False, resolution=100):
         """
         Integrate Phi over L and G. In units of Mpc^-3.
         If approx, show appromximated version.
@@ -141,16 +142,20 @@ class LDDEFermiModel(FermiModel):
 
             integral = np.zeros_like(z)
 
-            L = 10 ** np.linspace(np.log10(self.Lmin), np.log10(self.Lmax), 1000)
-            G = np.linspace(self.Gmin, self.Gmax, 1000)
+            l = np.linspace(np.log10(self.Lmin), np.log10(self.Lmax), resolution)
+            L = 10 ** l
 
-            for i, z in enumerate(z):
-                f = self.Phi(L[:, None], z, G) * 1e-13  # Mpc^-3 erg^-1 s
-                integral[i] = integrate.simps(integrate.simps(f, G), L)
+            G = np.linspace(self.Gmin, self.Gmax, resolution)
+
+            for i, redshift in enumerate(z):
+                f = (
+                    self.Phi(L[:, None], redshift, G) * np.log(10) * L[:, None] * 1e-13
+                )  # Mpc^-3 erg^-1 s
+                integral[i] = integrate.simps(integrate.simps(f, G), l)
 
             return integral
 
-    def dNdL(self, L, approx=False):
+    def dNdL(self, L, approx=False, resolution=100, cosmo=False):
         """
         Integrate Phi over z and G.
         If approx, show approximated version.
@@ -166,12 +171,15 @@ class LDDEFermiModel(FermiModel):
 
             integral = np.zeros_like(L)
 
-            z = np.linspace(self.zmin, self.zmax, 1000)
-            G = np.linspace(self.Gmin, self.Gmax, 1000)
+            z = np.linspace(self.zmin, self.zmax, resolution)
+            G = np.linspace(self.Gmin, self.Gmax, resolution)
 
             for i, L in enumerate(L):
                 f = self.Phi(L, z[:, None], G) * 1e-13  # Mpc^-3 erg^-1 s
-                # f = f * cosmology.differential_comoving_volume(z) * 1e9
+
+                if cosmo:
+                    f = f * cosmology.differential_comoving_volume(z) * 1e9
+
                 integral[i] = integrate.simps(integrate.simps(f, G), z)
 
             return integral
