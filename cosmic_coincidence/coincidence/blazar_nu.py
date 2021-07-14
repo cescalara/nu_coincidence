@@ -36,7 +36,7 @@ from cosmic_coincidence.neutrinos.icecube import (
     _run_sim_for,
 )
 from cosmic_coincidence.simulation import Simulation
-from cosmic_coincidence.utils.package_data import get_path_to_data
+from cosmic_coincidence.utils.package_data import get_path_to_config
 from cosmic_coincidence.utils.parallel import FileWritingBackend
 
 register_parallel_backend("file_write", FileWritingBackend)
@@ -89,7 +89,7 @@ class BlazarNuSim(Simulation, metaclass=ABCMeta):
             seed = i * 100
 
             # BL Lacs
-            bllac_spec = get_path_to_data(self._bllac_config)
+            bllac_spec = get_path_to_config(self._bllac_config)
             bllac_param_server = PopsynthParams(bllac_spec)
             bllac_param_server.seed = seed
             bllac_param_server.file_name = self._file_name
@@ -98,7 +98,7 @@ class BlazarNuSim(Simulation, metaclass=ABCMeta):
             self._bllac_param_servers.append(bllac_param_server)
 
             # FSRQs
-            fsrq_spec = get_path_to_data(self._fsrq_config)
+            fsrq_spec = get_path_to_config(self._fsrq_config)
             fsrq_param_server = PopsynthParams(fsrq_spec)
             fsrq_param_server.seed = seed
             fsrq_param_server.file_name = self._file_name
@@ -109,13 +109,13 @@ class BlazarNuSim(Simulation, metaclass=ABCMeta):
             # Neutrinos
             if self._nu_config is not None:
 
-                nu_spec = get_path_to_data(self._nu_config)
+                nu_spec = get_path_to_config(self._nu_config)
                 nu_param_server = IceCubeObsParams(nu_spec)
 
             else:
 
-                nu_hese_spec = get_path_to_data(self._nu_hese_config)
-                nu_ehe_spec = get_path_to_data(self._nu_ehe_config)
+                nu_hese_spec = get_path_to_config(self._nu_hese_config)
+                nu_ehe_spec = get_path_to_config(self._nu_ehe_config)
                 nu_param_server = IceCubeAlertsParams(nu_hese_spec, nu_ehe_spec)
 
             nu_param_server.seed = seed
