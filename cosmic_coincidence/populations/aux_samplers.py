@@ -154,7 +154,7 @@ class FlareDurationAuxSampler(AuxiliarySampler):
 
                 durations[i] = np.array(
                     [
-                        _sample_power_law(1 / 52, md, self.alpha)[0]
+                        _sample_power_law(1 / 52, md, self.alpha, 1)[0]
                         for md in max_durations
                     ],
                     dtype=np.dtype("float64"),
