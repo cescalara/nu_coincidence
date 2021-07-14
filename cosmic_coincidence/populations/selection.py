@@ -1,30 +1,41 @@
-from astropy.coordinates import SkyCoord
-
-from popsynth.selection_probability.spatial_selection import SpatialSelection
+from popsynth.selection_probability.generic_selectors import SoftSelection
 from popsynth.selection_probability.selection_probability import SelectionParameter
 
 
-class GalacticPlaneSelection(SpatialSelection):
+class CombinedFluxIndexSelection(SoftSelection):
+    """
+    Selection on :class:`CombinedFluxIndexSampler`,
+    with the form:
 
-    _selection_name = "GalacticPlaneSelection"
+    index = ``slope`` log10(flux) + ``intercept``
 
-    b_limit = SelectionParameter(vmin=0, vmax=90)
+    :class:`CombinedFluxIndexSampler` transforms to:
+    -(index - ``slope`` log10(flux))
+    such that a constant selection can be made
+    on -``intercept``.
 
-    def __init__(self, name="galactic plane selector"):
-        """
-        places a limit above the galactic plane for objects
-        """
-        super(GalacticPlaneSelection, self).__init__(name=name)
+    See e.g. Fig. 4 in Ajello et al. 2020 (4LAC),
+    default values are set to approximate this.
+    """
 
-    def draw(self, size: int):
+    _selection_name = "CombinedFluxIndexSelection"
 
-        c = SkyCoord(
-            self._spatial_distribution.ra,
-            self._spatial_distribution.dec,
-            unit="deg",
-            frame="icrs",
+    boundary = SelectionParameter(default=-37.5)
+    strength = SelectionParameter(default=5, vmin=0)
+
+    def __init__(
+        self,
+        name: str = "CombinedFluxIndexSelection",
+        use_obs_value: bool = True,
+    ):
+
+        super(CombinedFluxIndexSelection, self).__init__(
+            name=name, use_obs_value=use_obs_value
         )
 
-        b = c.galactic.b.deg
+    def draw(self, size: int, use_log: bool = False):
+        """
+        Override draw to not use log values.
+        """
 
-        self._selection = (b >= self.b_limit) | (b <= -self.b_limit)
+        super().draw(size, use_log)
