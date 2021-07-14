@@ -4,6 +4,7 @@ import h5py
 
 from popsynth.auxiliary_sampler import AuxiliarySampler, AuxiliaryParameter
 from popsynth.aux_samplers.normal_aux_sampler import NormalAuxSampler
+from popsynth.aux_samplers.plaw_aux_sampler import PowerLawAuxSampler, _sample_power_law
 from popsynth.utils.cosmology import cosmology
 
 
@@ -18,49 +19,6 @@ class SpectralIndexAuxSampler(NormalAuxSampler):
     def __init__(self, name="spectral_index", observed=True):
 
         super().__init__(name=name, observed=observed)
-
-
-class ParetoAuxSampler(AuxiliarySampler):
-    """
-    Sample from a Pareto distribution.
-    """
-
-    _auxiliary_sampler_name = "ParetoAuxSampler"
-
-    xmin = AuxiliaryParameter(vmin=0)
-    index = AuxiliaryParameter(default=1)
-
-    def __init__(self, name: str, observed: bool = False):
-
-        super(ParetoAuxSampler, self).__init__(name=name, observed=observed)
-
-    def true_sampler(self, size):
-
-        self._true_values = stats.pareto(self.index).rvs(size) * self.xmin
-
-
-class BoundedPowerLawAuxSampler(AuxiliarySampler):
-    """
-    Sample from a bounded power law.
-    """
-
-    _auxiliary_sampler_name = "BoundedPowerLawAuxSampler"
-
-    xmin = AuxiliaryParameter(vmin=0)
-    xmax = AuxiliaryParameter()
-    index = AuxiliaryParameter(default=1)
-
-    def __init__(self, name: str, observed: bool = False):
-
-        super(BoundedPowerLawAuxSampler, self).__init__(name=name, observed=observed)
-
-    def true_sampler(self, size):
-
-        uniform_samples = np.random.uniform(0, 1, size)
-
-        self._true_values = bounded_pl_inv_cdf(
-            uniform_samples, self.xmin, self.xmax, self.index
-        )
 
 
 class VariabilityAuxSampler(AuxiliarySampler):
@@ -86,7 +44,7 @@ class VariabilityAuxSampler(AuxiliarySampler):
         )
 
 
-class FlareRateAuxSampler(BoundedPowerLawAuxSampler):
+class FlareRateAuxSampler(PowerLawAuxSampler):
     """
     Sample source flare rate given its variability.
     """
@@ -110,26 +68,6 @@ class FlareRateAuxSampler(BoundedPowerLawAuxSampler):
         super(FlareRateAuxSampler, self).true_sampler(size)
 
         self._true_values = rate * self._true_values
-
-
-class FlareNumAuxSampler(AuxiliarySampler):
-    """
-    Sample number of flares for a given rate.
-    """
-
-    _auxiliary_sampler_name = "FlareNumAuxSampler"
-
-    obs_time = AuxiliaryParameter(vmin=0, default=1)
-
-    def __init__(self, name="flare_num", observed=False):
-
-        super(FlareNumAuxSampler, self).__init__(name=name, observed=observed)
-
-    def true_sampler(self, size):
-
-        rate = self._secondary_samplers["flare_rate"].true_values
-
-        self._true_values = np.random.poisson(rate * self.obs_time)
 
 
 class FlareTimeAuxSampler(AuxiliarySampler):
@@ -174,12 +112,12 @@ class FlareTimeAuxSampler(AuxiliarySampler):
 
 class FlareDurationAuxSampler(AuxiliarySampler):
     """
-    Sample flare durations given flare times
+    Sample flare durations given flare times.
     """
 
     _auxiliary_sampler_name = "FlareDurationAuxSampler"
 
-    index = AuxiliaryParameter(vmin=1, default=1.5)
+    alpha = AuxiliaryParameter(default=-1.5)
 
     def __init__(self, name="flare_durations", observed=False):
 
@@ -216,9 +154,7 @@ class FlareDurationAuxSampler(AuxiliarySampler):
 
                 durations[i] = np.array(
                     [
-                        bounded_pl_inv_cdf(
-                            np.random.uniform(0, 1), 1 / 52, md, self.index
-                        )
+                        _sample_power_law(1 / 52, md, self.alpha)[0]
                         for md in max_durations
                     ],
                     dtype=np.dtype("float64"),
@@ -236,7 +172,7 @@ class FlareAmplitudeAuxSampler(AuxiliarySampler):
     _auxiliary_sampler_name = "FlareAmplitudeAuxSampler"
 
     xmin = AuxiliaryParameter(vmin=0, default=1)
-    index = AuxiliaryParameter(default=1)
+    alpha = AuxiliaryParameter(default=1)
 
     def __init__(self, name="flare_amplitudes", observed=False):
 
@@ -260,23 +196,43 @@ class FlareAmplitudeAuxSampler(AuxiliarySampler):
 
                 n_flares = times[i].size
 
-                samples = stats.pareto(self.index).rvs(n_flares) * self.xmin
+                samples = stats.pareto(self.alpha).rvs(n_flares) * self.xmin
 
                 amplitudes[i] = np.array(samples, dtype=np.dtype("float64"))
 
         self._true_values = amplitudes
 
 
-class DemoSampler(AuxiliarySampler):
-    _auxiliary_sampler_name = "DemoSampler"
+class CombinedFluxIndexSampler(AuxiliarySampler):
+    """
+    Make a transformed parameter to perform a
+    combined linear selection on energy flux and
+    spectral index.
+
+    Selection has the form:
+    index = ``slope`` log10(flux) + ``intercept``
+
+    So, here we transform to:
+    -(index - ``slope`` log10(flux))
+    such that a constant selection can be made
+    on -``intercept``. This works with both
+    :class:`HardSelection` and :class:`SoftSelection`
+
+    See e.g. Fig. 4 in Ajello et al. 2020 (4LAC),
+    default values are set to approximate this.
+    """
+
+    _auxiliary_sampler_name = "CombinedFluxIndexSampler"
+
+    slope = AuxiliaryParameter(default=3)
 
     def __init__(
         self,
     ):
 
         # this time set observed=True
-        super(DemoSampler, self).__init__(
-            "demo",
+        super(CombinedFluxIndexSampler, self).__init__(
+            "combined flux index",
             observed=False,
             uses_distance=True,
             uses_luminosity=True,
@@ -284,33 +240,16 @@ class DemoSampler(AuxiliarySampler):
 
     def true_sampler(self, size):
 
-        dl = cosmology.luminosity_distance(self._distance)
+        # Calculate latent fluxes (ideally would use observed)
+        dl = cosmology.luminosity_distance(self._distance)  # cm
 
-        fluxes = self._luminosity / (4 * np.pi * dl ** 2)
+        fluxes = self._luminosity / (4 * np.pi * dl ** 2)  # erg cm^-2 s^-1
 
+        # Use observed spectral index
         spectral_index = self._secondary_samplers["spectral_index"].obs_values
 
-        self._true_values = -(spectral_index - 3 * np.log10(fluxes))
+        # Transformed based on desired selection
+        true_values = spectral_index - self.slope * np.log10(fluxes)
 
-
-def bounded_pl_inv_cdf(x, xmin, xmax, index):
-    """
-    Bounded power law inverse CDF.
-    """
-
-    if index != 1.0:
-
-        int_index = 1 - index
-        norm = 1 / int_index * (xmax ** int_index - xmin ** int_index)
-        norm = 1 / norm
-
-        inv_cdf_factor = norm ** (-1) * int_index
-        inv_cdf_const = xmin ** int_index
-        inv_cdf_index = 1.0 / int_index
-
-        return np.power((x * inv_cdf_factor) + inv_cdf_const, inv_cdf_index)
-
-    else:
-
-        norm = 1.0 / np.log(xmax / xmin)
-        return xmin * np.exp(x / norm)
+        # Negative to use with SoftSelection
+        self._true_values = -1 * true_values
