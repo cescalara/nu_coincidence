@@ -25,7 +25,6 @@ from cosmic_coincidence.populations.aux_samplers import (
     FlareTimeAuxSampler,
     FlareDurationAuxSampler,
 )
-from cosmic_coincidence.populations.selection import GalacticPlaneSelection
 from cosmic_coincidence.neutrinos.icecube import (
     IceCubeObsParams,
     IceCubeObsWrapper,
@@ -443,6 +442,7 @@ class BlazarNuCoincidence(BlazarNuAction):
             survey.variability[survey.selection],
             survey.flare_times[survey.selection],
             survey.flare_durations[survey.selection],
+            survey.flare_amplitudes[survey.selection],
         )
 
         self.bllac_coincidence["n_variable"] = n_match_variable
@@ -462,6 +462,7 @@ class BlazarNuCoincidence(BlazarNuAction):
             survey.variability[survey.selection],
             survey.flare_times[survey.selection],
             survey.flare_durations[survey.selection],
+            survey.flare_amplitudes[survey.selection],
         )
 
         self.fsrq_coincidence["n_variable"] = n_match_variable

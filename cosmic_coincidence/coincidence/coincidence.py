@@ -120,6 +120,6 @@ def check_temporal_coincidence(
 
                     if matches > 0:
 
-                        matched_flare_amplitudes.append(flare_amplitudes[selection])
+                        matched_flare_amplitudes.append(flare_amplitudes[selection][0])
 
     return n_match_variable, n_match_flaring, matched_flare_amplitudes
