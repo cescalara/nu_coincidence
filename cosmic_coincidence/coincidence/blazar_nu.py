@@ -433,7 +433,11 @@ class BlazarNuCoincidence(BlazarNuAction):
         # BL Lacs
         survey = self._bllac_pop.survey
 
-        n_match_variable, n_match_flaring = check_temporal_coincidence(
+        (
+            n_match_variable,
+            n_match_flaring,
+            matched_flare_amplitudes,
+        ) = check_temporal_coincidence(
             observation.times,
             self.bllac_coincidence["spatial_match_inds"],
             survey.variability[survey.selection],
@@ -443,11 +447,16 @@ class BlazarNuCoincidence(BlazarNuAction):
 
         self.bllac_coincidence["n_variable"] = n_match_variable
         self.bllac_coincidence["n_flaring"] = n_match_flaring
+        self.bllac_coincidence["matched_flare_amplitudes"] = matched_flare_amplitudes
 
         # FSRQs
         survey = self._fsrq_pop.survey
 
-        n_match_variable, n_match_flaring = check_temporal_coincidence(
+        (
+            n_match_variable,
+            n_match_flaring,
+            matched_flare_amplitudes,
+        ) = check_temporal_coincidence(
             observation.times,
             self.fsrq_coincidence["spatial_match_inds"],
             survey.variability[survey.selection],
@@ -457,6 +466,7 @@ class BlazarNuCoincidence(BlazarNuAction):
 
         self.fsrq_coincidence["n_variable"] = n_match_variable
         self.fsrq_coincidence["n_flaring"] = n_match_flaring
+        self.fsrq_coincidence["matched_flare_amplitudes"] = matched_flare_amplitudes
 
 
 class BlazarNuConnection(BlazarNuAction):

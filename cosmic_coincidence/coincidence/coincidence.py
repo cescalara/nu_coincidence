@@ -78,6 +78,7 @@ def check_temporal_coincidence(
     population_variability,
     population_flare_times,
     population_flare_durations,
+    population_flare_amplitudes,
 ):
     """
     Check the temporal coincidence of events,
@@ -87,6 +88,7 @@ def check_temporal_coincidence(
 
     n_match_variable = 0
     n_match_flaring = 0
+    matched_flare_amplitudes = []
 
     # For each event
     for e_time, match_inds in zip(event_times, spatial_match_inds):
@@ -106,10 +108,18 @@ def check_temporal_coincidence(
 
                     flare_durations = population_flare_durations[ind]
 
+                    flare_amplitudes = population_flare_amplitudes[ind]
+
                     selection = (e_time >= flare_times) & (
                         e_time <= flare_times + flare_durations
                     )
 
-                    n_match_flaring += len(np.where(selection == True)[0])
+                    matches = len(np.where(selection == True)[0])
 
-    return n_match_variable, n_match_flaring
+                    n_match_flaring += matches
+
+                    if matches > 0:
+
+                        matched_flare_amplitudes.append(flare_amplitudes[selection])
+
+    return n_match_variable, n_match_flaring, matched_flare_amplitudes
