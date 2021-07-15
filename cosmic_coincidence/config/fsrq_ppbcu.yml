@@ -35,6 +35,15 @@ auxiliary samplers:
     selection:
       UnitySelection: {}
     type: FlareTimeAuxSampler
+  flare_amplitudes:
+    alpha: 4.0
+    xmin: 1.3
+    observed: false
+    secondary:
+    - flare_times
+    selection:
+      UnitySelection: {}
+    type: FlareAmplitudeAuxSampler
   spectral_index:
     mu: 2.5
     observed: true

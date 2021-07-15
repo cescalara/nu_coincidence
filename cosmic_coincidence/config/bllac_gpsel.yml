@@ -10,7 +10,7 @@ auxiliary samplers:
     slope: 3
     type: CombinedFluxIndexSampler
   flare_durations:
-    alpha: -1.5
+    alpha: -2.0
     observed: false
     secondary:
     - flare_times
@@ -36,7 +36,7 @@ auxiliary samplers:
       UnitySelection: {}
     type: FlareTimeAuxSampler
   flare_amplitudes:
-    index: 4.5
+    alpha: 4.5
     xmin: 1.2
     observed: false
     secondary:
