@@ -62,15 +62,15 @@ auxiliary samplers:
     weight: 0.07
 luminosity distribution:
   BPLDistribution:
-    Lbreak: 9.800000000000001e+46
+    Lbreak: 1.0e+47
     Lmax: 1.0e+52
     Lmin: 7.0e+43
-    alpha: -1.8
-    beta: -2.7
+    alpha: -1.5
+    beta: -2.5
 seed: 42
 spatial distribution:
   ZPowerCosmoDistribution:
-    Lambda: 3500
-    delta: -5
+    Lambda: 4700
+    delta: -4
     r_max: 6
   is_rate: false
