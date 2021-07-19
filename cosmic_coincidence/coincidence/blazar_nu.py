@@ -216,6 +216,7 @@ class BlazarNuCoincidenceSim(BlazarNuSim):
         nu_config: str = None,
         nu_hese_config: str = None,
         nu_ehe_config: str = None,
+        seed=1000,
     ):
 
         super().__init__(
@@ -227,6 +228,7 @@ class BlazarNuCoincidenceSim(BlazarNuSim):
             nu_config=nu_config,
             nu_hese_config=nu_hese_config,
             nu_ehe_config=nu_ehe_config,
+            seed=seed,
         )
 
     def _blazar_nu_wrapper(self, bllac_pop, fsrq_pop, nu_obs):
@@ -250,6 +252,7 @@ class BlazarNuConnectedSim(BlazarNuSim):
         nu_config: str = None,
         nu_hese_config: str = None,
         nu_ehe_config: str = None,
+        seed=1000,
     ):
 
         super().__init__(
@@ -261,6 +264,7 @@ class BlazarNuConnectedSim(BlazarNuSim):
             nu_config=nu_config,
             nu_hese_config=nu_hese_config,
             nu_ehe_config=nu_ehe_config,
+            seed=seed,
         )
 
     def _blazar_nu_wrapper(self, nu_obs, bllac_pop, fsrq_pop):
