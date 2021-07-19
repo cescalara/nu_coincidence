@@ -59,6 +59,7 @@ class BlazarNuSim(Simulation, metaclass=ABCMeta):
         nu_config: str = None,
         nu_hese_config: str = None,
         nu_ehe_config: str = None,
+        seed=1000,
     ):
 
         self._bllac_config = bllac_config
@@ -66,6 +67,7 @@ class BlazarNuSim(Simulation, metaclass=ABCMeta):
         self._nu_config = nu_config
         self._nu_hese_config = nu_hese_config
         self._nu_ehe_config = nu_ehe_config
+        self._seed = seed
 
         self._bllac_param_servers = []
         self._fsrq_param_servers = []
@@ -85,7 +87,7 @@ class BlazarNuSim(Simulation, metaclass=ABCMeta):
 
         for i in range(self._N):
 
-            seed = i * 100
+            seed = self._seed + i
 
             # BL Lacs
             bllac_spec = get_path_to_config(self._bllac_config)
