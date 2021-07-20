@@ -116,9 +116,12 @@ def check_temporal_coincidence(
 
                     matches = len(np.where(selection == True)[0])
 
-                    n_match_flaring += matches
-
+                    # matches can *very rarely* be >1 for overlapping flares
+                    # overlapping flares can occur if diff(flare_times) < 1 week
+                    # in this case merge flares and take amplitude of first flare
                     if matches > 0:
+
+                        n_match_flaring += 1
 
                         matched_flare_amplitudes.append(flare_amplitudes[selection][0])
 
