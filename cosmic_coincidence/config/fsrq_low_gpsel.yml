@@ -18,7 +18,7 @@ auxiliary samplers:
       UnitySelection: {}
     type: FlareDurationAuxSampler
   flare_rate:
-    alpha: -2.0
+    alpha: -2.1
     observed: false
     secondary:
     - variability
@@ -59,13 +59,13 @@ auxiliary samplers:
     selection:
       UnitySelection: {}
     type: VariabilityAuxSampler
-    weight: 0.4
+    weight: 0.32
 luminosity distribution:
   BPLDistribution:
     Lbreak: 8.0e+47
     Lmax: 1.0e+52
     Lmin: 7.0e+43
-    alpha: -1.4000000000000001
+    alpha: -1.4
     beta: -2.7
 seed: 42
 spatial distribution:
