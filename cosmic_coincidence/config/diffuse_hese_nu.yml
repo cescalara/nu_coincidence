@@ -7,7 +7,7 @@ atmospheric flux:
 detector:
   Emin_det: 10000.0
   max_cosz: 1
-  obs_time: 7.5
+  obs_time: 10.0
 diffuse flux:
   index: 2.6
   lower_energy: 10000.0
