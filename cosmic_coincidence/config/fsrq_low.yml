@@ -65,15 +65,15 @@ luminosity distribution:
     Lbreak: 8.0e+47
     Lmax: 1.0e+52
     Lmin: 7.0e+43
-    alpha: -1.4
+    alpha: -1.3
     beta: -2.7
 seed: 42
 spatial distribution:
   SFRDistribution:
     a: 1
     decay: 4.6
-    peak: 0.5
-    r0: 22
+    peak: 0.6
+    r0: 25
     r_max: 6
-    rise: 14
+    rise: 14.5
   is_rate: false

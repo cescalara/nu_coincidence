@@ -62,18 +62,18 @@ auxiliary samplers:
     weight: 0.32
 luminosity distribution:
   BPLDistribution:
-    Lbreak: 1.2e+48
+    Lbreak: 1.1e+48
     Lmax: 1.0e+52
     Lmin: 7.0e+43
-    alpha: -0.8
+    alpha: -0.9
     beta: -2.3
 seed: 42
 spatial distribution:
   SFRDistribution:
     a: 1
     decay: 4.4
-    peak: 0.9
-    r0: 32
+    peak: 0.8
+    r0: 29
     r_max: 6
-    rise: 16
+    rise: 15.5
   is_rate: false
