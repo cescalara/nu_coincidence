@@ -8,6 +8,7 @@ from joblib import (
     delayed,
 )
 from collections import OrderedDict
+from typing import List
 
 from icecube_tools.neutrino_calculator import NeutrinoCalculator
 
@@ -270,6 +271,89 @@ class BlazarNuConnectedSim(BlazarNuSim):
     def _blazar_nu_wrapper(self, nu_obs, bllac_pop, fsrq_pop):
 
         return BlazarNuConnection(nu_obs, bllac_pop, fsrq_pop)
+
+
+class BlazarNuCoincidenceResults(object):
+    """
+    Load results from BlazarNuCoincidenceSim.
+    """
+
+    def __init__(self, file_name_list: List[str]):
+
+        self._file_name_list = file_name_list
+
+        self.bllac = OrderedDict()
+        self.bllac["n_spatial"] = np.array([])
+        self.bllac["n_variable"] = np.array([])
+        self.bllac["n_flaring"] = np.array([])
+        self.bllac["matched_flare_amplitudes"] = np.array([])
+
+        self.fsrq = OrderedDict()
+        self.fsrq["n_spatial"] = np.array([])
+        self.fsrq["n_variable"] = np.array([])
+        self.fsrq["n_flaring"] = np.array([])
+        self.fsrq["matched_flare_amplitudes"] = np.array([])
+
+        self.N = 0
+
+        for file_name in self._file_name_list:
+
+            self._load_from_h5(file_name)
+
+    def _load_from_h5(self, file_name):
+
+        with h5py.File(file_name, "r") as f:
+
+            N_f = f.attrs["N"]
+
+            bllac_n_spatial_f = np.zeros(N_f)
+            bllac_n_variable_f = np.zeros(N_f)
+            bllac_n_flaring_f = np.zeros(N_f)
+
+            fsrq_n_spatial_f = np.zeros(N_f)
+            fsrq_n_variable_f = np.zeros(N_f)
+            fsrq_n_flaring_f = np.zeros(N_f)
+
+            for i in range(N_f):
+
+                bllac_group = f["survey_%i/blazar_nu_coincidence/bllac" % i]
+                bllac_n_spatial_f[i] = bllac_group["n_spatial"][()]
+                bllac_n_variable_f[i] = bllac_group["n_variable"][()]
+                bllac_n_flaring_f[i] = bllac_group["n_flaring"][()]
+
+                if bllac_n_flaring_f[i] >= 1:
+                    bllac_flare_amps_i = bllac_group["matched_flare_amplitudes"][()]
+                    self.bllac["matched_flare_amplitudes"] = np.append(
+                        self.bllac["matched_flare_amplitudes"], bllac_flare_amps_i
+                    )
+
+                fsrq_group = f["survey_%i/blazar_nu_coincidence/fsrq" % i]
+                fsrq_n_spatial_f[i] = fsrq_group["n_spatial"][()]
+                fsrq_n_variable_f[i] = fsrq_group["n_variable"][()]
+                fsrq_n_flaring_f[i] = fsrq_group["n_flaring"][()]
+
+                if fsrq_n_flaring_f[i] >= 1:
+                    fsrq_flare_amps_i = fsrq_group["matched_flare_amplitudes"][()]
+                    self.fsrq["matched_flare_amplitudes"] = np.append(
+                        self.fsrq["matched_flare_amplitudes"], fsrq_flare_amps_i
+                    )
+
+        self.bllac["n_spatial"] = np.append(self.bllac["n_spatial"], bllac_n_spatial_f)
+        self.bllac["n_variable"] = np.append(
+            self.bllac["n_variable"], bllac_n_variable_f
+        )
+        self.bllac["n_flaring"] = np.append(self.bllac["n_flaring"], bllac_n_flaring_f)
+
+        self.fsrq["n_spatial"] = np.append(self.fsrq["n_spatial"], fsrq_n_spatial_f)
+        self.fsrq["n_variable"] = np.append(self.fsrq["n_variable"], fsrq_n_variable_f)
+        self.fsrq["n_flaring"] = np.append(self.fsrq["n_flaring"], fsrq_n_flaring_f)
+
+        self.N += N_f
+
+    @classmethod
+    def load(cls, file_name_list: List[str]):
+
+        return cls(file_name_list)
 
 
 class BlazarNuAction(object, metaclass=ABCMeta):
