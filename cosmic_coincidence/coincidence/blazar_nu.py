@@ -1,3 +1,4 @@
+import os
 import h5py
 import numpy as np
 from abc import ABCMeta, abstractmethod
@@ -254,6 +255,8 @@ class BlazarNuConnectedSim(BlazarNuSim):
         nu_hese_config: str = None,
         nu_ehe_config: str = None,
         seed=1000,
+        flux_factor: float = None,
+        flare_only: bool = False,
     ):
 
         super().__init__(
@@ -268,9 +271,20 @@ class BlazarNuConnectedSim(BlazarNuSim):
             seed=seed,
         )
 
+        # overwrite flux_factor if provided
+        if flux_factor:
+            for i in range(self._N):
+                self._nu_param_servers[i].hese.connection["flux_factor"] = flux_factor
+                self._nu_param_servers[i].ehe.connection["flux_factor"] = flux_factor
+
+        # store choice for flare_only
+        self._flare_only = flare_only
+
     def _blazar_nu_wrapper(self, nu_obs, bllac_pop, fsrq_pop):
 
-        return BlazarNuConnection(nu_obs, bllac_pop, fsrq_pop)
+        return BlazarNuConnection(
+            nu_obs, bllac_pop, fsrq_pop, flare_only=self._flare_only
+        )
 
 
 class BlazarNuCoincidenceResults(object):
@@ -354,6 +368,78 @@ class BlazarNuCoincidenceResults(object):
     def load(cls, file_name_list: List[str]):
 
         return cls(file_name_list)
+
+
+class BlazarNuConnectedResults(object):
+    """
+    Handle results from BlazarNuConnectedSim.
+    """
+
+    def __init__(self, file_name_list: List[str]):
+
+        self._file_name_list = file_name_list
+
+        self.bllac = OrderedDict()
+        self.fsrq = OrderedDict()
+
+        self._file_keys = ["n_alerts", "n_alerts_flare", "n_multi", "n_multi_flare"]
+
+    def merge_over_flux_factor(self, flux_factors, write_to: str = None, delete=False):
+
+        bllac_results = {}
+        fsrq_results = {}
+
+        for key in self._file_keys:
+
+            bllac_results[key] = []
+            bllac_results[key + "_tmp"] = []
+            fsrq_results[key] = []
+            fsrq_results[key + "_tmp"] = []
+
+        for flux_factor, sub_file_name in zip(flux_factors, self._file_name_list):
+
+            with h5py.File(sub_file_name, "r") as sf:
+
+                N_f = sf.attrs["N"]
+
+                for key in self._file_keys:
+                    bllac_results[key + "_tmp"] = []
+                    fsrq_results[key + "_tmp"] = []
+
+                for i in range(N_f):
+
+                    survey = sf["survey_%i/blazar_nu_connection" % i]
+                    bllac_group = survey["bllac"]
+                    fsrq_group = survey["fsrq"]
+
+                    for key in self._file_keys:
+                        bllac_results[key + "_tmp"].append(bllac_group[key][()])
+                        fsrq_results[key + "_tmp"].append(fsrq_group[key][()])
+
+            for key in self._file_keys:
+                bllac_results[key].append(bllac_results[key + "_tmp"])
+                fsrq_results[key].append(fsrq_results[key + "_tmp"])
+
+        # write to single file
+        if write_to:
+
+            with h5py.File(write_to, "w") as f:
+
+                f.create_dataset("flux_factors", data=flux_factors)
+
+                bllac_group = f.create_group("bllac")
+                fsrq_group = f.create_group("fsrq")
+
+                for key in self._file_keys:
+                    bllac_group.create_dataset(key, data=bllac_results[key])
+                    fsrq_group.create_dataset(key, data=fsrq_results[key])
+
+        # delete consolidated files
+        if delete:
+
+            for file_name in self._file_name_list:
+
+                os.remove(file_name)
 
 
 class BlazarNuAction(object, metaclass=ABCMeta):
@@ -611,6 +697,15 @@ class BlazarNuConnection(BlazarNuAction):
             hese_nu_detector = self._nu_obs.hese_detector
             ehe_nu_detector = self._nu_obs.ehe_detector
 
+            # check flux_factor is equal
+            if (
+                hese_nu_params.connection["flux_factor"]
+                != ehe_nu_params.connection["flux_factor"]
+            ):
+                raise ValueError(
+                    "Flux factor not equal between HESE and EHE connections."
+                )
+
             # BL Lacs
             self._connected_sim(
                 self._bllac_pop,
@@ -701,9 +796,12 @@ class BlazarNuConnection(BlazarNuAction):
 
             # Calculate steady emission
             L_steady = survey.luminosities_latent[i]  # erg s^-1 [0.1 - 100 GeV]
+
+            # For alternate energy range
             # L_steady = _convert_energy_range(
             #    L_steady, spectral_index, 0.1, 100, 1, 100
             # )  # erg s^-1 [1 - 100 GeV]
+
             L_steady = L_steady * erg_to_GeV  # GeV s^-1
             L_steady = L_steady * flux_factor  # Neutrinos
             L_steady = L_steady * flavour_factor  # Detected flavours
@@ -796,9 +894,12 @@ class BlazarNuConnection(BlazarNuAction):
                     L_flare = (
                         survey.luminosities_latent[i] * amp
                     )  # erg s^-1 [0.1 - 100 GeV]
+
+                    # alternate energy range
                     # L_flare = _convert_energy_range(
                     #   L_flare, spectral_index, 0.1, 100, 1, 100
                     # )  # erg s^-1 [1 - 100 GeV]
+
                     L_flare = L_flare * erg_to_GeV  # GeV s^-1
                     L_flare_nu = L_flare * flux_factor  # Neutrinos
                     L_flare_nu = L_flare_nu * flavour_factor  # Detected flavours
@@ -894,17 +995,58 @@ class BlazarNuConnection(BlazarNuAction):
 
             subgroup = group.create_group(self.name)
 
+            subgroup.create_dataset(
+                "flux_factor",
+                data=self._nu_obs._parameter_server.hese.connection["flux_factor"],
+            )
+
             bllac_group = subgroup.create_group("bllac")
 
-            for key, value in self.bllac_connection.items():
+            # reduced info
+            bllac_flare_sel = self.bllac_connection["src_flare"].astype(bool)
+            bllac_group.create_dataset(
+                "n_alerts", data=len(self.bllac_connection["nu_ras"])
+            )
+            bllac_group.create_dataset(
+                "n_alerts_flare",
+                data=len(self.bllac_connection["nu_ras"][bllac_flare_sel]),
+            )
+            unique, counts = np.unique(
+                self.bllac_connection["src_id"], return_counts=True
+            )
+            bllac_group.create_dataset("n_multi", data=len(counts[counts > 1]))
+            unique, counts = np.unique(
+                self.bllac_connection["src_id"][bllac_flare_sel], return_counts=True
+            )
+            bllac_group.create_dataset("n_multi_flare", data=len(counts[counts > 1]))
 
-                bllac_group.create_dataset(key, data=value)
+            # for key, value in self.bllac_connection.items():
+
+            #     bllac_group.create_dataset(key, data=value)
 
             fsrq_group = subgroup.create_group("fsrq")
 
-            for key, value in self.fsrq_connection.items():
+            # redcued info
+            fsrq_flare_sel = self.fsrq_connection["src_flare"].astype(bool)
+            fsrq_group.create_dataset(
+                "n_alerts", data=len(self.fsrq_connection["nu_ras"])
+            )
+            fsrq_group.create_dataset(
+                "n_alerts_flare",
+                data=len(self.fsrq_connection["nu_ras"][fsrq_flare_sel]),
+            )
+            unique, counts = np.unique(
+                self.fsrq_connection["src_id"], return_counts=True
+            )
+            fsrq_group.create_dataset("n_multi", data=len(counts[counts > 1]))
+            unique, counts = np.unique(
+                self.fsrq_connection["src_id"][fsrq_flare_sel], return_counts=True
+            )
+            fsrq_group.create_dataset("n_multi_flare", data=len(counts[counts > 1]))
 
-                fsrq_group.create_dataset(key, data=value)
+            # for key, value in self.fsrq_connection.items():
+
+            #     fsrq_group.create_dataset(key, data=value)
 
 
 def _convert_energy_range(luminosity, spectral_index, Emin, Emax, new_Emin, new_Emax):
