@@ -1,6 +1,7 @@
 import h5py
 import numpy as np
 from abc import abstractmethod, ABCMeta
+from typing import List
 
 
 class Simulation(object, metaclass=ABCMeta):
@@ -39,3 +40,46 @@ class Simulation(object, metaclass=ABCMeta):
     def run(self):
 
         raise NotImplementedError()
+
+
+class Results(object, metaclass=ABCMeta):
+    """
+    Generic results base class.
+    """
+
+    def __init__(self, file_name_list: List[str]):
+
+        self._file_name_list = file_name_list
+
+        self.N = 0
+
+        self._setup()
+
+        self._load_all_files()
+
+    @abstractmethod
+    def _setup(self):
+        """
+        Initialise output.
+        """
+
+        raise NotImplementedError()
+
+    @abstractmethod
+    def _load_from_h5(self, file_name: str):
+        """
+        Load single file.
+        """
+
+        raise NotImplementedError()
+
+    def _load_all_files(self):
+
+        for file_name in self._file_name_list:
+
+            self._load_from_h5(file_name)
+
+    @classmethod
+    def load(cls, file_name_list: List[str]):
+
+        return cls(file_name_list)

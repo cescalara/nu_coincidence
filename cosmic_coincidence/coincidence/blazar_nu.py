@@ -36,7 +36,7 @@ from cosmic_coincidence.neutrinos.icecube import (
     _get_point_source,
     _run_sim_for,
 )
-from cosmic_coincidence.simulation import Simulation
+from cosmic_coincidence.simulation import Simulation, Results
 from cosmic_coincidence.utils.package_data import get_path_to_config
 from cosmic_coincidence.utils.parallel import FileWritingBackend
 
@@ -287,14 +287,16 @@ class BlazarNuConnectedSim(BlazarNuSim):
         )
 
 
-class BlazarNuCoincidenceResults(object):
+class BlazarNuCoincidenceResults(Results):
     """
     Load results from BlazarNuCoincidenceSim.
     """
 
     def __init__(self, file_name_list: List[str]):
 
-        self._file_name_list = file_name_list
+        super().__init__(file_name_list=file_name_list)
+
+    def _setup(self):
 
         self.bllac = OrderedDict()
         self.bllac["n_spatial"] = np.array([])
@@ -307,12 +309,6 @@ class BlazarNuCoincidenceResults(object):
         self.fsrq["n_variable"] = np.array([])
         self.fsrq["n_flaring"] = np.array([])
         self.fsrq["matched_flare_amplitudes"] = np.array([])
-
-        self.N = 0
-
-        for file_name in self._file_name_list:
-
-            self._load_from_h5(file_name)
 
     def _load_from_h5(self, file_name):
 
@@ -364,45 +360,87 @@ class BlazarNuCoincidenceResults(object):
 
         self.N += N_f
 
-    @classmethod
-    def load(cls, file_name_list: List[str]):
 
-        return cls(file_name_list)
-
-
-class BlazarNuConnectedResults(object):
+class BlazarNuConnectedResults(Results):
     """
     Handle results from BlazarNuConnectedSim.
     """
 
     def __init__(self, file_name_list: List[str]):
 
-        self._file_name_list = file_name_list
+        super().__init__(file_name_list=file_name_list)
+
+    def _setup(self):
+
+        self._file_keys = ["n_alerts", "n_alerts_flare", "n_multi", "n_multi_flare"]
 
         self.bllac = OrderedDict()
         self.fsrq = OrderedDict()
 
-        self._file_keys = ["n_alerts", "n_alerts_flare", "n_multi", "n_multi_flare"]
+        for key in self._file_keys:
 
-    def merge_over_flux_factor(self, flux_factors, write_to: str = None, delete=False):
+            self.bllac[key] = np.array(([], []))
+            self.fsrq[key] = np.array(([], []))
+
+        # check flux_factors are equal across files
+        flux_factors = []
+        for file_name in self._file_name_list:
+
+            with h5py.File(file_name, "r") as f:
+
+                flux_factors.append(f["flux_factors"][()])
+
+        if not all(ff.all() == flux_factors[0].all() for ff in flux_factors):
+
+            raise ValueError("Flux factors are not equal across files")
+
+        self.flux_factors = flux_factors[0]
+
+    def _load_from_h5(self, file_name):
+
+        with h5py.File(file_name, "r") as f:
+
+            bllac_group = f["bllac"]
+            fsrq_group = f["fsrq"]
+
+            for blazar, group in zip(
+                [self.bllac, self.fsrq],
+                [bllac_group, fsrq_group],
+            ):
+
+                for key in self._file_keys:
+
+                    tmp_0 = np.append(blazar[key][0], group[key][()][0])
+                    tmp_1 = np.append(blazar[key][1], group[key][()][1])
+
+                    blazar[key] = np.array([tmp_0, tmp_1])
+
+    @staticmethod
+    def merge_over_flux_factor(
+        sub_file_names: List[str],
+        flux_factors,
+        write_to: str = None,
+        delete=False,
+    ):
+        _file_keys = ["n_alerts", "n_alerts_flare", "n_multi", "n_multi_flare"]
 
         bllac_results = {}
         fsrq_results = {}
 
-        for key in self._file_keys:
+        for key in _file_keys:
 
             bllac_results[key] = []
             bllac_results[key + "_tmp"] = []
             fsrq_results[key] = []
             fsrq_results[key + "_tmp"] = []
 
-        for flux_factor, sub_file_name in zip(flux_factors, self._file_name_list):
+        for flux_factor, sub_file_name in zip(flux_factors, sub_file_names):
 
             with h5py.File(sub_file_name, "r") as sf:
 
                 N_f = sf.attrs["N"]
 
-                for key in self._file_keys:
+                for key in _file_keys:
                     bllac_results[key + "_tmp"] = []
                     fsrq_results[key + "_tmp"] = []
 
@@ -412,11 +450,11 @@ class BlazarNuConnectedResults(object):
                     bllac_group = survey["bllac"]
                     fsrq_group = survey["fsrq"]
 
-                    for key in self._file_keys:
+                    for key in _file_keys:
                         bllac_results[key + "_tmp"].append(bllac_group[key][()])
                         fsrq_results[key + "_tmp"].append(fsrq_group[key][()])
 
-            for key in self._file_keys:
+            for key in _file_keys:
                 bllac_results[key].append(bllac_results[key + "_tmp"])
                 fsrq_results[key].append(fsrq_results[key + "_tmp"])
 
@@ -430,14 +468,14 @@ class BlazarNuConnectedResults(object):
                 bllac_group = f.create_group("bllac")
                 fsrq_group = f.create_group("fsrq")
 
-                for key in self._file_keys:
+                for key in _file_keys:
                     bllac_group.create_dataset(key, data=bllac_results[key])
                     fsrq_group.create_dataset(key, data=fsrq_results[key])
 
         # delete consolidated files
         if delete:
 
-            for file_name in self._file_name_list:
+            for file_name in sub_file_names:
 
                 os.remove(file_name)
 
