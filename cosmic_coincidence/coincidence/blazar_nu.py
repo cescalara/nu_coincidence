@@ -415,6 +415,8 @@ class BlazarNuConnectedResults(Results):
 
                     blazar[key] = np.array([tmp_0, tmp_1])
 
+            self.N += len(group[key][()][0])
+
     @staticmethod
     def merge_over_flux_factor(
         sub_file_names: List[str],
