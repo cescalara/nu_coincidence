@@ -142,7 +142,11 @@ class LDDEFermiModel(FermiModel):
 
             integral = np.zeros_like(z)
 
-            l = np.linspace(np.log10(self.Lmin), np.log10(self.Lmax), resolution)
+            l = np.linspace(
+                np.log10(self.Lmin),
+                np.log10(self.Lmax),
+                resolution,
+            )
             L = 10 ** l
 
             G = np.linspace(self.Gmin, self.Gmax, resolution)
@@ -406,18 +410,6 @@ class FermiPopWrapper(object, metaclass=ABCMeta):
                 data=self._survey.luminosities_latent,
                 compression="lzf",
             )
-
-            # subgroup.create_dataset(
-            #     "fluxes_latent",
-            #     data=self._survey.fluxes_latent,
-            #     compression="lzf",
-            # )
-
-            # subgroup.create_dataset(
-            #     "fluxes_observed",
-            #     data=self._survey.fluxes_observed,
-            #     compression="lzf",
-            # )
 
             subgroup.create_dataset(
                 "selection",

@@ -1,7 +1,7 @@
 import abc
 
 from popsynth.populations.bpl_population import BPLSFRPopulation
-from cosmic_coincidence.popsynth_wrapper import PopsynthWrapper
+from cosmic_coincidence.populations.popsynth_wrapper import PopsynthWrapper
 
 
 class ToyBLLacPopulation(BPLSFRPopulation):
@@ -43,29 +43,6 @@ class ToyBLLacPopulation(BPLSFRPopulation):
             seed=seed,
             is_rate=False,
         )
-
-
-class PDEBlazarPopulation(BPLSFRPopulation):
-    """
-    A BL Lac-like population based on the
-    results for the "luminosity-dependent
-    density evolution" (LDDE) model reported
-    in Ajello et al. 2014.
-    """
-
-    def __init__(self):
-
-        pass
-
-
-class FSRQPopulation:
-    """
-    Ajello et al. 2012.
-    """
-
-    def __init__(self):
-
-        pass
 
 
 class BlazarPopWrapper(PopsynthWrapper):
