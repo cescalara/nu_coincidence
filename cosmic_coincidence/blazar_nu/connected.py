@@ -485,13 +485,8 @@ class BlazarNuConnectedResults(Results):
 
         self._file_keys = ["n_alerts", "n_alerts_flare", "n_multi", "n_multi_flare"]
 
-        self.bllac = OrderedDict()
-        self.fsrq = OrderedDict()
-
-        for key in self._file_keys:
-
-            self.bllac[key] = np.array(([], []))
-            self.fsrq[key] = np.array(([], []))
+        self._bllac = OrderedDict()
+        self._fsrq = OrderedDict()
 
         # check flux_factors are equal across files
         flux_factors = []
@@ -507,6 +502,11 @@ class BlazarNuConnectedResults(Results):
 
         self.flux_factors = flux_factors[0]
 
+        for key in self._file_keys:
+
+            self._bllac[key] = [[] for _ in self.flux_factors]
+            self._fsrq[key] = [[] for _ in self.flux_factors]
+
     def _load_from_h5(self, file_name):
 
         with h5py.File(file_name, "r") as f:
@@ -515,18 +515,39 @@ class BlazarNuConnectedResults(Results):
             fsrq_group = f["fsrq"]
 
             for blazar, group in zip(
-                [self.bllac, self.fsrq],
+                [self._bllac, self._fsrq],
                 [bllac_group, fsrq_group],
             ):
 
                 for key in self._file_keys:
 
-                    tmp_0 = np.append(blazar[key][0], group[key][()][0])
-                    tmp_1 = np.append(blazar[key][1], group[key][()][1])
+                    for i in range(len(self.flux_factors)):
+                        blazar[key][i].extend(group[key][()][i])
 
-                    blazar[key] = np.array([tmp_0, tmp_1])
+                    # tmp = [
+                    #     np.append(blazar[key][i], group[key][()][i])
+                    #     for i in range(len(self.flux_factors))
+                    # ]
+
+                    # blazar[key] = np.array([tmp])
 
             self.N += len(group[key][()][0])
+
+    @property
+    def bllac(self):
+
+        for key in self._file_keys:
+            self._bllac[key] = np.array(self._bllac[key])
+
+        return self._bllac
+
+    @property
+    def fsrq(self):
+
+        for key in self._file_keys:
+            self._fsrq[key] = np.array(self._fsrq[key])
+
+        return self._fsrq
 
     @staticmethod
     def merge_over_flux_factor(
