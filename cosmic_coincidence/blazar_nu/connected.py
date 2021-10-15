@@ -524,13 +524,6 @@ class BlazarNuConnectedResults(Results):
                     for i in range(len(self.flux_factors)):
                         blazar[key][i].extend(group[key][()][i])
 
-                    # tmp = [
-                    #     np.append(blazar[key][i], group[key][()][i])
-                    #     for i in range(len(self.flux_factors))
-                    # ]
-
-                    # blazar[key] = np.array([tmp])
-
             self.N += len(group[key][()][0])
 
     @property
@@ -580,13 +573,23 @@ class BlazarNuConnectedResults(Results):
 
                 for i in range(N_f):
 
-                    survey = sf["survey_%i/blazar_nu_connection" % i]
-                    bllac_group = survey["bllac"]
-                    fsrq_group = survey["fsrq"]
+                    try:
 
-                    for key in _file_keys:
-                        bllac_results[key + "_tmp"].append(bllac_group[key][()])
-                        fsrq_results[key + "_tmp"].append(fsrq_group[key][()])
+                        # look for survey
+                        survey = sf["survey_%i/blazar_nu_connection" % i]
+                        bllac_group = survey["bllac"]
+                        fsrq_group = survey["fsrq"]
+
+                        for key in _file_keys:
+                            bllac_results[key + "_tmp"].append(bllac_group[key][()])
+                            fsrq_results[key + "_tmp"].append(fsrq_group[key][()])
+
+                    except KeyError:
+
+                        # write nan if no survey found
+                        for key in _file_keys:
+                            bllac_results[key + "_tmp"].append(np.nan)
+                            fsrq_results[key + "_tmp"].append(np.nan)
 
             for key in _file_keys:
                 bllac_results[key].append(bllac_results[key + "_tmp"])
