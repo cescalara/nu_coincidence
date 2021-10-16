@@ -39,6 +39,7 @@ class BlazarNuConnectedSim(BlazarNuSim):
         seed=1000,
         flux_factor: float = None,
         flare_only: bool = False,
+        det_only: bool = False,
     ):
 
         super().__init__(
@@ -62,10 +63,17 @@ class BlazarNuConnectedSim(BlazarNuSim):
         # store choice for flare_only
         self._flare_only = flare_only
 
+        # store choice for det_only
+        self._det_only = det_only
+
     def _blazar_nu_wrapper(self, nu_obs, bllac_pop, fsrq_pop):
 
         return BlazarNuConnection(
-            nu_obs, bllac_pop, fsrq_pop, flare_only=self._flare_only
+            nu_obs,
+            bllac_pop,
+            fsrq_pop,
+            flare_only=self._flare_only,
+            det_only=self._det_only,
         )
 
 
@@ -81,7 +89,8 @@ class BlazarNuConnection(BlazarNuAction):
         fsrq_pop: PopsynthWrapper,
         nu_obs: IceCubeObsWrapper,
         name="blazar_nu_connection",
-        flare_only=False,
+        flare_only: bool = False,
+        det_only: bool = False,
     ):
 
         self._bllac_connection = OrderedDict()
@@ -89,6 +98,8 @@ class BlazarNuConnection(BlazarNuAction):
         self._fsrq_connection = OrderedDict()
 
         self._flare_only = flare_only
+
+        self._det_only = det_only
 
         super().__init__(
             bllac_pop=bllac_pop,
@@ -424,52 +435,57 @@ class BlazarNuConnection(BlazarNuAction):
             )
 
             bllac_group = subgroup.create_group("bllac")
+            fsrq_group = subgroup.create_group("fsrq")
 
-            # reduced info
+            if self._det_only:
+
+                bllac_det_sel = self.bllac_connection["src_detected"].astype(bool)
+                fsrq_det_sel = self.fsrq_connection["src_detected"].astype(bool)
+
+            else:
+
+                bllac_det_sel = np.tile(True, len(self.bllac_connection["nu_ras"]))
+                fsrq_det_sel = np.tile(True, len(self.fsrq_connection["nu_ras"]))
+
             bllac_flare_sel = self.bllac_connection["src_flare"].astype(bool)
+            fsrq_flare_sel = self.fsrq_connection["src_flare"].astype(bool)
+
+            bllac_both_sel = bllac_det_sel & bllac_flare_sel
+            fsrq_both_sel = fsrq_det_sel & fsrq_flare_sel
+
+            # BL Lac
             bllac_group.create_dataset(
-                "n_alerts", data=len(self.bllac_connection["nu_ras"])
+                "n_alerts", data=len(self.bllac_connection["nu_ras"][bllac_det_sel])
             )
             bllac_group.create_dataset(
                 "n_alerts_flare",
-                data=len(self.bllac_connection["nu_ras"][bllac_flare_sel]),
+                data=len(self.bllac_connection["nu_ras"][bllac_both_sel]),
             )
             unique, counts = np.unique(
-                self.bllac_connection["src_id"], return_counts=True
+                self.bllac_connection["src_id"][bllac_det_sel], return_counts=True
             )
             bllac_group.create_dataset("n_multi", data=len(counts[counts > 1]))
             unique, counts = np.unique(
-                self.bllac_connection["src_id"][bllac_flare_sel], return_counts=True
+                self.bllac_connection["src_id"][bllac_both_sel], return_counts=True
             )
             bllac_group.create_dataset("n_multi_flare", data=len(counts[counts > 1]))
 
-            # for key, value in self.bllac_connection.items():
-
-            #     bllac_group.create_dataset(key, data=value)
-
-            fsrq_group = subgroup.create_group("fsrq")
-
-            # redcued info
-            fsrq_flare_sel = self.fsrq_connection["src_flare"].astype(bool)
+            # FSRQ
             fsrq_group.create_dataset(
-                "n_alerts", data=len(self.fsrq_connection["nu_ras"])
+                "n_alerts", data=len(self.fsrq_connection["nu_ras"][fsrq_det_sel])
             )
             fsrq_group.create_dataset(
                 "n_alerts_flare",
-                data=len(self.fsrq_connection["nu_ras"][fsrq_flare_sel]),
+                data=len(self.fsrq_connection["nu_ras"][fsrq_both_sel]),
             )
             unique, counts = np.unique(
-                self.fsrq_connection["src_id"], return_counts=True
+                self.fsrq_connection["src_id"][fsrq_det_sel], return_counts=True
             )
             fsrq_group.create_dataset("n_multi", data=len(counts[counts > 1]))
             unique, counts = np.unique(
-                self.fsrq_connection["src_id"][fsrq_flare_sel], return_counts=True
+                self.fsrq_connection["src_id"][fsrq_both_sel], return_counts=True
             )
             fsrq_group.create_dataset("n_multi_flare", data=len(counts[counts > 1]))
-
-            # for key, value in self.fsrq_connection.items():
-
-            #     fsrq_group.create_dataset(key, data=value)
 
 
 class BlazarNuConnectedResults(Results):
