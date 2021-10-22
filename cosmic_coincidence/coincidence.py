@@ -53,6 +53,47 @@ def check_spatial_coincidence(
     return n_match_spatial, spatial_match_inds
 
 
+def count_spatial_coincidence(
+    event_ras,
+    event_decs,
+    event_ang_errs,
+    population_ras,
+    population_decs,
+):
+    """
+    Count the spatial coincidence of events
+    assuming circular error regions with the
+    sources in population, which are assumed to be points.
+
+    All angles should be in radians.
+    """
+
+    n_match_spatial = 0
+    spatial_match_inds = []
+
+    # For each event
+    for e_ra, e_dec, e_ang_err in zip(event_ras, event_decs, event_ang_errs):
+
+        # Check if source locations inside event circle
+        sigmas = get_central_angle(e_ra, e_dec, population_ras, population_decs)
+        match_selection = sigmas <= e_ang_err
+
+        n_match_spatial += len(match_selection[match_selection == True])
+
+        # Indices of sources which match this event
+        spatial_match_inds.append(np.where(match_selection == True)[0])
+
+    # Store how many nu for each object, if non-zero
+    match_ids = []
+    for inds in spatial_match_inds:
+
+        if inds.size > 0:
+
+            match_ids.extend(inds)
+
+    return n_match_spatial, match_ids
+
+
 def get_central_angle(ref_ra, ref_dec, ras, decs):
     """
     Get the central angles between ref_ra and
