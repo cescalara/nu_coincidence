@@ -1,16 +1,16 @@
 atmospheric flux:
   index: 3.7
-  lower_energy: 50000.0
+  lower_energy: 20000.0
   normalisation: 1.3333333333333334e-18
   normalisation_energy: 100000.0
-  upper_energy: 100000000.0
+  upper_energy: 10000000.0
 detector:
-  Emin_det: 50000.0
-  max_cosz: 1
+  Emin_det: 10000.0
+  max_cosz: 0.1
   obs_time: 10.0
 diffuse flux:
   index: 2.6
-  lower_energy: 50000.0
+  lower_energy: 20000.0
   normalisation: 6.666666666666667e-19
   normalisation_energy: 100000.0
-  upper_energy: 100000000.0
+  upper_energy: 10000000.0
