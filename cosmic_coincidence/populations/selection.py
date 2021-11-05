@@ -1,8 +1,8 @@
-from popsynth.selection_probability.generic_selectors import SoftSelection
+from popsynth.selection_probability.generic_selectors import LowerBound, SoftSelection
 from popsynth.selection_probability.selection_probability import SelectionParameter
 
 
-class CombinedFluxIndexSelection(SoftSelection):
+class CombinedFluxIndexSelection(LowerBound):
     """
     Selection on :class:`CombinedFluxIndexSampler`,
     with the form:
@@ -21,7 +21,6 @@ class CombinedFluxIndexSelection(SoftSelection):
     _selection_name = "CombinedFluxIndexSelection"
 
     boundary = SelectionParameter(default=-37.5)
-    strength = SelectionParameter(default=5, vmin=0)
 
     def __init__(
         self,
@@ -30,6 +29,38 @@ class CombinedFluxIndexSelection(SoftSelection):
     ):
 
         super(CombinedFluxIndexSelection, self).__init__(
+            name=name, use_obs_value=use_obs_value
+        )
+
+
+class CombinedFluxIndexSoftSelection(SoftSelection):
+    """
+    Selection on :class:`CombinedFluxIndexSampler`,
+    with the form:
+
+    index = ``slope`` log10(flux) + ``intercept``
+
+    :class:`CombinedFluxIndexSampler` transforms to:
+    -(index - ``slope`` log10(flux))
+    such that a constant selection can be made
+    on -``intercept``.
+
+    See e.g. Fig. 4 in Ajello et al. 2020 (4LAC),
+    default values are set to approximate this.
+    """
+
+    _selection_name = "CombinedFluxIndexSoftSelection"
+
+    boundary = SelectionParameter(default=-37.5)
+    strength = SelectionParameter(default=5, vmin=0)
+
+    def __init__(
+        self,
+        name: str = "CombinedFluxIndexSoftSelection",
+        use_obs_value: bool = True,
+    ):
+
+        super(CombinedFluxIndexSoftSelection, self).__init__(
             name=name, use_obs_value=use_obs_value
         )
 

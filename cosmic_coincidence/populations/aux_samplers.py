@@ -216,7 +216,7 @@ class CombinedFluxIndexSampler(AuxiliarySampler):
     -(index - ``slope`` log10(flux))
     such that a constant selection can be made
     on -``intercept``. This works with both
-    :class:`HardSelection` and :class:`SoftSelection`
+    :class:`LowerBound` and :class:`SoftSelection`
 
     See e.g. Fig. 4 in Ajello et al. 2020 (4LAC),
     default values are set to approximate this.
@@ -230,7 +230,6 @@ class CombinedFluxIndexSampler(AuxiliarySampler):
         self,
     ):
 
-        # this time set observed=True
         super(CombinedFluxIndexSampler, self).__init__(
             "combined flux index",
             observed=False,
@@ -240,16 +239,16 @@ class CombinedFluxIndexSampler(AuxiliarySampler):
 
     def true_sampler(self, size):
 
-        # Calculate latent fluxes (ideally would use observed)
+        # Calculate latent fluxes
         dl = cosmology.luminosity_distance(self._distance)  # cm
 
         fluxes = self._luminosity / (4 * np.pi * dl ** 2)  # erg cm^-2 s^-1
 
-        # Use observed spectral index
-        spectral_index = self._secondary_samplers["spectral_index"].obs_values
+        # Use true spectral index
+        spectral_index = self._secondary_samplers["spectral_index"].true_values
 
         # Transformed based on desired selection
         true_values = spectral_index - self.slope * np.log10(fluxes)
 
-        # Negative to use with SoftSelection
-        self._true_values = -1 * true_values
+        # Negative to use with LowerBound/SoftSelection
+        self._true_values = -true_values
