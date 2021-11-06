@@ -6,9 +6,17 @@ auxiliary samplers:
     selection:
       CombinedFluxIndexSelection:
         boundary: -37.5
-        strength: 5
     slope: 3
     type: CombinedFluxIndexSampler
+  flare_amplitudes:
+    alpha: 4.0
+    observed: false
+    secondary:
+    - flare_times
+    selection:
+      UnitySelection: {}
+    type: FlareAmplitudeAuxSampler
+    xmin: 1.2
   flare_durations:
     alpha: -2.0
     observed: false
@@ -18,7 +26,7 @@ auxiliary samplers:
       UnitySelection: {}
     type: FlareDurationAuxSampler
   flare_rate:
-    alpha: -2.1
+    alpha: -2.0
     observed: false
     secondary:
     - variability
@@ -35,15 +43,6 @@ auxiliary samplers:
     selection:
       UnitySelection: {}
     type: FlareTimeAuxSampler
-  flare_amplitudes:
-    alpha: 4.0
-    xmin: 1.3
-    observed: false
-    secondary:
-    - flare_times
-    selection:
-      UnitySelection: {}
-    type: FlareAmplitudeAuxSampler
   spectral_index:
     mu: 2.5
     observed: true
@@ -59,14 +58,17 @@ auxiliary samplers:
     selection:
       UnitySelection: {}
     type: VariabilityAuxSampler
-    weight: 0.32
+    weight: 0.4
+flux selection:
+  HardFluxSelection:
+    boundary: 1.0e-14
 luminosity distribution:
   BPLDistribution:
-    Lbreak: 8.0e+47
-    Lmax: 1.0e+52
+    Lbreak: 9.0e+47
+    Lmax: 1.0e+50
     Lmin: 7.0e+43
     alpha: -1.3
-    beta: -2.7
+    beta: -2.4
 seed: 42
 spatial distribution:
   SFRDistribution:
@@ -75,5 +77,5 @@ spatial distribution:
     peak: 0.6
     r0: 25
     r_max: 6
-    rise: 14.5
+    rise: 14.6
   is_rate: false
