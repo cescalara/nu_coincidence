@@ -69,7 +69,7 @@ luminosity distribution:
     Lmin: 7.0e+43
     alpha: -1.2
     beta: -2.2
-seed: 100
+seed: 42
 spatial distribution:
   SFRDistribution:
     a: 1
