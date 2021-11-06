@@ -24,6 +24,7 @@ def check_spatial_coincidence(
     event_ras,
     event_decs,
     event_ang_errs,
+    event_src_labels,
     population_ras,
     population_decs,
 ):
@@ -36,10 +37,16 @@ def check_spatial_coincidence(
     """
 
     n_match_spatial = 0
+    n_match_spatial_astro = 0
     spatial_match_inds = []
 
     # For each event
-    for e_ra, e_dec, e_ang_err in zip(event_ras, event_decs, event_ang_errs):
+    for e_ra, e_dec, e_ang_err, e_label in zip(
+        event_ras,
+        event_decs,
+        event_ang_errs,
+        event_src_labels,
+    ):
 
         # Check if source locations inside event circle
         sigmas = get_central_angle(e_ra, e_dec, population_ras, population_decs)
@@ -47,10 +54,15 @@ def check_spatial_coincidence(
 
         n_match_spatial += len(match_selection[match_selection == True])
 
+        # Check if event is from astro component
+        if e_label == 1:
+
+            n_match_spatial_astro += len(match_selection[match_selection == True])
+
         # Indices of sources which match this event
         spatial_match_inds.append(np.where(match_selection == True)[0])
 
-    return n_match_spatial, spatial_match_inds
+    return n_match_spatial, n_match_spatial_astro, spatial_match_inds
 
 
 def count_spatial_coincidence(
@@ -115,6 +127,7 @@ def get_central_angle(ref_ra, ref_dec, ras, decs):
 
 def check_temporal_coincidence(
     event_times,
+    event_src_labels,
     spatial_match_inds,
     population_variability,
     population_flare_times,
@@ -128,11 +141,17 @@ def check_temporal_coincidence(
     """
 
     n_match_variable = 0
+    n_match_variable_astro = 0
     n_match_flaring = 0
+    n_match_flaring_astro = 0
     matched_flare_amplitudes = []
 
     # For each event
-    for e_time, match_inds in zip(event_times, spatial_match_inds):
+    for e_time, e_label, match_inds in zip(
+        event_times,
+        event_src_labels,
+        spatial_match_inds,
+    ):
 
         # If there are spatial matches
         if match_inds.size:
@@ -144,6 +163,9 @@ def check_temporal_coincidence(
                 if population_variability[ind]:
 
                     n_match_variable += 1
+
+                    if e_label == 1:
+                        n_match_variable_astro += 1
 
                     flare_times = population_flare_times[ind]
 
@@ -164,6 +186,15 @@ def check_temporal_coincidence(
 
                         n_match_flaring += 1
 
+                        if e_label == 1:
+                            n_match_flaring_astro += 1
+
                         matched_flare_amplitudes.append(flare_amplitudes[selection][0])
 
-    return n_match_variable, n_match_flaring, matched_flare_amplitudes
+    return (
+        n_match_variable,
+        n_match_variable_astro,
+        n_match_flaring,
+        n_match_flaring_astro,
+        matched_flare_amplitudes,
+    )
