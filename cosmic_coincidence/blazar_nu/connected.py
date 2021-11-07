@@ -511,7 +511,13 @@ class BlazarNuConnectedResults(Results):
     Handle results from BlazarNuConnectedSim.
     """
 
-    def __init__(self, file_name_list: List[str]):
+    def __init__(
+        self,
+        file_name_list: List[str],
+        append_flux_factors: bool = False,
+    ):
+
+        self._append_flux_factors = append_flux_factors
 
         super().__init__(file_name_list=file_name_list)
 
@@ -522,24 +528,42 @@ class BlazarNuConnectedResults(Results):
         self._bllac = OrderedDict()
         self._fsrq = OrderedDict()
 
-        # check flux_factors are equal across files
-        flux_factors = []
-        for file_name in self._file_name_list:
+        if self._append_flux_factors:
 
-            with h5py.File(file_name, "r") as f:
+            flux_factors = []
+            for file_name in self._file_name_list:
 
-                flux_factors.append(f["flux_factors"][()])
+                with h5py.File(file_name, "r") as f:
 
-        if not all(ff.all() == flux_factors[0].all() for ff in flux_factors):
+                    flux_factors.extend(f["flux_factors"][()])
 
-            raise ValueError("Flux factors are not equal across files")
+            self.flux_factors = flux_factors
 
-        self.flux_factors = flux_factors[0]
+            for key in self._file_keys:
 
-        for key in self._file_keys:
+                self._bllac[key] = []
+                self._fsrq[key] = []
 
-            self._bllac[key] = [[] for _ in self.flux_factors]
-            self._fsrq[key] = [[] for _ in self.flux_factors]
+        else:
+
+            # check flux_factors are equal across files
+            flux_factors = []
+            for file_name in self._file_name_list:
+
+                with h5py.File(file_name, "r") as f:
+
+                    flux_factors.append(f["flux_factors"][()])
+
+            if not all(ff.all() == flux_factors[0].all() for ff in flux_factors):
+
+                raise ValueError("Flux factors are not equal across files")
+
+            self.flux_factors = flux_factors[0]
+
+            for key in self._file_keys:
+
+                self._bllac[key] = [[] for _ in self.flux_factors]
+                self._fsrq[key] = [[] for _ in self.flux_factors]
 
     def _load_from_h5(self, file_name):
 
@@ -555,10 +579,21 @@ class BlazarNuConnectedResults(Results):
 
                 for key in self._file_keys:
 
-                    for i in range(len(self.flux_factors)):
-                        blazar[key][i].extend(group[key][()][i])
+                    if self._append_flux_factors:
+                        blazar[key].extend(group[key][()])
 
-            self.N += len(group[key][()][0])
+                    else:
+
+                        for i in range(len(self.flux_factors)):
+                            blazar[key][i].extend(group[key][()][i])
+
+            if self._append_flux_factors:
+
+                self.N += len(group[key][()])
+
+            else:
+
+                self.N += len(group[key][()][0])
 
     @property
     def bllac(self):
