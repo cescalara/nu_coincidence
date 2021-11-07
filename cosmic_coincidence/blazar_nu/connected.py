@@ -2,7 +2,7 @@ import os
 import h5py
 import numpy as np
 from collections import OrderedDict
-from typing import List
+from typing import List, Callable
 from numpy.typing import ArrayLike
 from astropy import units as u
 
@@ -39,7 +39,7 @@ class BlazarNuConnectedSim(BlazarNuSim):
         nu_ehe_config: str = None,
         seed=1000,
         flux_factor: float = None,
-        flux_factors: ArrayLike = None,
+        use_pop_flux_factors: bool = False,
         flare_only: bool = False,
         det_only: bool = False,
     ):
@@ -57,8 +57,6 @@ class BlazarNuConnectedSim(BlazarNuSim):
         )
 
         # overwrite flux_factor if provided
-
-        # for fixed flux factors
         if flux_factor:
 
             for i in range(self._N):
@@ -66,17 +64,7 @@ class BlazarNuConnectedSim(BlazarNuSim):
                 self._nu_param_servers[i].hese.connection["flux_factor"] = flux_factor
                 self._nu_param_servers[i].ehe.connection["flux_factor"] = flux_factor
 
-        # for individual flux factors
-        if flux_factors and len(flux_factors) == self._N:
-
-            for i, ff in enumerate(flux_factors):
-
-                self._nu_param_servers[i].hese.connection["flux_factor"] = ff
-                self._nu_param_servers[i].ehe.connection["flux_factor"] = ff
-
-        elif flux_factors:
-
-            raise ValueError("Length of flux_factors must equal input N")
+        self._use_pop_flux_factors = use_pop_flux_factors
 
         # store choice for flare_only
         self._flare_only = flare_only
@@ -90,6 +78,7 @@ class BlazarNuConnectedSim(BlazarNuSim):
             nu_obs,
             bllac_pop,
             fsrq_pop,
+            use_pop_flux_factors=self._use_pop_flux_factors,
             flare_only=self._flare_only,
             det_only=self._det_only,
         )
@@ -107,6 +96,7 @@ class BlazarNuConnection(BlazarNuAction):
         fsrq_pop: PopsynthWrapper,
         nu_obs: IceCubeObsWrapper,
         name="blazar_nu_connection",
+        use_pop_flux_factors: bool = False,
         flare_only: bool = False,
         det_only: bool = False,
     ):
@@ -114,6 +104,8 @@ class BlazarNuConnection(BlazarNuAction):
         self._bllac_connection = OrderedDict()
 
         self._fsrq_connection = OrderedDict()
+
+        self._use_pop_flux_factors = use_pop_flux_factors
 
         self._flare_only = flare_only
 
@@ -212,7 +204,13 @@ class BlazarNuConnection(BlazarNuAction):
         connection["src_flare"] = np.array([])
         connection["src_id"] = np.array([], dtype=np.int64)
 
-    def _connected_sim(self, pop, nu_params, nu_detector, connection):
+    def _connected_sim(
+        self,
+        pop,
+        nu_params,
+        nu_detector,
+        connection,
+    ):
         """
         Run a connected sim for pop and store
         the results in connection.
@@ -245,6 +243,10 @@ class BlazarNuConnection(BlazarNuAction):
             dec = np.deg2rad(survey.dec[i])
             z = survey.distances[i]
             spectral_index = survey.spectral_index[i]
+
+            # Overwrite flux_factor if necessary
+            if self._use_pop_flux_factors:
+                flux_factor = survey.flux_factor[i]
 
             # Calculate steady emission
             L_steady = survey.luminosities_latent[i]  # erg s^-1 [0.1 - 100 GeV]
@@ -447,10 +449,25 @@ class BlazarNuConnection(BlazarNuAction):
 
             subgroup = group.create_group(self.name)
 
-            subgroup.create_dataset(
-                "flux_factor",
-                data=self._nu_obs._parameter_server.hese.connection["flux_factor"],
-            )
+            if self._use_pop_flux_factors:
+
+                mean_flux_factor = np.mean(
+                    np.concatenate(
+                        [
+                            self._bllac_pop.survey.flux_factor,
+                            self._fsrq_pop.survey.flux_factor,
+                        ]
+                    )
+                )
+
+                subgroup.create_dataset("flux_factor", data=mean_flux_factor)
+
+            else:
+
+                subgroup.create_dataset(
+                    "flux_factor",
+                    data=self._nu_obs._parameter_server.hese.connection["flux_factor"],
+                )
 
             bllac_group = subgroup.create_group("bllac")
             fsrq_group = subgroup.create_group("fsrq")
@@ -577,23 +594,22 @@ class BlazarNuConnectedResults(Results):
                 [bllac_group, fsrq_group],
             ):
 
-                for key in self._file_keys:
+                if self._append_flux_factors:
 
-                    if self._append_flux_factors:
+                    for key in self._file_keys:
+
                         blazar[key].extend(group[key][()])
 
-                    else:
+                    self.N += len(group[key][()])
+
+                else:
+
+                    for key in self._file_keys:
 
                         for i in range(len(self.flux_factors)):
                             blazar[key][i].extend(group[key][()][i])
 
-            if self._append_flux_factors:
-
-                self.N += len(group[key][()])
-
-            else:
-
-                self.N += len(group[key][()][0])
+                    self.N += len(group[key][()][0])
 
     @property
     def bllac(self):
