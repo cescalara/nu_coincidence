@@ -3,6 +3,7 @@ import h5py
 import numpy as np
 from collections import OrderedDict
 from typing import List
+from numpy.typing import ArrayLike
 from astropy import units as u
 
 from icecube_tools.neutrino_calculator import NeutrinoCalculator
@@ -38,6 +39,7 @@ class BlazarNuConnectedSim(BlazarNuSim):
         nu_ehe_config: str = None,
         seed=1000,
         flux_factor: float = None,
+        flux_factors: ArrayLike = None,
         flare_only: bool = False,
         det_only: bool = False,
     ):
@@ -55,10 +57,26 @@ class BlazarNuConnectedSim(BlazarNuSim):
         )
 
         # overwrite flux_factor if provided
+
+        # for fixed flux factors
         if flux_factor:
+
             for i in range(self._N):
+
                 self._nu_param_servers[i].hese.connection["flux_factor"] = flux_factor
                 self._nu_param_servers[i].ehe.connection["flux_factor"] = flux_factor
+
+        # for individual flux factors
+        if flux_factors and len(flux_factors) == self._N:
+
+            for i, ff in enumerate(flux_factors):
+
+                self._nu_param_servers[i].hese.connection["flux_factor"] = ff
+                self._nu_param_servers[i].ehe.connection["flux_factor"] = ff
+
+        elif flux_factors:
+
+            raise ValueError("Length of flux_factors must equal input N")
 
         # store choice for flare_only
         self._flare_only = flare_only
@@ -631,6 +649,72 @@ class BlazarNuConnectedResults(Results):
             for file_name in sub_file_names:
 
                 os.remove(file_name)
+
+    @staticmethod
+    def reorganise_file_structure(
+        file_name: str,
+        write_to: str = None,
+        delete=False,
+    ):
+
+        _file_keys = ["n_alerts", "n_alerts_flare", "n_multi", "n_multi_flare"]
+
+        bllac_results = {}
+        fsrq_results = {}
+        flux_factors = []
+
+        for key in _file_keys:
+
+            bllac_results[key] = []
+            fsrq_results[key] = []
+
+        with h5py.File(file_name, "r") as f:
+
+            N_f = f.attrs["N"]
+
+            for i in range(N_f):
+
+                try:
+
+                    # look for survey
+                    survey = f["survey_%i/blazar_nu_connection" % i]
+                    bllac_group = survey["bllac"]
+                    fsrq_group = survey["fsrq"]
+
+                    flux_factor = survey["flux_factor"][()]
+                    flux_factors.append(flux_factor)
+
+                    for key in _file_keys:
+                        bllac_results[key].append(bllac_group[key][()])
+                        fsrq_results[key].append(fsrq_group[key][()])
+
+                except KeyError:
+
+                    # write nan if no survey found
+                    flux_factors.append(np.nan)
+
+                    for key in _file_keys:
+                        bllac_results[key].append(np.nan)
+                        fsrq_results[key].append(np.nan)
+
+        # write to new file
+        if write_to:
+
+            with h5py.File(write_to, "w") as f:
+
+                f.create_dataset("flux_factors", data=flux_factors)
+
+                bllac_group = f.create_group("bllac")
+                fsrq_group = f.create_group("fsrq")
+
+                for key in _file_keys:
+                    bllac_group.create_dataset(key, data=bllac_results[key])
+                    fsrq_group.create_dataset(key, data=fsrq_results[key])
+
+        # delete consolidated files
+        if delete:
+
+            os.remove(file_name)
 
 
 def _convert_energy_range(
