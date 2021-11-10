@@ -594,22 +594,24 @@ class BlazarNuConnectedResults(Results):
                 [bllac_group, fsrq_group],
             ):
 
-                if self._append_flux_factors:
+                for key in self._file_keys:
 
-                    for key in self._file_keys:
+                    if self._append_flux_factors:
 
                         blazar[key].extend(group[key][()])
 
-                    self.N += len(group[key][()])
-
-                else:
-
-                    for key in self._file_keys:
+                    else:
 
                         for i in range(len(self.flux_factors)):
                             blazar[key][i].extend(group[key][()][i])
 
-                    self.N += len(group[key][()][0])
+            if self._append_flux_factors:
+
+                self.N += len(group[key][()])
+
+            else:
+
+                self.N += len(group[key][()][0])
 
     @property
     def bllac(self):
