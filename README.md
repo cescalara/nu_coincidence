@@ -1,3 +1,3 @@
 # cosmic_coincidence
 
-Investigating coincident multi-messenger detections through simulations.
+Investigating coincident source-neutrino detections through simulations.
