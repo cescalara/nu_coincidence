@@ -203,6 +203,51 @@ class FlareAmplitudeAuxSampler(AuxiliarySampler):
         self._true_values = amplitudes
 
 
+class FluxSampler(AuxiliarySampler):
+    """
+    Sample observed fluxes based on the latent
+    fluxes.
+
+    This is equivalent to defining ``flux_sigma``
+    in PopulationSynth.draw_survey(), but also
+    allows to define more complicated selections
+    on the *observed* flux, such as the
+    ``CombinedFluxIndexSelection``.
+    """
+
+    _auxiliary_sampler_name = "FluxSampler"
+
+    sigma = AuxiliaryParameter(default=0.1, vmin=0)
+
+    def __init__(self):
+
+        super(FluxSampler, self).__init__(
+            "flux",
+            observed=True,
+            uses_distance=True,
+            uses_luminosity=True,
+        )
+
+    def true_sampler(self, size):
+
+        # Calculate latent fluxes
+        dl = cosmology.luminosity_distance(self._distance)  # cm
+
+        fluxes = self._luminosity / (4 * np.pi * dl ** 2)  # erg cm^-2 s^-1
+
+        self._true_values = fluxes
+
+    def observation_sampler(self, size):
+
+        log_fluxes = np.log(self._true_values)
+
+        log_obs_fluxes = log_fluxes + np.random.normal(
+            loc=0, scale=self.sigma, size=size
+        )
+
+        self._obs_values = np.exp(log_obs_fluxes)
+
+
 class CombinedFluxIndexSampler(AuxiliarySampler):
     """
     Make a transformed parameter to perform a
@@ -231,24 +276,22 @@ class CombinedFluxIndexSampler(AuxiliarySampler):
     ):
 
         super(CombinedFluxIndexSampler, self).__init__(
-            "combined flux index",
+            "combined_flux_index",
             observed=False,
-            uses_distance=True,
-            uses_luminosity=True,
         )
 
     def true_sampler(self, size):
 
-        # Calculate latent fluxes
-        dl = cosmology.luminosity_distance(self._distance)  # cm
+        # Get obs fluxes
+        secondary = self._secondary_samplers["flux"]
 
-        fluxes = self._luminosity / (4 * np.pi * dl ** 2)  # erg cm^-2 s^-1
+        obs_fluxes = secondary.obs_values
 
-        # Use true spectral index
-        spectral_index = self._secondary_samplers["spectral_index"].true_values
+        # Use obs spectral index
+        spectral_index = self._secondary_samplers["spectral_index"].obs_values
 
         # Transformed based on desired selection
-        true_values = spectral_index - self.slope * np.log10(fluxes)
+        true_values = spectral_index - self.slope * np.log10(obs_fluxes)
 
         # Negative to use with LowerBound/SoftSelection
         self._true_values = -true_values
