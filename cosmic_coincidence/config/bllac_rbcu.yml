@@ -2,6 +2,7 @@ auxiliary samplers:
   combined flux index:
     observed: false
     secondary:
+    - flux
     - spectral_index
     selection:
       CombinedFluxIndexSelection:
@@ -43,6 +44,13 @@ auxiliary samplers:
     selection:
       UnitySelection: {}
     type: FlareTimeAuxSampler
+  flux:
+    observed: true
+    secondary: []
+    selection:
+      UnitySelection: {}
+    sigma: 0.1
+    type: FluxSampler
   spectral_index:
     mu: 2.1
     observed: true
@@ -58,7 +66,7 @@ auxiliary samplers:
     selection:
       UnitySelection: {}
     type: VariabilityAuxSampler
-    weight: 0.08
+    weight: 0.075
 flux selection:
   HardFluxSelection:
     boundary: 1.0e-14
