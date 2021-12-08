@@ -175,7 +175,11 @@ class IceCubeAlertsWrapper(IceCubeObsWrapper):
             diffuse_source = DiffuseSource(flux_model=diffuse_power_law)
             ehe_sources.append(diffuse_source)
 
-        ehe_aeff = EffectiveArea.from_dataset("20181018", fetch=False)
+        ehe_aeff = EffectiveArea.from_dataset(
+            "20181018",
+            scale_factor=0.3,
+            fetch=False,
+        )
 
         ehe_ang_res = AngularResolution.from_dataset(
             "20181018",
