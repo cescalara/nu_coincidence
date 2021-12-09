@@ -80,6 +80,8 @@ class BlazarNuCoincidence(BlazarNuAction):
 
         self._check_temporal()
 
+        self._store_survey_info()
+
     @property
     def bllac_coincidence(self):
 
@@ -188,11 +190,10 @@ class BlazarNuCoincidence(BlazarNuAction):
             n_match_flaring,
             n_match_flaring_astro,
             matched_flare_amplitudes,
-            matched_src_ras,
-            matched_src_decs,
             matched_nu_ras,
             matched_nu_decs,
             matched_nu_ang_errs,
+            matched_nu_times,
         ) = check_temporal_coincidence(
             observation.times,
             observation.source_label,
@@ -200,8 +201,6 @@ class BlazarNuCoincidence(BlazarNuAction):
             observation.dec,
             observation.ang_err,
             self.bllac_coincidence["spatial_match_inds"],
-            survey.ra[survey.selection],
-            survey.dec[survey.selection],
             survey.variability[survey.selection],
             survey.flare_times[survey.selection],
             survey.flare_durations[survey.selection],
@@ -213,11 +212,10 @@ class BlazarNuCoincidence(BlazarNuAction):
         self.bllac_coincidence["n_flaring"] = n_match_flaring
         self.bllac_coincidence["n_flaring_astro"] = n_match_flaring_astro
         self.bllac_coincidence["matched_flare_amplitudes"] = matched_flare_amplitudes
-        self.bllac_coincidence["matched_src_ras"] = matched_src_ras
-        self.bllac_coincidence["matched_src_decs"] = matched_src_decs
         self.bllac_coincidence["matched_nu_ras"] = matched_nu_ras
         self.bllac_coincidence["matched_nu_decs"] = matched_nu_decs
         self.bllac_coincidence["matched_nu_ang_errs"] = matched_nu_ang_errs
+        self.bllac_coincidence["matched_nu_times"] = matched_nu_times
 
         # FSRQs
         survey = self._fsrq_pop.survey
@@ -228,11 +226,10 @@ class BlazarNuCoincidence(BlazarNuAction):
             n_match_flaring,
             n_match_flaring_astro,
             matched_flare_amplitudes,
-            matched_src_ras,
-            matched_src_decs,
             matched_nu_ras,
             matched_nu_decs,
             matched_nu_ang_errs,
+            matched_nu_times,
         ) = check_temporal_coincidence(
             observation.times,
             observation.source_label,
@@ -240,8 +237,6 @@ class BlazarNuCoincidence(BlazarNuAction):
             observation.dec,
             observation.ang_err,
             self.fsrq_coincidence["spatial_match_inds"],
-            survey.ra[survey.selection],
-            survey.dec[survey.selection],
             survey.variability[survey.selection],
             survey.flare_times[survey.selection],
             survey.flare_durations[survey.selection],
@@ -253,11 +248,94 @@ class BlazarNuCoincidence(BlazarNuAction):
         self.fsrq_coincidence["n_flaring"] = n_match_flaring
         self.fsrq_coincidence["n_flaring_astro"] = n_match_flaring_astro
         self.fsrq_coincidence["matched_flare_amplitudes"] = matched_flare_amplitudes
-        self.fsrq_coincidence["matched_src_ras"] = matched_src_ras
-        self.fsrq_coincidence["matched_src_decs"] = matched_src_decs
         self.fsrq_coincidence["matched_nu_ras"] = matched_nu_ras
         self.fsrq_coincidence["matched_nu_decs"] = matched_nu_decs
         self.fsrq_coincidence["matched_nu_ang_errs"] = matched_nu_ang_errs
+        self.fsrq_coincidence["matched_nu_times"] = matched_nu_times
+
+    def _store_survey_info(self):
+
+        self.bllac_coincidence["pop_ras"] = []
+        self.bllac_coincidence["pop_decs"] = []
+        self.bllac_coincidence["pop_fluxes"] = []
+
+        self.fsrq_coincidence["pop_ras"] = []
+        self.fsrq_coincidence["pop_decs"] = []
+        self.fsrq_coincidence["pop_fluxes"] = []
+
+        if (
+            self.bllac_coincidence["n_flaring"] > 0
+            or self.fsrq_coincidence["n_flaring"] > 0
+        ):
+
+            # Store positions of all detected sources
+            survey = self._bllac_pop.survey
+            self.bllac_coincidence["pop_ras"] = survey.ra[survey.selection]
+            self.bllac_coincidence["pop_decs"] = survey.dec[survey.selection]
+
+            # Store fluxes at the time of nu arrival
+            pop_fluxes = []
+
+            if self.bllac_coincidence["n_flaring"] > 0:
+
+                # Is source flaring at this time?
+                for e_time in self.bllac_coincidence["matched_nu_times"]:
+
+                    fluxes = survey.flux_obs[survey.selection]
+
+                    for i in range(len(fluxes)):
+
+                        flare_times = survey.flare_times[survey.selection][i]
+                        flare_durations = survey.flare_durations[survey.selection][i]
+                        flare_amplitudes = survey.flare_amplitudes[survey.selection][i]
+
+                        selection = (e_time >= flare_times) & (
+                            e_time <= flare_times + flare_durations
+                        )
+
+                        matches = len(np.where(selection == True)[0])
+
+                        if matches > 0:
+
+                            fluxes[i] *= flare_amplitudes[selection][0]
+
+                    pop_fluxes.append(fluxes)
+
+            self.bllac_coincidence["pop_fluxes"] = pop_fluxes
+
+            # Similarly for FSRQs
+            survey = self._fsrq_pop.survey
+            self.fsrq_coincidence["pop_ras"] = survey.ra[survey.selection]
+            self.fsrq_coincidence["pop_decs"] = survey.dec[survey.selection]
+
+            pop_fluxes = []
+
+            if self.fsrq_coincidence["n_flaring"] > 0:
+
+                # Is source flaring at this time?
+                for e_time in self.fsrq_coincidence["matched_nu_times"]:
+
+                    fluxes = survey.flux_obs[survey.selection]
+
+                    for i in range(len(fluxes)):
+
+                        flare_times = survey.flare_times[survey.selection][i]
+                        flare_durations = survey.flare_durations[survey.selection][i]
+                        flare_amplitudes = survey.flare_amplitudes[survey.selection][i]
+
+                        selection = (e_time >= flare_times) & (
+                            e_time <= flare_times + flare_durations
+                        )
+
+                        matches = len(np.where(selection == True)[0])
+
+                        if matches > 0:
+
+                            fluxes[i] *= flare_amplitudes[selection][0]
+
+                    pop_fluxes.append(fluxes)
+
+            self.fsrq_coincidence["pop_fluxes"] = pop_fluxes
 
 
 class BlazarNuCoincidenceResults(Results):
@@ -275,11 +353,13 @@ class BlazarNuCoincidenceResults(Results):
             "n_flaring",
             "n_flaring_astro",
             "matched_flare_amplitudes",
-            "matched_src_ras",
-            "matched_src_decs",
             "matched_nu_ras",
             "matched_nu_decs",
             "matched_nu_ang_errs",
+            "matched_nu_times",
+            "pop_ras",
+            "pop_decs",
+            "pop_fluxes",
         ]
 
         super().__init__(file_name_list=file_name_list)
@@ -291,9 +371,17 @@ class BlazarNuCoincidenceResults(Results):
 
         for key in self._file_keys:
 
-            self.bllac[key] = np.array([])
+            if "pop" in key:
 
-            self.fsrq[key] = np.array([])
+                self.bllac[key] = []
+
+                self.fsrq[key] = []
+
+            else:
+
+                self.bllac[key] = np.array([])
+
+                self.fsrq[key] = np.array([])
 
     def _load_from_h5(self, file_name):
 
@@ -306,7 +394,7 @@ class BlazarNuCoincidenceResults(Results):
 
             for key in self._file_keys:
 
-                if "matched" not in key:
+                if "matched" not in key and "pop" not in key:
 
                     bllac_f[key] = np.zeros(N_f)
                     fsrq_f[key] = np.zeros(N_f)
@@ -318,10 +406,20 @@ class BlazarNuCoincidenceResults(Results):
 
                 for key in self._file_keys:
 
-                    if "matched" not in key:
+                    if "matched" not in key and "pop" not in key:
 
                         bllac_f[key][i] = bllac_group[key][()]
                         fsrq_f[key][i] = fsrq_group[key][()]
+
+                    elif "pop" in key:
+
+                        if bllac_f["n_flaring"][i] >= 1:
+                            bllac_match_i = bllac_group[key][()]
+                            self.bllac[key].append(bllac_match_i)
+
+                        if fsrq_f["n_flaring"][i] >= 1:
+                            fsrq_match_i = fsrq_group[key][()]
+                            self.fsrq[key].append(fsrq_match_i)
 
                     else:
 
@@ -330,12 +428,12 @@ class BlazarNuCoincidenceResults(Results):
                             self.bllac[key] = np.append(self.bllac[key], bllac_match_i)
 
                         if fsrq_f["n_flaring"][i] >= 1:
-                            fsrq_match_i = bllac_group[key][()]
+                            fsrq_match_i = fsrq_group[key][()]
                             self.fsrq[key] = np.append(self.fsrq[key], fsrq_match_i)
 
         for key in self._file_keys:
 
-            if "matched" not in key:
+            if "matched" not in key and "pop" not in key:
 
                 self.bllac[key] = np.append(self.bllac[key], bllac_f[key])
                 self.fsrq[key] = np.append(self.fsrq[key], fsrq_f[key])
