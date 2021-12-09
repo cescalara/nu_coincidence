@@ -62,7 +62,11 @@ def check_spatial_coincidence(
         # Indices of sources which match this event
         spatial_match_inds.append(np.where(match_selection == True)[0])
 
-    return n_match_spatial, n_match_spatial_astro, spatial_match_inds
+    return (
+        n_match_spatial,
+        n_match_spatial_astro,
+        spatial_match_inds,
+    )
 
 
 def count_spatial_coincidence(
@@ -128,7 +132,12 @@ def get_central_angle(ref_ra, ref_dec, ras, decs):
 def check_temporal_coincidence(
     event_times,
     event_src_labels,
+    event_ras,
+    event_decs,
+    event_ang_errs,
     spatial_match_inds,
+    population_ras,
+    population_decs,
     population_variability,
     population_flare_times,
     population_flare_durations,
@@ -144,12 +153,22 @@ def check_temporal_coincidence(
     n_match_variable_astro = 0
     n_match_flaring = 0
     n_match_flaring_astro = 0
+
     matched_flare_amplitudes = []
+    matched_src_ras = []
+    matched_src_decs = []
+
+    matched_nu_ras = []
+    matched_nu_decs = []
+    matched_nu_ang_errs = []
 
     # For each event
-    for e_time, e_label, match_inds in zip(
+    for (e_time, e_label, e_ra, e_dec, e_ang_err, match_inds) in zip(
         event_times,
         event_src_labels,
+        event_ras,
+        event_decs,
+        event_ang_errs,
         spatial_match_inds,
     ):
 
@@ -189,7 +208,13 @@ def check_temporal_coincidence(
                         if e_label == 1:
                             n_match_flaring_astro += 1
 
+                        # Store info on this match
                         matched_flare_amplitudes.append(flare_amplitudes[selection][0])
+                        matched_src_ras.append(population_ras[ind])
+                        matched_src_decs.append(population_decs[ind])
+                        matched_nu_ras.append(e_ra)
+                        matched_nu_decs.append(e_dec)
+                        matched_nu_ang_errs.append(e_ang_err)
 
     return (
         n_match_variable,
@@ -197,4 +222,9 @@ def check_temporal_coincidence(
         n_match_flaring,
         n_match_flaring_astro,
         matched_flare_amplitudes,
+        matched_src_ras,
+        matched_src_decs,
+        matched_nu_ras,
+        matched_nu_decs,
+        matched_nu_ang_errs,
     )

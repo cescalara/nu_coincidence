@@ -188,10 +188,20 @@ class BlazarNuCoincidence(BlazarNuAction):
             n_match_flaring,
             n_match_flaring_astro,
             matched_flare_amplitudes,
+            matched_src_ras,
+            matched_src_decs,
+            matched_nu_ras,
+            matched_nu_decs,
+            matched_nu_ang_errs,
         ) = check_temporal_coincidence(
             observation.times,
             observation.source_label,
+            observation.ra,
+            observation.dec,
+            observation.ang_err,
             self.bllac_coincidence["spatial_match_inds"],
+            survey.ra[survey.selection],
+            survey.dec[survey.selection],
             survey.variability[survey.selection],
             survey.flare_times[survey.selection],
             survey.flare_durations[survey.selection],
@@ -203,6 +213,11 @@ class BlazarNuCoincidence(BlazarNuAction):
         self.bllac_coincidence["n_flaring"] = n_match_flaring
         self.bllac_coincidence["n_flaring_astro"] = n_match_flaring_astro
         self.bllac_coincidence["matched_flare_amplitudes"] = matched_flare_amplitudes
+        self.bllac_coincidence["matched_src_ras"] = matched_src_ras
+        self.bllac_coincidence["matched_src_decs"] = matched_src_decs
+        self.bllac_coincidence["matched_nu_ras"] = matched_nu_ras
+        self.bllac_coincidence["matched_nu_decs"] = matched_nu_decs
+        self.bllac_coincidence["matched_nu_ang_errs"] = matched_nu_ang_errs
 
         # FSRQs
         survey = self._fsrq_pop.survey
@@ -213,10 +228,20 @@ class BlazarNuCoincidence(BlazarNuAction):
             n_match_flaring,
             n_match_flaring_astro,
             matched_flare_amplitudes,
+            matched_src_ras,
+            matched_src_decs,
+            matched_nu_ras,
+            matched_nu_decs,
+            matched_nu_ang_errs,
         ) = check_temporal_coincidence(
             observation.times,
             observation.source_label,
+            observation.ra,
+            observation.dec,
+            observation.ang_err,
             self.fsrq_coincidence["spatial_match_inds"],
+            survey.ra[survey.selection],
+            survey.dec[survey.selection],
             survey.variability[survey.selection],
             survey.flare_times[survey.selection],
             survey.flare_durations[survey.selection],
@@ -228,6 +253,11 @@ class BlazarNuCoincidence(BlazarNuAction):
         self.fsrq_coincidence["n_flaring"] = n_match_flaring
         self.fsrq_coincidence["n_flaring_astro"] = n_match_flaring_astro
         self.fsrq_coincidence["matched_flare_amplitudes"] = matched_flare_amplitudes
+        self.fsrq_coincidence["matched_src_ras"] = matched_src_ras
+        self.fsrq_coincidence["matched_src_decs"] = matched_src_decs
+        self.fsrq_coincidence["matched_nu_ras"] = matched_nu_ras
+        self.fsrq_coincidence["matched_nu_decs"] = matched_nu_decs
+        self.fsrq_coincidence["matched_nu_ang_errs"] = matched_nu_ang_errs
 
 
 class BlazarNuCoincidenceResults(Results):
@@ -245,6 +275,11 @@ class BlazarNuCoincidenceResults(Results):
             "n_flaring",
             "n_flaring_astro",
             "matched_flare_amplitudes",
+            "matched_src_ras",
+            "matched_src_decs",
+            "matched_nu_ras",
+            "matched_nu_decs",
+            "matched_nu_ang_errs",
         ]
 
         super().__init__(file_name_list=file_name_list)
@@ -271,7 +306,7 @@ class BlazarNuCoincidenceResults(Results):
 
             for key in self._file_keys:
 
-                if key != "matched_flare_amplitudes":
+                if "matched" not in key:
 
                     bllac_f[key] = np.zeros(N_f)
                     fsrq_f[key] = np.zeros(N_f)
@@ -283,26 +318,24 @@ class BlazarNuCoincidenceResults(Results):
 
                 for key in self._file_keys:
 
-                    if key != "matched_flare_amplitudes":
+                    if "matched" not in key:
 
                         bllac_f[key][i] = bllac_group[key][()]
                         fsrq_f[key][i] = fsrq_group[key][()]
 
-                if bllac_f["n_flaring"][i] >= 1:
-                    bllac_flare_amps_i = bllac_group["matched_flare_amplitudes"][()]
-                    self.bllac["matched_flare_amplitudes"] = np.append(
-                        self.bllac["matched_flare_amplitudes"], bllac_flare_amps_i
-                    )
+                    else:
 
-                if fsrq_f["n_flaring"][i] >= 1:
-                    fsrq_flare_amps_i = fsrq_group["matched_flare_amplitudes"][()]
-                    self.fsrq["matched_flare_amplitudes"] = np.append(
-                        self.fsrq["matched_flare_amplitudes"], fsrq_flare_amps_i
-                    )
+                        if bllac_f["n_flaring"][i] >= 1:
+                            bllac_match_i = bllac_group[key][()]
+                            self.bllac[key] = np.append(self.bllac[key], bllac_match_i)
+
+                        if fsrq_f["n_flaring"][i] >= 1:
+                            fsrq_match_i = bllac_group[key][()]
+                            self.fsrq[key] = np.append(self.fsrq[key], fsrq_match_i)
 
         for key in self._file_keys:
 
-            if key != "matched_flare_amplitudes":
+            if "matched" not in key:
 
                 self.bllac[key] = np.append(self.bllac[key], bllac_f[key])
                 self.fsrq[key] = np.append(self.fsrq[key], fsrq_f[key])
