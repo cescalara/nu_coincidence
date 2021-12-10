@@ -371,7 +371,7 @@ class BlazarNuCoincidenceResults(Results):
 
         for key in self._file_keys:
 
-            if "pop" in key:
+            if "pop" in key or "matched_nu" in key:
 
                 self.bllac[key] = []
 
@@ -411,7 +411,7 @@ class BlazarNuCoincidenceResults(Results):
                         bllac_f[key][i] = bllac_group[key][()]
                         fsrq_f[key][i] = fsrq_group[key][()]
 
-                    elif "pop" in key:
+                    elif "pop" in key or "matched_nu" in key:
 
                         if bllac_f["n_flaring"][i] >= 1:
                             bllac_match_i = bllac_group[key][()]
