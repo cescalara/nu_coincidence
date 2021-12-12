@@ -7,6 +7,4 @@ connection:
 detector:
   Emin_det: 10000.0
   max_cosz: 1
-  obs_time: 10.0
-  flavour_factor: 1.0
-  
+  obs_time: 10.0  
