@@ -257,7 +257,6 @@ class BlazarNuConnection(BlazarNuAction):
 
             L_steady = L_steady * erg_to_GeV  # GeV s^-1
             L_steady = L_steady * flux_factor  # Neutrinos
-            L_steady = L_steady * (1 / 3)  # Detected flavours
 
             source = _get_point_source(
                 L_steady,
@@ -355,7 +354,6 @@ class BlazarNuConnection(BlazarNuAction):
 
                     L_flare = L_flare * erg_to_GeV  # GeV s^-1
                     L_flare_nu = L_flare * flux_factor  # Neutrinos
-                    L_flare_nu = L_flare_nu * (1 / 3)  # Detected flavours
 
                     source = _get_point_source(
                         L_flare_nu,
