@@ -15,7 +15,7 @@ from icecube_tools.simulator import Simulator
 
 from popsynth.utils.cosmology import cosmology
 
-from cosmic_coincidence.utils.parameter_server import ParameterServer
+from nu_coincidence.utils.parameter_server import ParameterServer
 
 
 @dataclass

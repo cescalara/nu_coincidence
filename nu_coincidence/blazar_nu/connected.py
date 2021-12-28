@@ -2,21 +2,20 @@ import os
 import h5py
 import numpy as np
 from collections import OrderedDict
-from typing import List, Callable
-from numpy.typing import ArrayLike
+from typing import List
 from astropy import units as u
 
 from icecube_tools.neutrino_calculator import NeutrinoCalculator
 
-from cosmic_coincidence.populations.popsynth_wrapper import PopsynthWrapper
-from cosmic_coincidence.neutrinos.icecube import (
+from nu_coincidence.populations.popsynth_wrapper import PopsynthWrapper
+from nu_coincidence.neutrinos.icecube import (
     IceCubeObsWrapper,
     IceCubeAlertsWrapper,
     _get_point_source,
     _run_sim_for,
 )
-from cosmic_coincidence.simulation import Results
-from cosmic_coincidence.blazar_nu.base import BlazarNuSim, BlazarNuAction
+from nu_coincidence.simulation import Results
+from nu_coincidence.blazar_nu.base import BlazarNuSim, BlazarNuAction
 
 erg_to_GeV = (1 * u.erg).to(u.GeV).value
 

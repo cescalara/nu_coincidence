@@ -2,7 +2,7 @@ import yaml
 from typing import Dict, Any
 
 from popsynth.population_synth import PopulationSynth
-from cosmic_coincidence.utils.parameter_server import ParameterServer
+from nu_coincidence.utils.parameter_server import ParameterServer
 
 
 class PopsynthParams(ParameterServer):

@@ -1,6 +1,8 @@
 from popsynth.population_synth import PopulationSynth
 
-from ..distributions.cosmological_distribution import ZPowExpCosmoDistribution
+from nu_coincidence.distributions.cosmological_distribution import (
+    ZPowExpCosmoDistribution,
+)
 
 
 class ZPowExpCosmoPopulation(PopulationSynth):

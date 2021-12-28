@@ -1,2 +1,2 @@
 include versioneer.py
-include cosmic_coincidence/_version.py
+include nu_coincidence/_version.py

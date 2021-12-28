@@ -6,20 +6,20 @@ from joblib import (
     delayed,
 )
 
-from cosmic_coincidence.populations.popsynth_wrapper import (
+from nu_coincidence.populations.popsynth_wrapper import (
     PopsynthParams,
     PopsynthWrapper,
 )
-from cosmic_coincidence.simulation import Simulation
-from cosmic_coincidence.utils.package_data import get_path_to_config
-from cosmic_coincidence.neutrinos.icecube import (
+from nu_coincidence.simulation import Simulation
+from nu_coincidence.utils.package_data import get_path_to_config
+from nu_coincidence.neutrinos.icecube import (
     IceCubeObsParams,
     IceCubeObsWrapper,
     IceCubeTracksWrapper,
     IceCubeAlertsParams,
     IceCubeAlertsWrapper,
 )
-from cosmic_coincidence.utils.parallel import FileWritingBackend
+from nu_coincidence.utils.parallel import FileWritingBackend
 
 register_parallel_backend("file_write", FileWritingBackend)
 

@@ -3,14 +3,14 @@ import h5py
 from typing import List
 from collections import OrderedDict
 
-from cosmic_coincidence.simulation import Results
-from cosmic_coincidence.populations.popsynth_wrapper import PopsynthWrapper
-from cosmic_coincidence.neutrinos.icecube import IceCubeObsWrapper
-from cosmic_coincidence.coincidence import (
+from nu_coincidence.simulation import Results
+from nu_coincidence.populations.popsynth_wrapper import PopsynthWrapper
+from nu_coincidence.neutrinos.icecube import IceCubeObsWrapper
+from nu_coincidence.coincidence import (
     count_spatial_coincidence,
     check_temporal_coincidence,
 )
-from cosmic_coincidence.pop_nu.base import PopNuSim, PopNuAction
+from nu_coincidence.pop_nu.base import PopNuSim, PopNuAction
 
 
 class PopNuCoincidenceSim(PopNuSim):
