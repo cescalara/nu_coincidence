@@ -2,7 +2,7 @@
  "cells": [
   {
    "cell_type": "markdown",
-   "id": "8f699aa6",
+   "id": "9de57347",
    "metadata": {},
    "source": [
     "# Blazar-neutrino chance coincidence simulation\n",
@@ -13,13 +13,13 @@
   {
    "cell_type": "code",
    "execution_count": 1,
-   "id": "12c2c1c8",
+   "id": "9e049feb",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-01-18T22:33:14.864471Z",
-     "iopub.status.busy": "2022-01-18T22:33:14.863768Z",
-     "iopub.status.idle": "2022-01-18T22:33:20.274066Z",
-     "shell.execute_reply": "2022-01-18T22:33:20.272943Z"
+     "iopub.execute_input": "2022-01-18T22:38:56.644159Z",
+     "iopub.status.busy": "2022-01-18T22:38:56.643627Z",
+     "iopub.status.idle": "2022-01-18T22:39:00.360145Z",
+     "shell.execute_reply": "2022-01-18T22:39:00.359199Z"
     }
    },
    "outputs": [],
@@ -38,7 +38,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "a954da27",
+   "id": "126a9957",
    "metadata": {},
    "source": [
     "Firstly, we make sure that we have the necessary files for running an IceCube simulation by using the `icecube_tools` package"
@@ -47,13 +47,13 @@
   {
    "cell_type": "code",
    "execution_count": 2,
-   "id": "41939239",
+   "id": "95294f9d",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-01-18T22:33:20.280588Z",
-     "iopub.status.busy": "2022-01-18T22:33:20.279191Z",
-     "iopub.status.idle": "2022-01-18T22:34:57.973670Z",
-     "shell.execute_reply": "2022-01-18T22:34:57.972653Z"
+     "iopub.execute_input": "2022-01-18T22:39:00.367524Z",
+     "iopub.status.busy": "2022-01-18T22:39:00.366647Z",
+     "iopub.status.idle": "2022-01-18T22:41:02.129941Z",
+     "shell.execute_reply": "2022-01-18T22:41:02.129454Z"
     }
    },
    "outputs": [
@@ -70,7 +70,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20181018_All-sky_point-source_IceCube_da...:   9%|▉         | 1048576/11730609 [00:00<00:03, 2784038.92it/s]"
+      "20181018_All-sky_point-source_IceCube_da...:   9%|▉         | 1048576/11730609 [00:02<00:28, 368505.14it/s]"
      ]
     },
     {
@@ -78,7 +78,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20181018_All-sky_point-source_IceCube_da...:  18%|█▊        | 2097152/11730609 [00:00<00:03, 2751007.99it/s]"
+      "20181018_All-sky_point-source_IceCube_da...:  18%|█▊        | 2097152/11730609 [00:04<00:20, 480042.84it/s]"
      ]
     },
     {
@@ -86,7 +86,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20181018_All-sky_point-source_IceCube_da...:  27%|██▋       | 3145728/11730609 [00:01<00:03, 2721169.50it/s]"
+      "20181018_All-sky_point-source_IceCube_da...:  27%|██▋       | 3145728/11730609 [00:06<00:15, 566835.54it/s]"
      ]
     },
     {
@@ -94,7 +94,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20181018_All-sky_point-source_IceCube_da...:  36%|███▌      | 4194304/11730609 [00:01<00:02, 2581410.55it/s]"
+      "20181018_All-sky_point-source_IceCube_da...:  36%|███▌      | 4194304/11730609 [00:07<00:11, 646118.18it/s]"
      ]
     },
     {
@@ -102,7 +102,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20181018_All-sky_point-source_IceCube_da...:  45%|████▍     | 5242880/11730609 [00:02<00:02, 2435976.77it/s]"
+      "20181018_All-sky_point-source_IceCube_da...:  45%|████▍     | 5242880/11730609 [00:08<00:08, 732903.52it/s]"
      ]
     },
     {
@@ -110,7 +110,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20181018_All-sky_point-source_IceCube_da...:  54%|█████▎    | 6291456/11730609 [00:02<00:02, 2147404.87it/s]"
+      "20181018_All-sky_point-source_IceCube_da...:  54%|█████▎    | 6291456/11730609 [00:09<00:06, 784276.29it/s]"
      ]
     },
     {
@@ -118,7 +118,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20181018_All-sky_point-source_IceCube_da...:  63%|██████▎   | 7340032/11730609 [00:03<00:02, 1679400.99it/s]"
+      "20181018_All-sky_point-source_IceCube_da...:  63%|██████▎   | 7340032/11730609 [00:10<00:05, 787469.70it/s]"
      ]
     },
     {
@@ -126,7 +126,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20181018_All-sky_point-source_IceCube_da...:  72%|███████▏  | 8388608/11730609 [00:04<00:02, 1584721.37it/s]"
+      "20181018_All-sky_point-source_IceCube_da...:  72%|███████▏  | 8388608/11730609 [00:12<00:04, 759131.33it/s]"
      ]
     },
     {
@@ -134,7 +134,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20181018_All-sky_point-source_IceCube_da...:  80%|████████  | 9437184/11730609 [00:04<00:01, 1567368.47it/s]"
+      "20181018_All-sky_point-source_IceCube_da...:  80%|████████  | 9437184/11730609 [00:13<00:03, 749435.06it/s]"
      ]
     },
     {
@@ -142,7 +142,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20181018_All-sky_point-source_IceCube_da...:  89%|████████▉ | 10485760/11730609 [00:05<00:00, 1543486.63it/s]"
+      "20181018_All-sky_point-source_IceCube_da...:  89%|████████▉ | 10485760/11730609 [00:15<00:01, 673533.77it/s]"
      ]
     },
     {
@@ -150,7 +150,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20181018_All-sky_point-source_IceCube_da...:  98%|█████████▊| 11534336/11730609 [00:06<00:00, 1466803.71it/s]"
+      "20181018_All-sky_point-source_IceCube_da...:  98%|█████████▊| 11534336/11730609 [00:17<00:00, 634960.57it/s]"
      ]
     },
     {
@@ -158,7 +158,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20181018_All-sky_point-source_IceCube_da...: 100%|██████████| 11730609/11730609 [00:06<00:00, 1477119.22it/s]"
+      "20181018_All-sky_point-source_IceCube_da...: 100%|██████████| 11730609/11730609 [00:17<00:00, 633441.69it/s]"
      ]
     },
     {
@@ -166,7 +166,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20181018_All-sky_point-source_IceCube_da...: 100%|██████████| 11730609/11730609 [00:06<00:00, 1773242.21it/s]"
+      "20181018_All-sky_point-source_IceCube_da...: 100%|██████████| 11730609/11730609 [00:17<00:00, 656032.86it/s]"
      ]
     },
     {
@@ -189,7 +189,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:   6%|▌         | 1048576/18812495 [00:00<00:14, 1199477.59it/s]"
+      "20131121_Search_for_contained_neutrino_e...:   6%|▌         | 1048576/18812495 [00:02<00:37, 473728.34it/s]"
      ]
     },
     {
@@ -197,7 +197,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  11%|█         | 2097152/18812495 [00:01<00:14, 1184951.04it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  11%|█         | 2097152/18812495 [00:03<00:27, 605967.60it/s]"
      ]
     },
     {
@@ -205,7 +205,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  17%|█▋        | 3145728/18812495 [00:02<00:15, 1018596.12it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  17%|█▋        | 3145728/18812495 [00:04<00:22, 688894.85it/s]"
      ]
     },
     {
@@ -213,7 +213,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  22%|██▏       | 4194304/18812495 [00:04<00:15, 923972.88it/s] "
+      "20131121_Search_for_contained_neutrino_e...:  22%|██▏       | 4194304/18812495 [00:06<00:23, 612636.81it/s]"
      ]
     },
     {
@@ -221,7 +221,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  28%|██▊       | 5242880/18812495 [00:05<00:15, 904636.90it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  28%|██▊       | 5242880/18812495 [00:08<00:22, 600592.07it/s]"
      ]
     },
     {
@@ -229,7 +229,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  33%|███▎      | 6291456/18812495 [00:06<00:13, 906387.59it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  33%|███▎      | 6291456/18812495 [00:09<00:18, 670985.09it/s]"
      ]
     },
     {
@@ -237,7 +237,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  39%|███▉      | 7340032/18812495 [00:07<00:12, 916023.96it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  39%|███▉      | 7340032/18812495 [00:11<00:15, 732652.64it/s]"
      ]
     },
     {
@@ -245,7 +245,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  45%|████▍     | 8388608/18812495 [00:08<00:10, 967438.16it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  45%|████▍     | 8388608/18812495 [00:12<00:13, 793747.30it/s]"
      ]
     },
     {
@@ -253,7 +253,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  50%|█████     | 9437184/18812495 [00:09<00:08, 1091928.08it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  50%|█████     | 9437184/18812495 [00:13<00:13, 709099.78it/s]"
      ]
     },
     {
@@ -261,7 +261,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  56%|█████▌    | 10485760/18812495 [00:10<00:06, 1209004.19it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  56%|█████▌    | 10485760/18812495 [00:15<00:12, 646886.36it/s]"
      ]
     },
     {
@@ -269,7 +269,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  61%|██████▏   | 11534336/18812495 [00:11<00:06, 1088828.50it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  61%|██████▏   | 11534336/18812495 [00:17<00:11, 652105.17it/s]"
      ]
     },
     {
@@ -277,7 +277,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  67%|██████▋   | 12582912/18812495 [00:12<00:06, 917229.64it/s] "
+      "20131121_Search_for_contained_neutrino_e...:  67%|██████▋   | 12582912/18812495 [00:19<00:09, 633756.06it/s]"
      ]
     },
     {
@@ -285,7 +285,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  72%|███████▏  | 13631488/18812495 [00:14<00:06, 792422.07it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  72%|███████▏  | 13631488/18812495 [00:20<00:08, 640188.03it/s]"
      ]
     },
     {
@@ -293,7 +293,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  78%|███████▊  | 14680064/18812495 [00:15<00:04, 841077.32it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  78%|███████▊  | 14680064/18812495 [00:22<00:06, 601421.80it/s]"
      ]
     },
     {
@@ -301,7 +301,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  84%|████████▎ | 15728640/18812495 [00:16<00:03, 837327.92it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  84%|████████▎ | 15728640/18812495 [00:24<00:04, 646245.61it/s]"
      ]
     },
     {
@@ -309,7 +309,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  89%|████████▉ | 16777216/18812495 [00:17<00:02, 860302.28it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  89%|████████▉ | 16777216/18812495 [00:25<00:03, 674992.74it/s]"
      ]
     },
     {
@@ -317,7 +317,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  95%|█████████▍| 17825792/18812495 [00:18<00:01, 911628.12it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  95%|█████████▍| 17825792/18812495 [00:26<00:01, 704653.57it/s]"
      ]
     },
     {
@@ -325,7 +325,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...: 100%|██████████| 18812495/18812495 [00:19<00:00, 977160.63it/s]"
+      "20131121_Search_for_contained_neutrino_e...: 100%|██████████| 18812495/18812495 [00:27<00:00, 772318.74it/s]"
      ]
     },
     {
@@ -333,7 +333,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...: 100%|██████████| 18812495/18812495 [00:19<00:00, 949588.71it/s]"
+      "20131121_Search_for_contained_neutrino_e...: 100%|██████████| 18812495/18812495 [00:27<00:00, 674772.17it/s]"
      ]
     },
     {
@@ -356,7 +356,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:   2%|▏         | 1048576/43711022 [00:00<00:30, 1394499.97it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:   2%|▏         | 1048576/43711022 [00:01<00:44, 952568.01it/s]"
      ]
     },
     {
@@ -364,7 +364,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:   5%|▍         | 2097152/43711022 [00:01<00:22, 1816320.56it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:   5%|▍         | 2097152/43711022 [00:01<00:36, 1138661.25it/s]"
      ]
     },
     {
@@ -372,7 +372,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:   7%|▋         | 3145728/43711022 [00:01<00:20, 1986816.23it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:   7%|▋         | 3145728/43711022 [00:02<00:31, 1269241.70it/s]"
      ]
     },
     {
@@ -380,7 +380,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  10%|▉         | 4194304/43711022 [00:02<00:18, 2141728.83it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  10%|▉         | 4194304/43711022 [00:03<00:30, 1277054.20it/s]"
      ]
     },
     {
@@ -388,7 +388,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  12%|█▏        | 5242880/43711022 [00:02<00:17, 2144686.79it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  12%|█▏        | 5242880/43711022 [00:04<00:30, 1269827.39it/s]"
      ]
     },
     {
@@ -396,7 +396,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  14%|█▍        | 6291456/43711022 [00:03<00:19, 1896033.92it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  14%|█▍        | 6291456/43711022 [00:04<00:28, 1316282.27it/s]"
      ]
     },
     {
@@ -404,7 +404,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  17%|█▋        | 7340032/43711022 [00:04<00:21, 1659634.67it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  17%|█▋        | 7340032/43711022 [00:05<00:28, 1292251.20it/s]"
      ]
     },
     {
@@ -412,7 +412,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  19%|█▉        | 8388608/43711022 [00:05<00:25, 1367981.89it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  19%|█▉        | 8388608/43711022 [00:06<00:27, 1293016.32it/s]"
      ]
     },
     {
@@ -420,7 +420,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  22%|██▏       | 9437184/43711022 [00:06<00:32, 1060536.66it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  22%|██▏       | 9437184/43711022 [00:07<00:29, 1143153.58it/s]"
      ]
     },
     {
@@ -428,7 +428,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  24%|██▍       | 10485760/43711022 [00:07<00:34, 975676.47it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  24%|██▍       | 10485760/43711022 [00:08<00:30, 1087728.77it/s]"
      ]
     },
     {
@@ -436,7 +436,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  26%|██▋       | 11534336/43711022 [00:08<00:31, 1026513.23it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  26%|██▋       | 11534336/43711022 [00:09<00:28, 1116177.68it/s]"
      ]
     },
     {
@@ -444,7 +444,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  29%|██▉       | 12582912/43711022 [00:09<00:29, 1056320.35it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  29%|██▉       | 12582912/43711022 [00:10<00:27, 1129750.13it/s]"
      ]
     },
     {
@@ -452,7 +452,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  31%|███       | 13631488/43711022 [00:10<00:27, 1093802.77it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  31%|███       | 13631488/43711022 [00:11<00:27, 1092095.57it/s]"
      ]
     },
     {
@@ -460,7 +460,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  34%|███▎      | 14680064/43711022 [00:11<00:26, 1111885.93it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  34%|███▎      | 14680064/43711022 [00:13<00:34, 834277.76it/s] "
      ]
     },
     {
@@ -468,7 +468,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  36%|███▌      | 15728640/43711022 [00:12<00:23, 1171081.21it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  36%|███▌      | 15728640/43711022 [00:15<00:37, 744514.86it/s]"
      ]
     },
     {
@@ -476,7 +476,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  38%|███▊      | 16777216/43711022 [00:13<00:22, 1181868.42it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  38%|███▊      | 16777216/43711022 [00:16<00:37, 719417.63it/s]"
      ]
     },
     {
@@ -484,7 +484,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  41%|████      | 17825792/43711022 [00:14<00:27, 946120.03it/s] "
+      "20150820_Astrophysical_muon_neutrino_flu...:  41%|████      | 17825792/43711022 [00:18<00:33, 764198.06it/s]"
      ]
     },
     {
@@ -492,7 +492,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  43%|████▎     | 18874368/43711022 [00:15<00:26, 945827.71it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  43%|████▎     | 18874368/43711022 [00:19<00:29, 840765.32it/s]"
      ]
     },
     {
@@ -500,7 +500,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  46%|████▌     | 19922944/43711022 [00:16<00:23, 1023329.09it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  46%|████▌     | 19922944/43711022 [00:20<00:27, 873195.22it/s]"
      ]
     },
     {
@@ -508,7 +508,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  48%|████▊     | 20971520/43711022 [00:17<00:21, 1065905.65it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  48%|████▊     | 20971520/43711022 [00:21<00:25, 884496.89it/s]"
      ]
     },
     {
@@ -516,7 +516,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  50%|█████     | 22020096/43711022 [00:18<00:20, 1067864.75it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  50%|█████     | 22020096/43711022 [00:22<00:24, 888374.44it/s]"
      ]
     },
     {
@@ -524,7 +524,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  53%|█████▎    | 23068672/43711022 [00:19<00:20, 987461.67it/s] "
+      "20150820_Astrophysical_muon_neutrino_flu...:  53%|█████▎    | 23068672/43711022 [00:23<00:24, 843633.22it/s]"
      ]
     },
     {
@@ -532,7 +532,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  55%|█████▌    | 24117248/43711022 [00:20<00:19, 1015253.66it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  55%|█████▌    | 24117248/43711022 [00:24<00:22, 877605.63it/s]"
      ]
     },
     {
@@ -540,7 +540,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  58%|█████▊    | 25165824/43711022 [00:21<00:17, 1065679.96it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  58%|█████▊    | 25165824/43711022 [00:26<00:20, 896327.05it/s]"
      ]
     },
     {
@@ -548,7 +548,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  60%|█████▉    | 26214400/43711022 [00:22<00:14, 1168147.78it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  60%|█████▉    | 26214400/43711022 [00:27<00:20, 849090.62it/s]"
      ]
     },
     {
@@ -556,7 +556,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  62%|██████▏   | 27262976/43711022 [00:23<00:13, 1215770.72it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  62%|██████▏   | 27262976/43711022 [00:28<00:19, 841659.93it/s]"
      ]
     },
     {
@@ -564,7 +564,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  65%|██████▍   | 28311552/43711022 [00:23<00:12, 1217611.72it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  65%|██████▍   | 28311552/43711022 [00:29<00:17, 899903.67it/s]"
      ]
     },
     {
@@ -572,7 +572,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  67%|██████▋   | 29360128/43711022 [00:24<00:12, 1165376.83it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  67%|██████▋   | 29360128/43711022 [00:30<00:14, 960408.96it/s]"
      ]
     },
     {
@@ -580,7 +580,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  70%|██████▉   | 30408704/43711022 [00:26<00:12, 1074811.94it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  70%|██████▉   | 30408704/43711022 [00:32<00:15, 834492.15it/s]"
      ]
     },
     {
@@ -588,7 +588,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  72%|███████▏  | 31457280/43711022 [00:27<00:13, 912000.95it/s] "
+      "20150820_Astrophysical_muon_neutrino_flu...:  72%|███████▏  | 31457280/43711022 [00:33<00:15, 787260.79it/s]"
      ]
     },
     {
@@ -596,7 +596,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  74%|███████▍  | 32505856/43711022 [00:28<00:12, 932737.10it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  74%|███████▍  | 32505856/43711022 [00:35<00:16, 699091.42it/s]"
      ]
     },
     {
@@ -604,7 +604,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  77%|███████▋  | 33554432/43711022 [00:29<00:10, 964056.27it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  77%|███████▋  | 33554432/43711022 [00:36<00:13, 732440.05it/s]"
      ]
     },
     {
@@ -612,7 +612,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  79%|███████▉  | 34603008/43711022 [00:30<00:09, 968627.51it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  79%|███████▉  | 34603008/43711022 [00:37<00:11, 810841.33it/s]"
      ]
     },
     {
@@ -620,7 +620,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  82%|████████▏ | 35651584/43711022 [00:31<00:08, 951728.64it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  82%|████████▏ | 35651584/43711022 [00:38<00:08, 904243.82it/s]"
      ]
     },
     {
@@ -628,7 +628,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  84%|████████▍ | 36700160/43711022 [00:32<00:06, 1023259.78it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  84%|████████▍ | 36700160/43711022 [00:39<00:07, 965506.04it/s]"
      ]
     },
     {
@@ -636,7 +636,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  86%|████████▋ | 37748736/43711022 [00:33<00:05, 1089441.00it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  86%|████████▋ | 37748736/43711022 [00:40<00:06, 968052.07it/s]"
      ]
     },
     {
@@ -644,7 +644,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  89%|████████▉ | 38797312/43711022 [00:34<00:04, 1063883.12it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  89%|████████▉ | 38797312/43711022 [00:41<00:04, 1012743.14it/s]"
      ]
     },
     {
@@ -652,7 +652,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  91%|█████████ | 39845888/43711022 [00:35<00:03, 1130894.20it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  91%|█████████ | 39845888/43711022 [00:42<00:03, 1073652.88it/s]"
      ]
     },
     {
@@ -660,7 +660,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  94%|█████████▎| 40894464/43711022 [00:36<00:02, 1215414.29it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  94%|█████████▎| 40894464/43711022 [00:43<00:02, 1173211.85it/s]"
      ]
     },
     {
@@ -668,7 +668,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  96%|█████████▌| 41943040/43711022 [00:37<00:01, 1078084.18it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  96%|█████████▌| 41943040/43711022 [00:44<00:01, 1203457.37it/s]"
      ]
     },
     {
@@ -676,7 +676,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  98%|█████████▊| 42991616/43711022 [00:38<00:00, 1073286.94it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  98%|█████████▊| 42991616/43711022 [00:44<00:00, 1250130.17it/s]"
      ]
     },
     {
@@ -684,7 +684,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...: 100%|██████████| 43711022/43711022 [00:38<00:00, 1113918.81it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...: 100%|██████████| 43711022/43711022 [00:45<00:00, 1264184.38it/s]"
      ]
     },
     {
@@ -692,7 +692,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...: 100%|██████████| 43711022/43711022 [00:38<00:00, 1122323.31it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...: 100%|██████████| 43711022/43711022 [00:45<00:00, 963705.97it/s] "
      ]
     },
     {
@@ -712,7 +712,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "1da970c2",
+   "id": "8613b077",
    "metadata": {},
    "source": [
     "The inputs to `BlazarNuCoincidenceSim` are specified by the `.yml` config files provided with the `nu_coincidence` package. We can check what is available using the helper function `get_available_config()`."
@@ -721,13 +721,13 @@
   {
    "cell_type": "code",
    "execution_count": 3,
-   "id": "0799cda0",
+   "id": "e1c78722",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-01-18T22:34:57.979398Z",
-     "iopub.status.busy": "2022-01-18T22:34:57.978207Z",
-     "iopub.status.idle": "2022-01-18T22:34:57.987117Z",
-     "shell.execute_reply": "2022-01-18T22:34:57.986564Z"
+     "iopub.execute_input": "2022-01-18T22:41:02.134593Z",
+     "iopub.status.busy": "2022-01-18T22:41:02.134111Z",
+     "iopub.status.idle": "2022-01-18T22:41:02.141129Z",
+     "shell.execute_reply": "2022-01-18T22:41:02.140524Z"
     }
    },
    "outputs": [
@@ -769,7 +769,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "ff0a894b",
+   "id": "6356b48c",
    "metadata": {},
    "source": [
     "For this example, we can use the reference blazar model (`bllac_ref.yml` and `fsrq_ref.yml`) together with the diffuse IceCube HESE and EHE alerts models (`nu_diffuse_hese.yml` and `nu_diffuse_ehe.yml`)."
@@ -778,13 +778,13 @@
   {
    "cell_type": "code",
    "execution_count": 4,
-   "id": "555111d5",
+   "id": "f776c61f",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-01-18T22:34:57.992532Z",
-     "iopub.status.busy": "2022-01-18T22:34:57.991816Z",
-     "iopub.status.idle": "2022-01-18T22:39:09.428149Z",
-     "shell.execute_reply": "2022-01-18T22:39:09.427097Z"
+     "iopub.execute_input": "2022-01-18T22:41:02.145382Z",
+     "iopub.status.busy": "2022-01-18T22:41:02.144921Z",
+     "iopub.status.idle": "2022-01-18T22:43:18.080579Z",
+     "shell.execute_reply": "2022-01-18T22:43:18.080081Z"
     }
    },
    "outputs": [],
@@ -804,7 +804,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "ff44e407",
+   "id": "c43269fa",
    "metadata": {},
    "source": [
     "The results are organised to store relevant information on the number of different coincidences, divided into the `results.bllac` and `results.fsrq` populations. We study *spatial*, *variable* and *flaring* coincidences. In just 2 simulations, we expect to see spatial and variable coincidences, but flaring coincidences are unlikely. In the event that flaring coincidences occur, several other population/neutrino properties are also stored for further analysis."
@@ -813,13 +813,13 @@
   {
    "cell_type": "code",
    "execution_count": 5,
-   "id": "05c01ace",
+   "id": "1f3c6674",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-01-18T22:39:09.434858Z",
-     "iopub.status.busy": "2022-01-18T22:39:09.433751Z",
-     "iopub.status.idle": "2022-01-18T22:39:09.445314Z",
-     "shell.execute_reply": "2022-01-18T22:39:09.444750Z"
+     "iopub.execute_input": "2022-01-18T22:43:18.085582Z",
+     "iopub.status.busy": "2022-01-18T22:43:18.084624Z",
+     "iopub.status.idle": "2022-01-18T22:43:18.092936Z",
+     "shell.execute_reply": "2022-01-18T22:43:18.093295Z"
     }
    },
    "outputs": [],
@@ -830,13 +830,13 @@
   {
    "cell_type": "code",
    "execution_count": 6,
-   "id": "7c23007e",
+   "id": "71f63fdc",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-01-18T22:39:09.452652Z",
-     "iopub.status.busy": "2022-01-18T22:39:09.451939Z",
-     "iopub.status.idle": "2022-01-18T22:39:09.454697Z",
-     "shell.execute_reply": "2022-01-18T22:39:09.455262Z"
+     "iopub.execute_input": "2022-01-18T22:43:18.099533Z",
+     "iopub.status.busy": "2022-01-18T22:43:18.099052Z",
+     "iopub.status.idle": "2022-01-18T22:43:18.101461Z",
+     "shell.execute_reply": "2022-01-18T22:43:18.101833Z"
     }
    },
    "outputs": [
@@ -870,7 +870,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "97c2da14",
+   "id": "9442b16d",
    "metadata": {},
    "source": [
     "As we ran 4 simulations, we have a coincidence count for each case."
@@ -879,13 +879,13 @@
   {
    "cell_type": "code",
    "execution_count": 7,
-   "id": "1afdf6a5",
+   "id": "91c471df",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-01-18T22:39:09.460691Z",
-     "iopub.status.busy": "2022-01-18T22:39:09.460000Z",
-     "iopub.status.idle": "2022-01-18T22:39:09.462560Z",
-     "shell.execute_reply": "2022-01-18T22:39:09.463077Z"
+     "iopub.execute_input": "2022-01-18T22:43:18.106886Z",
+     "iopub.status.busy": "2022-01-18T22:43:18.106408Z",
+     "iopub.status.idle": "2022-01-18T22:43:18.108767Z",
+     "shell.execute_reply": "2022-01-18T22:43:18.109136Z"
     }
    },
    "outputs": [
@@ -907,13 +907,13 @@
   {
    "cell_type": "code",
    "execution_count": 8,
-   "id": "6c595594",
+   "id": "45878097",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-01-18T22:39:09.466662Z",
-     "iopub.status.busy": "2022-01-18T22:39:09.465903Z",
-     "iopub.status.idle": "2022-01-18T22:39:09.472988Z",
-     "shell.execute_reply": "2022-01-18T22:39:09.473508Z"
+     "iopub.execute_input": "2022-01-18T22:43:18.114903Z",
+     "iopub.status.busy": "2022-01-18T22:43:18.114427Z",
+     "iopub.status.idle": "2022-01-18T22:43:18.116785Z",
+     "shell.execute_reply": "2022-01-18T22:43:18.117154Z"
     }
    },
    "outputs": [
@@ -967,7 +967,45 @@
   "widgets": {
    "application/vnd.jupyter.widget-state+json": {
     "state": {
-     "25165f9da9ff4338b320def70f6b15ff": {
+     "3c1340e0f46149aa9873fe9fdeeb774f": {
+      "model_module": "jupyter-vuetify",
+      "model_module_version": "^1.8.1",
+      "model_name": "ThemeColorsModel",
+      "state": {
+       "_model_module": "jupyter-vuetify",
+       "_model_module_version": "^1.8.1",
+       "_model_name": "ThemeColorsModel",
+       "_theme_name": "light",
+       "_view_count": null,
+       "_view_module": null,
+       "_view_module_version": "^1.8.1",
+       "_view_name": null,
+       "accent": "#82B1FF",
+       "anchor": null,
+       "error": "#FF5252",
+       "info": "#2196F3",
+       "primary": "#1976D2",
+       "secondary": "#424242",
+       "success": "#4CAF50",
+       "warning": "#FB8C00"
+      }
+     },
+     "49dcbfd20b1e4d649b44dff9f9647fd7": {
+      "model_module": "jupyter-vuetify",
+      "model_module_version": "^1.8.1",
+      "model_name": "ThemeModel",
+      "state": {
+       "_model_module": "jupyter-vuetify",
+       "_model_module_version": "^1.8.1",
+       "_model_name": "ThemeModel",
+       "_view_count": null,
+       "_view_module": null,
+       "_view_module_version": "^1.8.1",
+       "_view_name": null,
+       "dark": null
+      }
+     },
+     "8622355d034e4f99b8b34c74f2c3acf7": {
       "model_module": "@jupyter-widgets/base",
       "model_module_version": "1.2.0",
       "model_name": "LayoutModel",
@@ -1019,7 +1057,7 @@
        "width": null
       }
      },
-     "46ed42bd169f4f68889b74c5350f17a0": {
+     "e5aea1c39bdc41cf99745e30bd7228e5": {
       "model_module": "jupyter-vue",
       "model_module_version": "^1.7.0",
       "model_name": "ForceLoadModel",
@@ -1032,48 +1070,10 @@
        "_view_module": null,
        "_view_module_version": "",
        "_view_name": null,
-       "layout": "IPY_MODEL_25165f9da9ff4338b320def70f6b15ff"
+       "layout": "IPY_MODEL_8622355d034e4f99b8b34c74f2c3acf7"
       }
      },
-     "6f6448e851034874b49353c2b2b45424": {
-      "model_module": "jupyter-vuetify",
-      "model_module_version": "^1.8.1",
-      "model_name": "ThemeColorsModel",
-      "state": {
-       "_model_module": "jupyter-vuetify",
-       "_model_module_version": "^1.8.1",
-       "_model_name": "ThemeColorsModel",
-       "_theme_name": "light",
-       "_view_count": null,
-       "_view_module": null,
-       "_view_module_version": "^1.8.1",
-       "_view_name": null,
-       "accent": "#82B1FF",
-       "anchor": null,
-       "error": "#FF5252",
-       "info": "#2196F3",
-       "primary": "#1976D2",
-       "secondary": "#424242",
-       "success": "#4CAF50",
-       "warning": "#FB8C00"
-      }
-     },
-     "e8c13c916494434b9dee68074e89e6ef": {
-      "model_module": "jupyter-vuetify",
-      "model_module_version": "^1.8.1",
-      "model_name": "ThemeModel",
-      "state": {
-       "_model_module": "jupyter-vuetify",
-       "_model_module_version": "^1.8.1",
-       "_model_name": "ThemeModel",
-       "_view_count": null,
-       "_view_module": null,
-       "_view_module_version": "^1.8.1",
-       "_view_name": null,
-       "dark": null
-      }
-     },
-     "fa9f1a9795644ce2b2e66604b71cef53": {
+     "ee5874dab5e94019a4a4cc8c5ab5937d": {
       "model_module": "jupyter-vuetify",
       "model_module_version": "^1.8.1",
       "model_name": "ThemeColorsModel",
