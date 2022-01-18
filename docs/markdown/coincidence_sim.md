@@ -70,7 +70,7 @@ results = BlazarNuCoincidenceResults.load(["output/test_coincidence_sim.h5"])
 results.bllac
 ```
 
-As we ran 4 simulations, we have a coincidence count for each case.
+As we ran 2 simulations, we have a coincidence count for each case.
 
 ```python
 results.bllac["n_spatial"]
