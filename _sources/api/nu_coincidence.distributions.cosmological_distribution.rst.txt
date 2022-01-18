@@ -1,0 +1,7 @@
+nu\_coincidence.distributions.cosmological\_distribution module
+===============================================================
+
+.. automodule:: nu_coincidence.distributions.cosmological_distribution
+   :members:
+   :undoc-members:
+   :show-inheritance:

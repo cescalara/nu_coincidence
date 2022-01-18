@@ -1,0 +1,7 @@
+nu\_coincidence.populations.popsynth\_wrapper module
+====================================================
+
+.. automodule:: nu_coincidence.populations.popsynth_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:

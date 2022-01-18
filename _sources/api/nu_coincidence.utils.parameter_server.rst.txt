@@ -1,0 +1,7 @@
+nu\_coincidence.utils.parameter\_server module
+==============================================
+
+.. automodule:: nu_coincidence.utils.parameter_server
+   :members:
+   :undoc-members:
+   :show-inheritance:

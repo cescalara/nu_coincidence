@@ -1,0 +1,21 @@
+nu\_coincidence.populations package
+===================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   nu_coincidence.populations.aux_samplers
+   nu_coincidence.populations.popsynth_wrapper
+   nu_coincidence.populations.selection
+   nu_coincidence.populations.spatial_populations
+
+Module contents
+---------------
+
+.. automodule:: nu_coincidence.populations
+   :members:
+   :undoc-members:
+   :show-inheritance:

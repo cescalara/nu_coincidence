@@ -1,0 +1,7 @@
+nu\_coincidence.populations.spatial\_populations module
+=======================================================
+
+.. automodule:: nu_coincidence.populations.spatial_populations
+   :members:
+   :undoc-members:
+   :show-inheritance:

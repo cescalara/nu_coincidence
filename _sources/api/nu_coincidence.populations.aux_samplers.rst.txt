@@ -1,0 +1,7 @@
+nu\_coincidence.populations.aux\_samplers module
+================================================
+
+.. automodule:: nu_coincidence.populations.aux_samplers
+   :members:
+   :undoc-members:
+   :show-inheritance:

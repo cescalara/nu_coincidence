@@ -1,0 +1,10 @@
+nu\_coincidence.config package
+==============================
+
+Module contents
+---------------
+
+.. automodule:: nu_coincidence.config
+   :members:
+   :undoc-members:
+   :show-inheritance:

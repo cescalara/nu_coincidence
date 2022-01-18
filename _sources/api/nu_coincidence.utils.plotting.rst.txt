@@ -1,0 +1,7 @@
+nu\_coincidence.utils.plotting module
+=====================================
+
+.. automodule:: nu_coincidence.utils.plotting
+   :members:
+   :undoc-members:
+   :show-inheritance:

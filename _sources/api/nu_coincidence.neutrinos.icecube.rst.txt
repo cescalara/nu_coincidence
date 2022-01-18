@@ -1,0 +1,7 @@
+nu\_coincidence.neutrinos.icecube module
+========================================
+
+.. automodule:: nu_coincidence.neutrinos.icecube
+   :members:
+   :undoc-members:
+   :show-inheritance:

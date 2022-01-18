@@ -1,0 +1,7 @@
+nu\_coincidence.simulation module
+=================================
+
+.. automodule:: nu_coincidence.simulation
+   :members:
+   :undoc-members:
+   :show-inheritance:

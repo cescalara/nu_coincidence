@@ -1,0 +1,19 @@
+nu\_coincidence.pop\_nu package
+===============================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   nu_coincidence.pop_nu.base
+   nu_coincidence.pop_nu.coincidence
+
+Module contents
+---------------
+
+.. automodule:: nu_coincidence.pop_nu
+   :members:
+   :undoc-members:
+   :show-inheritance:

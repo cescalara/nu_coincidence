@@ -1,0 +1,7 @@
+nu\_coincidence.blazar\_nu.base module
+======================================
+
+.. automodule:: nu_coincidence.blazar_nu.base
+   :members:
+   :undoc-members:
+   :show-inheritance:

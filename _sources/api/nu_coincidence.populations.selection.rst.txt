@@ -1,0 +1,7 @@
+nu\_coincidence.populations.selection module
+============================================
+
+.. automodule:: nu_coincidence.populations.selection
+   :members:
+   :undoc-members:
+   :show-inheritance:

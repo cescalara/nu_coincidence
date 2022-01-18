@@ -1,0 +1,33 @@
+nu\_coincidence package
+=======================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   nu_coincidence.blazar_nu
+   nu_coincidence.config
+   nu_coincidence.distributions
+   nu_coincidence.neutrinos
+   nu_coincidence.pop_nu
+   nu_coincidence.populations
+   nu_coincidence.utils
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   nu_coincidence.coincidence
+   nu_coincidence.simulation
+
+Module contents
+---------------
+
+.. automodule:: nu_coincidence
+   :members:
+   :undoc-members:
+   :show-inheritance:

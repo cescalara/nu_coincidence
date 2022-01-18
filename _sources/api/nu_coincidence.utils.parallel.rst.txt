@@ -1,0 +1,7 @@
+nu\_coincidence.utils.parallel module
+=====================================
+
+.. automodule:: nu_coincidence.utils.parallel
+   :members:
+   :undoc-members:
+   :show-inheritance:

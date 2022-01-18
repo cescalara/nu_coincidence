@@ -1,0 +1,7 @@
+nu\_coincidence.utils.fluxes module
+===================================
+
+.. automodule:: nu_coincidence.utils.fluxes
+   :members:
+   :undoc-members:
+   :show-inheritance:

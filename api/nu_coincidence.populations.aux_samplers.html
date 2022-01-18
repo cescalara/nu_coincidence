@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nu_coincidence.populations.aux_samplers module &mdash; nu_coincidence  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="nu_coincidence.populations.popsynth_wrapper module" href="nu_coincidence.populations.popsynth_wrapper.html" />
+    <link rel="prev" title="nu_coincidence.populations package" href="nu_coincidence.populations.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> nu_coincidence
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/coincidence_sim.html">Blazar-neutrino chance coincidence simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/connected_sim.html">Blazar-neutrino connected simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html#nu-coincidence">nu_coincidence</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">nu_coincidence</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="api.html">API</a> &raquo;</li>
+          <li><a href="nu_coincidence.html">nu_coincidence package</a> &raquo;</li>
+          <li><a href="nu_coincidence.populations.html">nu_coincidence.populations package</a> &raquo;</li>
+      <li>nu_coincidence.populations.aux_samplers module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/nu_coincidence.populations.aux_samplers.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="module-nu_coincidence.populations.aux_samplers">
+<span id="nu-coincidence-populations-aux-samplers-module"></span><h1>nu_coincidence.populations.aux_samplers module<a class="headerlink" href="#module-nu_coincidence.populations.aux_samplers" title="Permalink to this headline"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="nu_coincidence.populations.aux_samplers.CombinedFluxIndexSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nu_coincidence.populations.aux_samplers.</span></span><span class="sig-name descname"><span class="pre">CombinedFluxIndexSampler</span></span><a class="headerlink" href="#nu_coincidence.populations.aux_samplers.CombinedFluxIndexSampler" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">popsynth.auxiliary_sampler.AuxiliarySampler</span></code></p>
+<p>Make a transformed parameter to perform a
+combined linear selection on energy flux and
+spectral index.</p>
+<p>Selection has the form:
+index = <code class="docutils literal notranslate"><span class="pre">slope</span></code> log10(flux) + <code class="docutils literal notranslate"><span class="pre">intercept</span></code></p>
+<p>So, here we transform to:
+-(index - <code class="docutils literal notranslate"><span class="pre">slope</span></code> log10(flux))
+such that a constant selection can be made
+on -<code class="docutils literal notranslate"><span class="pre">intercept</span></code>. This works with both
+<code class="xref py py-class docutils literal notranslate"><span class="pre">LowerBound</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">SoftSelection</span></code></p>
+<p>See e.g. Fig. 4 in Ajello et al. 2020 (4LAC),
+default values are set to approximate this.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nu_coincidence.populations.aux_samplers.CombinedFluxIndexSampler.slope">
+<span class="sig-name descname"><span class="pre">slope</span></span><a class="headerlink" href="#nu_coincidence.populations.aux_samplers.CombinedFluxIndexSampler.slope" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nu_coincidence.populations.aux_samplers.CombinedFluxIndexSampler.true_sampler">
+<span class="sig-name descname"><span class="pre">true_sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nu_coincidence.populations.aux_samplers.CombinedFluxIndexSampler.true_sampler" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nu_coincidence.populations.aux_samplers.FlareAmplitudeAuxSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nu_coincidence.populations.aux_samplers.</span></span><span class="sig-name descname"><span class="pre">FlareAmplitudeAuxSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'flare_amplitudes'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nu_coincidence.populations.aux_samplers.FlareAmplitudeAuxSampler" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">popsynth.auxiliary_sampler.AuxiliarySampler</span></code></p>
+<p>Sample increase in luminosity of the flares
+as a multiplicative factor.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nu_coincidence.populations.aux_samplers.FlareAmplitudeAuxSampler.alpha">
+<span class="sig-name descname"><span class="pre">alpha</span></span><a class="headerlink" href="#nu_coincidence.populations.aux_samplers.FlareAmplitudeAuxSampler.alpha" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nu_coincidence.populations.aux_samplers.FlareAmplitudeAuxSampler.true_sampler">
+<span class="sig-name descname"><span class="pre">true_sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nu_coincidence.populations.aux_samplers.FlareAmplitudeAuxSampler.true_sampler" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nu_coincidence.populations.aux_samplers.FlareAmplitudeAuxSampler.xmin">
+<span class="sig-name descname"><span class="pre">xmin</span></span><a class="headerlink" href="#nu_coincidence.populations.aux_samplers.FlareAmplitudeAuxSampler.xmin" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nu_coincidence.populations.aux_samplers.FlareDurationAuxSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nu_coincidence.populations.aux_samplers.</span></span><span class="sig-name descname"><span class="pre">FlareDurationAuxSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'flare_durations'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nu_coincidence.populations.aux_samplers.FlareDurationAuxSampler" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">popsynth.auxiliary_sampler.AuxiliarySampler</span></code></p>
+<p>Sample flare durations given flare times.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nu_coincidence.populations.aux_samplers.FlareDurationAuxSampler.alpha">
+<span class="sig-name descname"><span class="pre">alpha</span></span><a class="headerlink" href="#nu_coincidence.populations.aux_samplers.FlareDurationAuxSampler.alpha" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nu_coincidence.populations.aux_samplers.FlareDurationAuxSampler.true_sampler">
+<span class="sig-name descname"><span class="pre">true_sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nu_coincidence.populations.aux_samplers.FlareDurationAuxSampler.true_sampler" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nu_coincidence.populations.aux_samplers.FlareRateAuxSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nu_coincidence.populations.aux_samplers.</span></span><span class="sig-name descname"><span class="pre">FlareRateAuxSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'flare_rate'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nu_coincidence.populations.aux_samplers.FlareRateAuxSampler" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">popsynth.aux_samplers.plaw_aux_sampler.PowerLawAuxSampler</span></code></p>
+<p>Sample source flare rate given its variability.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nu_coincidence.populations.aux_samplers.FlareRateAuxSampler.true_sampler">
+<span class="sig-name descname"><span class="pre">true_sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nu_coincidence.populations.aux_samplers.FlareRateAuxSampler.true_sampler" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nu_coincidence.populations.aux_samplers.FlareTimeAuxSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nu_coincidence.populations.aux_samplers.</span></span><span class="sig-name descname"><span class="pre">FlareTimeAuxSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'flare_times'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nu_coincidence.populations.aux_samplers.FlareTimeAuxSampler" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">popsynth.auxiliary_sampler.AuxiliarySampler</span></code></p>
+<p>Sample flare times for each source give
+rate and total number of flares.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nu_coincidence.populations.aux_samplers.FlareTimeAuxSampler.obs_time">
+<span class="sig-name descname"><span class="pre">obs_time</span></span><a class="headerlink" href="#nu_coincidence.populations.aux_samplers.FlareTimeAuxSampler.obs_time" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nu_coincidence.populations.aux_samplers.FlareTimeAuxSampler.true_sampler">
+<span class="sig-name descname"><span class="pre">true_sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nu_coincidence.populations.aux_samplers.FlareTimeAuxSampler.true_sampler" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nu_coincidence.populations.aux_samplers.FluxSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nu_coincidence.populations.aux_samplers.</span></span><span class="sig-name descname"><span class="pre">FluxSampler</span></span><a class="headerlink" href="#nu_coincidence.populations.aux_samplers.FluxSampler" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">popsynth.auxiliary_sampler.AuxiliarySampler</span></code></p>
+<p>Sample observed fluxes based on the latent
+fluxes.</p>
+<p>This is equivalent to defining <code class="docutils literal notranslate"><span class="pre">flux_sigma</span></code>
+in PopulationSynth.draw_survey(), but also
+allows to define more complicated selections
+on the <em>observed</em> flux, such as the
+<code class="docutils literal notranslate"><span class="pre">CombinedFluxIndexSelection</span></code>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nu_coincidence.populations.aux_samplers.FluxSampler.observation_sampler">
+<span class="sig-name descname"><span class="pre">observation_sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nu_coincidence.populations.aux_samplers.FluxSampler.observation_sampler" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nu_coincidence.populations.aux_samplers.FluxSampler.sigma">
+<span class="sig-name descname"><span class="pre">sigma</span></span><a class="headerlink" href="#nu_coincidence.populations.aux_samplers.FluxSampler.sigma" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nu_coincidence.populations.aux_samplers.FluxSampler.true_sampler">
+<span class="sig-name descname"><span class="pre">true_sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nu_coincidence.populations.aux_samplers.FluxSampler.true_sampler" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nu_coincidence.populations.aux_samplers.SpectralIndexAuxSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nu_coincidence.populations.aux_samplers.</span></span><span class="sig-name descname"><span class="pre">SpectralIndexAuxSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'spectral_index'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nu_coincidence.populations.aux_samplers.SpectralIndexAuxSampler" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">popsynth.aux_samplers.normal_aux_sampler.NormalAuxSampler</span></code></p>
+<p>Sample the spectral index of a source
+with a simple power law spectrum.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nu_coincidence.populations.aux_samplers.VariabilityAuxSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nu_coincidence.populations.aux_samplers.</span></span><span class="sig-name descname"><span class="pre">VariabilityAuxSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'variability'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nu_coincidence.populations.aux_samplers.VariabilityAuxSampler" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">popsynth.auxiliary_sampler.AuxiliarySampler</span></code></p>
+<p>Sample whether a source is variable or not.
+Boolean outcome.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nu_coincidence.populations.aux_samplers.VariabilityAuxSampler.true_sampler">
+<span class="sig-name descname"><span class="pre">true_sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nu_coincidence.populations.aux_samplers.VariabilityAuxSampler.true_sampler" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nu_coincidence.populations.aux_samplers.VariabilityAuxSampler.weight">
+<span class="sig-name descname"><span class="pre">weight</span></span><a class="headerlink" href="#nu_coincidence.populations.aux_samplers.VariabilityAuxSampler.weight" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="nu_coincidence.populations.html" class="btn btn-neutral float-left" title="nu_coincidence.populations package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="nu_coincidence.populations.popsynth_wrapper.html" class="btn btn-neutral float-right" title="nu_coincidence.populations.popsynth_wrapper module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Francesca Capel.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

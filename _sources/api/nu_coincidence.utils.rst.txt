@@ -1,0 +1,22 @@
+nu\_coincidence.utils package
+=============================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   nu_coincidence.utils.fluxes
+   nu_coincidence.utils.package_data
+   nu_coincidence.utils.parallel
+   nu_coincidence.utils.parameter_server
+   nu_coincidence.utils.plotting
+
+Module contents
+---------------
+
+.. automodule:: nu_coincidence.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:

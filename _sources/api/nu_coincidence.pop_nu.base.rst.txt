@@ -1,0 +1,7 @@
+nu\_coincidence.pop\_nu.base module
+===================================
+
+.. automodule:: nu_coincidence.pop_nu.base
+   :members:
+   :undoc-members:
+   :show-inheritance:

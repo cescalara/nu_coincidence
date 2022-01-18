@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nu_coincidence.neutrinos.icecube module &mdash; nu_coincidence  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="nu_coincidence.pop_nu package" href="nu_coincidence.pop_nu.html" />
+    <link rel="prev" title="nu_coincidence.neutrinos package" href="nu_coincidence.neutrinos.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> nu_coincidence
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/coincidence_sim.html">Blazar-neutrino chance coincidence simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/connected_sim.html">Blazar-neutrino connected simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html#nu-coincidence">nu_coincidence</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">nu_coincidence</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="api.html">API</a> &raquo;</li>
+          <li><a href="nu_coincidence.html">nu_coincidence package</a> &raquo;</li>
+          <li><a href="nu_coincidence.neutrinos.html">nu_coincidence.neutrinos package</a> &raquo;</li>
+      <li>nu_coincidence.neutrinos.icecube module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/nu_coincidence.neutrinos.icecube.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="module-nu_coincidence.neutrinos.icecube">
+<span id="nu-coincidence-neutrinos-icecube-module"></span><h1>nu_coincidence.neutrinos.icecube module<a class="headerlink" href="#module-nu_coincidence.neutrinos.icecube" title="Permalink to this headline"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeAlertsParams">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nu_coincidence.neutrinos.icecube.</span></span><span class="sig-name descname"><span class="pre">IceCubeAlertsParams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hese_config_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ehe_config_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeAlertsParams" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="nu_coincidence.utils.parameter_server.html#nu_coincidence.utils.parameter_server.ParameterServer" title="nu_coincidence.utils.parameter_server.ParameterServer"><code class="xref py py-class docutils literal notranslate"><span class="pre">nu_coincidence.utils.parameter_server.ParameterServer</span></code></a></p>
+<p>Parameter server for IceCube alerts where
+HESE and EHE simulations both require inputs.</p>
+<p>For use with IceCubeAlertsWrapper</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeAlertsParams.ehe">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ehe</span></span><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeAlertsParams.ehe" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeAlertsParams.hese">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hese</span></span><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeAlertsParams.hese" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeAlertsWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nu_coincidence.neutrinos.icecube.</span></span><span class="sig-name descname"><span class="pre">IceCubeAlertsWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_server</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeAlertsWrapper" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nu_coincidence.neutrinos.icecube.IceCubeObsWrapper" title="nu_coincidence.neutrinos.icecube.IceCubeObsWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">nu_coincidence.neutrinos.icecube.IceCubeObsWrapper</span></code></a></p>
+<p>Wrapper for simulation of HESE and EHE
+alerts.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeAlertsWrapper.ehe_detector">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ehe_detector</span></span><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeAlertsWrapper.ehe_detector" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeAlertsWrapper.hese_detector">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hese_detector</span></span><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeAlertsWrapper.hese_detector" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeObsParams">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nu_coincidence.neutrinos.icecube.</span></span><span class="sig-name descname"><span class="pre">IceCubeObsParams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">detector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atmospheric_flux</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffuse_flux</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeObsParams" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="nu_coincidence.utils.parameter_server.html#nu_coincidence.utils.parameter_server.ParameterServer" title="nu_coincidence.utils.parameter_server.ParameterServer"><code class="xref py py-class docutils literal notranslate"><span class="pre">nu_coincidence.utils.parameter_server.ParameterServer</span></code></a></p>
+<p>All the info you need to recreate a
+simulation of neutrinos in IceCube.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeObsParams.atmospheric_flux">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">atmospheric_flux</span></span><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeObsParams.atmospheric_flux" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeObsParams.connection">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">connection</span></span><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeObsParams.connection" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeObsParams.detector">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">detector</span></span><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeObsParams.detector" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeObsParams.diffuse_flux">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">diffuse_flux</span></span><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeObsParams.diffuse_flux" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeObsParams.from_dict">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#nu_coincidence.neutrinos.icecube.IceCubeObsParams" title="nu_coincidence.neutrinos.icecube.IceCubeObsParams"><span class="pre">nu_coincidence.neutrinos.icecube.IceCubeObsParams</span></a></span></span><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeObsParams.from_dict" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeObsParams.from_file">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#nu_coincidence.neutrinos.icecube.IceCubeObsParams" title="nu_coincidence.neutrinos.icecube.IceCubeObsParams"><span class="pre">nu_coincidence.neutrinos.icecube.IceCubeObsParams</span></a></span></span><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeObsParams.from_file" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeObsParams.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeObsParams.to_dict" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeObsParams.write_to">
+<span class="sig-name descname"><span class="pre">write_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeObsParams.write_to" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeObsWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nu_coincidence.neutrinos.icecube.</span></span><span class="sig-name descname"><span class="pre">IceCubeObsWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_server</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeObsWrapper" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Abstract base class for IceCube-like
+observations.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeObsWrapper.observation">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">observation</span></span><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeObsWrapper.observation" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeObsWrapper.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeObsWrapper.write" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeObservation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nu_coincidence.neutrinos.icecube.</span></span><span class="sig-name descname"><span class="pre">IceCubeObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energies</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ang_err</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">times</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'icecube_obs'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeObservation" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Store the output of IceCube simulations.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeObservation.ang_err">
+<span class="sig-name descname"><span class="pre">ang_err</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeObservation.ang_err" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeObservation.dec">
+<span class="sig-name descname"><span class="pre">dec</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeObservation.dec" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeObservation.energies">
+<span class="sig-name descname"><span class="pre">energies</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeObservation.energies" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeObservation.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'icecube_obs'</span></em><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeObservation.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeObservation.ra">
+<span class="sig-name descname"><span class="pre">ra</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeObservation.ra" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeObservation.selection">
+<span class="sig-name descname"><span class="pre">selection</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeObservation.selection" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeObservation.source_label">
+<span class="sig-name descname"><span class="pre">source_label</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeObservation.source_label" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeObservation.times">
+<span class="sig-name descname"><span class="pre">times</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeObservation.times" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeTracksWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nu_coincidence.neutrinos.icecube.</span></span><span class="sig-name descname"><span class="pre">IceCubeTracksWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_server</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeTracksWrapper" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nu_coincidence.neutrinos.icecube.IceCubeObsWrapper" title="nu_coincidence.neutrinos.icecube.IceCubeObsWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">nu_coincidence.neutrinos.icecube.IceCubeObsWrapper</span></code></a></p>
+<p>Wrapper for the simulation of track events.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="nu_coincidence.neutrinos.icecube.IceCubeTracksWrapper.detector">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">detector</span></span><a class="headerlink" href="#nu_coincidence.neutrinos.icecube.IceCubeTracksWrapper.detector" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="nu_coincidence.neutrinos.html" class="btn btn-neutral float-left" title="nu_coincidence.neutrinos package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="nu_coincidence.pop_nu.html" class="btn btn-neutral float-right" title="nu_coincidence.pop_nu package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Francesca Capel.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

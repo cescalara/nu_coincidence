@@ -1,0 +1,18 @@
+nu\_coincidence.neutrinos package
+=================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   nu_coincidence.neutrinos.icecube
+
+Module contents
+---------------
+
+.. automodule:: nu_coincidence.neutrinos
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,18 @@
+nu\_coincidence.distributions package
+=====================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   nu_coincidence.distributions.cosmological_distribution
+
+Module contents
+---------------
+
+.. automodule:: nu_coincidence.distributions
+   :members:
+   :undoc-members:
+   :show-inheritance:

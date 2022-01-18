@@ -1,0 +1,7 @@
+nu\_coincidence.coincidence module
+==================================
+
+.. automodule:: nu_coincidence.coincidence
+   :members:
+   :undoc-members:
+   :show-inheritance:
