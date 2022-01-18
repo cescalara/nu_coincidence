@@ -22,10 +22,10 @@ connected_sim_params["nu_ehe_config"] = "nu_connected_ehe.yml"
 connected_sim_params["seed"] = 42
 
 
-def test_concidence_sim():
+def test_concidence_sim(output_directory):
 
     sim = BlazarNuCoincidenceSim(
-        file_name="output/test_coincidence_sim.h5",
+        file_name=output_directory.join("test_coincidence_sim.h5"),
         N=1,
         bllac_config=coincidence_sim_params["bllac_config"],
         fsrq_config=coincidence_sim_params["fsrq_config"],
@@ -36,15 +36,17 @@ def test_concidence_sim():
 
     sim.run(parallel=False)
 
-    results = BlazarNuCoincidenceResults.load(["output/test_coincidence_sim.h5"])
+    results = BlazarNuCoincidenceResults.load(
+        [output_directory.join("test_coincidence_sim.h5")]
+    )
 
     assert len(results.bllac["n_spatial"]) == len(results.fsrq["n_spatial"]) == 1
 
 
-def test_coincidence_sim_parallel():
+def test_coincidence_sim_parallel(output_directory):
 
     sim = BlazarNuCoincidenceSim(
-        file_name="output/test_coincidence_sim_parallel.h5",
+        file_name=output_directory.join("test_coincidence_sim_parallel.h5"),
         N=2,
         bllac_config=coincidence_sim_params["bllac_config"],
         fsrq_config=coincidence_sim_params["fsrq_config"],
@@ -58,16 +60,16 @@ def test_coincidence_sim_parallel():
     time.sleep(1)
 
     results = BlazarNuCoincidenceResults.load(
-        ["output/test_coincidence_sim_parallel.h5"]
+        [output_directory.join("test_coincidence_sim_parallel.h5")]
     )
 
     assert len(results.bllac["n_spatial"]) == len(results.fsrq["n_spatial"]) == 2
 
 
-def test_connected_sim():
+def test_connected_sim(output_directory):
 
     sub_file_names = [
-        "output/test_connected_sim_%.1e.h5" % ff
+        output_directory.join("test_connected_sim_%.1e.h5" % ff)
         for ff in connected_sim_params["flux_factors"]
     ]
 
@@ -91,18 +93,20 @@ def test_connected_sim():
     BlazarNuConnectedResults.merge_over_flux_factor(
         sub_file_names,
         connected_sim_params["flux_factors"],
-        write_to="output/test_connected_sim.h5",
+        write_to=output_directory.join("test_connected_sim.h5"),
     )
 
-    results = BlazarNuConnectedResults.load(["output/test_connected_sim.h5"])
+    results = BlazarNuConnectedResults.load(
+        [output_directory.join("test_connected_sim.h5")]
+    )
 
     assert len(results.bllac["n_alerts"]) == len(results.fsrq["n_alerts"]) == 2
 
 
-def test_connected_sim_parallel():
+def test_connected_sim_parallel(output_directory):
 
     sub_file_names = [
-        "output/test_connected_sim_%.1e.h5" % ff
+        output_directory.join("test_connected_sim_%.1e.h5" % ff)
         for ff in connected_sim_params["flux_factors"]
     ]
 
@@ -128,9 +132,11 @@ def test_connected_sim_parallel():
     BlazarNuConnectedResults.merge_over_flux_factor(
         sub_file_names,
         connected_sim_params["flux_factors"],
-        write_to="output/test_connected_sim_parallel.h5",
+        write_to=output_directory.join("test_connected_sim_parallel.h5"),
     )
 
-    results = BlazarNuConnectedResults.load(["output/test_connected_sim_parallel.h5"])
+    results = BlazarNuConnectedResults.load(
+        [output_directory.join("test_connected_sim_parallel.h5")]
+    )
 
     assert len(results.bllac["n_alerts"]) == len(results.fsrq["n_alerts"]) == 2

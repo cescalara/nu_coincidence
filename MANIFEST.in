@@ -1,2 +1,3 @@
 include versioneer.py
 include nu_coincidence/_version.py
+graft nu_coincidence/config
