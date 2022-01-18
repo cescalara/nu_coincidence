@@ -200,3 +200,7 @@ hdfs-initialized-indicator
 .ipynb_checkpoints
 mydask.png
 .vscode/
+
+# Docs
+docs/api/nu_coincidence*
+docs/api/modules.rst
