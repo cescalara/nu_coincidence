@@ -8,7 +8,7 @@ Welcome to nu_coincidence's documentation!
 
 Investigating coincident source-neutrino detections through simulations. The examples here show how to simulate realistic source populations and neutrino emission. The source populations can either be disconnected from the neutrino emission to study chance coincidences, or alternatively neutrino emission can be connected to sources to study the implications.
 
-This code makes use of the `popsynth <https://github.com/grburgess/popsynth.git>` and `icecube_tools <https://github.com/cescalara/icecube_tools.git>` packages, which also have their own documentation on how to simulate source populations and neutrinos. 
+This code makes use of the `popsynth <https://github.com/grburgess/popsynth.git>`_ and `icecube_tools <https://github.com/cescalara/icecube_tools.git>`_ packages, which also have their own documentation on how to simulate source populations and neutrinos. 
 
 .. toctree::
    :maxdepth: 2
