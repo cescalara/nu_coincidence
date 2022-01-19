@@ -5,4 +5,4 @@
 [![codecov](https://codecov.io/gh/cescalara/nu_coincidence/branch/main/graph/badge.svg?token=JaHLAsrId6)](https://codecov.io/gh/cescalara/nu_coincidence)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-Investigating coincident source-neutrino detections through simulations.
+Investigating coincident source-neutrino detections through simulations. Code used in [this paper](https://arxiv.org/abs/2201.05633).
