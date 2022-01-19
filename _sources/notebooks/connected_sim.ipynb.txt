@@ -2,7 +2,7 @@
  "cells": [
   {
    "cell_type": "markdown",
-   "id": "58629221",
+   "id": "809ed813",
    "metadata": {},
    "source": [
     "# Blazar-neutrino connected simulation\n",
@@ -13,13 +13,13 @@
   {
    "cell_type": "code",
    "execution_count": 1,
-   "id": "058a8b6c",
+   "id": "34fc4d78",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-01-18T22:55:19.992029Z",
-     "iopub.status.busy": "2022-01-18T22:55:19.991421Z",
-     "iopub.status.idle": "2022-01-18T22:55:23.304679Z",
-     "shell.execute_reply": "2022-01-18T22:55:23.304062Z"
+     "iopub.execute_input": "2022-01-19T10:51:47.131987Z",
+     "iopub.status.busy": "2022-01-19T10:51:47.131562Z",
+     "iopub.status.idle": "2022-01-19T10:51:50.614612Z",
+     "shell.execute_reply": "2022-01-19T10:51:50.613629Z"
     }
    },
    "outputs": [],
@@ -38,7 +38,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "d765eb2d",
+   "id": "a70437fd",
    "metadata": {},
    "source": [
     "Firstly, we make sure that we have the necessary files for running an IceCube simulation by using the `icecube_tools` package"
@@ -47,13 +47,13 @@
   {
    "cell_type": "code",
    "execution_count": 2,
-   "id": "11521663",
+   "id": "b6006865",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-01-18T22:55:23.309287Z",
-     "iopub.status.busy": "2022-01-18T22:55:23.308813Z",
-     "iopub.status.idle": "2022-01-18T22:55:27.620655Z",
-     "shell.execute_reply": "2022-01-18T22:55:27.620254Z"
+     "iopub.execute_input": "2022-01-19T10:51:50.619307Z",
+     "iopub.status.busy": "2022-01-19T10:51:50.618782Z",
+     "iopub.status.idle": "2022-01-19T10:51:55.735948Z",
+     "shell.execute_reply": "2022-01-19T10:51:55.736705Z"
     }
    },
    "outputs": [],
@@ -66,7 +66,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "b776ece3",
+   "id": "23baf2e5",
    "metadata": {},
    "source": [
     "The inputs to `BlazarNuConnectedSim` are specified by the `.yml` config files provided with the `nu_coincidence` package. We can check what is available using the helper function `get_available_config()`."
@@ -75,13 +75,13 @@
   {
    "cell_type": "code",
    "execution_count": 3,
-   "id": "716eab4f",
+   "id": "228498fb",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-01-18T22:55:27.625165Z",
-     "iopub.status.busy": "2022-01-18T22:55:27.624686Z",
-     "iopub.status.idle": "2022-01-18T22:55:27.630935Z",
-     "shell.execute_reply": "2022-01-18T22:55:27.631269Z"
+     "iopub.execute_input": "2022-01-19T10:51:55.742239Z",
+     "iopub.status.busy": "2022-01-19T10:51:55.741750Z",
+     "iopub.status.idle": "2022-01-19T10:51:55.749633Z",
+     "shell.execute_reply": "2022-01-19T10:51:55.750017Z"
     }
    },
    "outputs": [
@@ -123,7 +123,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "a047c7a3",
+   "id": "42bef04d",
    "metadata": {},
    "source": [
     "The connecting flux factor, $Y_{\\nu\\gamma}$ can be set in the `nu_connected_...` config files or specified at run time. we may want to explore different flux factors and their implications, as we show below."
@@ -132,13 +132,13 @@
   {
    "cell_type": "code",
    "execution_count": 4,
-   "id": "f5be77c0",
+   "id": "51c93da0",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-01-18T22:55:27.639325Z",
-     "iopub.status.busy": "2022-01-18T22:55:27.637726Z",
-     "iopub.status.idle": "2022-01-18T22:55:27.641422Z",
-     "shell.execute_reply": "2022-01-18T22:55:27.641001Z"
+     "iopub.execute_input": "2022-01-19T10:51:55.753391Z",
+     "iopub.status.busy": "2022-01-19T10:51:55.752910Z",
+     "iopub.status.idle": "2022-01-19T10:51:55.755386Z",
+     "shell.execute_reply": "2022-01-19T10:51:55.754922Z"
     }
    },
    "outputs": [],
@@ -149,7 +149,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "3b452f1c",
+   "id": "a4b11fd5",
    "metadata": {},
    "source": [
     "For this example, we use the reference blazar model (`bllac_ref.yml` and `fsrq_ref.yml`) together with the connected IceCube HESE and EHE alerts models (`nu_connected_hese.yml` and `nu_connected_ehe.yml`). This will run for a couple of mins."
@@ -158,13 +158,13 @@
   {
    "cell_type": "code",
    "execution_count": 5,
-   "id": "ef15a18e",
+   "id": "7e4d6f29",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-01-18T22:55:27.660635Z",
-     "iopub.status.busy": "2022-01-18T22:55:27.655348Z",
-     "iopub.status.idle": "2022-01-18T22:58:23.047276Z",
-     "shell.execute_reply": "2022-01-18T22:58:23.046373Z"
+     "iopub.execute_input": "2022-01-19T10:51:55.760020Z",
+     "iopub.status.busy": "2022-01-19T10:51:55.759486Z",
+     "iopub.status.idle": "2022-01-19T10:55:10.732225Z",
+     "shell.execute_reply": "2022-01-19T10:55:10.731140Z"
     }
    },
    "outputs": [],
@@ -188,7 +188,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "6dd827da",
+   "id": "4f8f4ee1",
    "metadata": {},
    "source": [
     "If working with different flux factors, there is a helper function to merge together the separate output files."
@@ -197,13 +197,13 @@
   {
    "cell_type": "code",
    "execution_count": 6,
-   "id": "cfd76ec9",
+   "id": "e1da4bde",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-01-18T22:58:23.052654Z",
-     "iopub.status.busy": "2022-01-18T22:58:23.052160Z",
-     "iopub.status.idle": "2022-01-18T22:58:23.070058Z",
-     "shell.execute_reply": "2022-01-18T22:58:23.069533Z"
+     "iopub.execute_input": "2022-01-19T10:55:10.738467Z",
+     "iopub.status.busy": "2022-01-19T10:55:10.737935Z",
+     "iopub.status.idle": "2022-01-19T10:55:10.756736Z",
+     "shell.execute_reply": "2022-01-19T10:55:10.756184Z"
     }
    },
    "outputs": [],
@@ -217,7 +217,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "ea2a9c54",
+   "id": "fe7fb9a5",
    "metadata": {},
    "source": [
     "The results are organised to store relevant information divided into the `results.bllac` and `results.fsrq` populations. We focus on the total number of alerts, `n_alerts`, and the number of sources that produce multiple detected neutrinos, `n_multi`, from each simulated survey."
@@ -226,13 +226,13 @@
   {
    "cell_type": "code",
    "execution_count": 7,
-   "id": "454bfb1a",
+   "id": "6d0135a1",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-01-18T22:58:23.076149Z",
-     "iopub.status.busy": "2022-01-18T22:58:23.075641Z",
-     "iopub.status.idle": "2022-01-18T22:58:23.078086Z",
-     "shell.execute_reply": "2022-01-18T22:58:23.078460Z"
+     "iopub.execute_input": "2022-01-19T10:55:10.763195Z",
+     "iopub.status.busy": "2022-01-19T10:55:10.762321Z",
+     "iopub.status.idle": "2022-01-19T10:55:10.764870Z",
+     "shell.execute_reply": "2022-01-19T10:55:10.765276Z"
     }
    },
    "outputs": [
@@ -265,13 +265,13 @@
   {
    "cell_type": "code",
    "execution_count": 8,
-   "id": "cfb4a361",
+   "id": "a7c2db0f",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-01-18T22:58:23.084053Z",
-     "iopub.status.busy": "2022-01-18T22:58:23.083580Z",
-     "iopub.status.idle": "2022-01-18T22:58:23.086645Z",
-     "shell.execute_reply": "2022-01-18T22:58:23.087094Z"
+     "iopub.execute_input": "2022-01-19T10:55:10.770567Z",
+     "iopub.status.busy": "2022-01-19T10:55:10.770112Z",
+     "iopub.status.idle": "2022-01-19T10:55:10.773857Z",
+     "shell.execute_reply": "2022-01-19T10:55:10.774257Z"
     }
    },
    "outputs": [
@@ -304,7 +304,7 @@
   {
    "cell_type": "code",
    "execution_count": null,
-   "id": "351cd8d8",
+   "id": "cb31ff9f",
    "metadata": {},
    "outputs": [],
    "source": []
@@ -331,7 +331,30 @@
   "widgets": {
    "application/vnd.jupyter.widget-state+json": {
     "state": {
-     "00ab5bdd34f742978a5b8bb9b978018e": {
+     "160d80fbf891423fbdd44404f9fbbd50": {
+      "model_module": "jupyter-vuetify",
+      "model_module_version": "^1.8.1",
+      "model_name": "ThemeColorsModel",
+      "state": {
+       "_model_module": "jupyter-vuetify",
+       "_model_module_version": "^1.8.1",
+       "_model_name": "ThemeColorsModel",
+       "_theme_name": "dark",
+       "_view_count": null,
+       "_view_module": null,
+       "_view_module_version": "^1.8.1",
+       "_view_name": null,
+       "accent": "#FF4081",
+       "anchor": null,
+       "error": "#FF5252",
+       "info": "#2196F3",
+       "primary": "#2196F3",
+       "secondary": "#424242",
+       "success": "#4CAF50",
+       "warning": "#FB8C00"
+      }
+     },
+     "4232b0d7913d4694b02fcf863ead6ee1": {
       "model_module": "jupyter-vuetify",
       "model_module_version": "^1.8.1",
       "model_name": "ThemeColorsModel",
@@ -354,7 +377,7 @@
        "warning": "#FB8C00"
       }
      },
-     "1c47c52084714fc7a3536b969a33d1e3": {
+     "8fbc6f5c75aa43589d42b21b2dfb3f39": {
       "model_module": "@jupyter-widgets/base",
       "model_module_version": "1.2.0",
       "model_name": "LayoutModel",
@@ -406,7 +429,7 @@
        "width": null
       }
      },
-     "723e9e65fbd041fc9ee69538fa2fee88": {
+     "98ec2af3164a4feca7b4bf0cf5c7c7a9": {
       "model_module": "jupyter-vuetify",
       "model_module_version": "^1.8.1",
       "model_name": "ThemeModel",
@@ -421,7 +444,7 @@
        "dark": null
       }
      },
-     "9406bc911a67409c80d1a7e059394e4c": {
+     "c1e8239514754f64abde727bbb85c89e": {
       "model_module": "jupyter-vue",
       "model_module_version": "^1.7.0",
       "model_name": "ForceLoadModel",
@@ -434,30 +457,7 @@
        "_view_module": null,
        "_view_module_version": "",
        "_view_name": null,
-       "layout": "IPY_MODEL_1c47c52084714fc7a3536b969a33d1e3"
-      }
-     },
-     "d43d4d71b2fd4843b16e7fa025bca69c": {
-      "model_module": "jupyter-vuetify",
-      "model_module_version": "^1.8.1",
-      "model_name": "ThemeColorsModel",
-      "state": {
-       "_model_module": "jupyter-vuetify",
-       "_model_module_version": "^1.8.1",
-       "_model_name": "ThemeColorsModel",
-       "_theme_name": "dark",
-       "_view_count": null,
-       "_view_module": null,
-       "_view_module_version": "^1.8.1",
-       "_view_name": null,
-       "accent": "#FF4081",
-       "anchor": null,
-       "error": "#FF5252",
-       "info": "#2196F3",
-       "primary": "#2196F3",
-       "secondary": "#424242",
-       "success": "#4CAF50",
-       "warning": "#FB8C00"
+       "layout": "IPY_MODEL_8fbc6f5c75aa43589d42b21b2dfb3f39"
       }
      }
     },
