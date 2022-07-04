@@ -14,9 +14,10 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
@@ -288,6 +289,7 @@ div.nboutput.container div.output_area > div[class^='highlight']{
 }
 
 /* Some additional styling taken form the Jupyter notebook CSS */
+.jp-RenderedHTMLCommon table,
 div.rendered_html table {
   border: none;
   border-collapse: collapse;
@@ -296,10 +298,14 @@ div.rendered_html table {
   font-size: 12px;
   table-layout: fixed;
 }
+.jp-RenderedHTMLCommon thead,
 div.rendered_html thead {
   border-bottom: 1px solid black;
   vertical-align: bottom;
 }
+.jp-RenderedHTMLCommon tr,
+.jp-RenderedHTMLCommon th,
+.jp-RenderedHTMLCommon td,
 div.rendered_html tr,
 div.rendered_html th,
 div.rendered_html td {
@@ -311,12 +317,15 @@ div.rendered_html td {
   max-width: none;
   border: none;
 }
+.jp-RenderedHTMLCommon th,
 div.rendered_html th {
   font-weight: bold;
 }
+.jp-RenderedHTMLCommon tbody tr:nth-child(odd),
 div.rendered_html tbody tr:nth-child(odd) {
   background: #f5f5f5;
 }
+.jp-RenderedHTMLCommon tbody tr:hover,
 div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
@@ -344,7 +353,7 @@ div.rendered_html tbody tr:hover {
 }
 </style>
 <section id="Blazar-neutrino-connected-simulation">
-<h1>Blazar-neutrino connected simulation<a class="headerlink" href="#Blazar-neutrino-connected-simulation" title="Permalink to this headline"></a></h1>
+<h1>Blazar-neutrino connected simulation<a class="headerlink" href="#Blazar-neutrino-connected-simulation" title="Permalink to this heading"></a></h1>
 <p>We demonstrate how to run a simulation for a population of blazars that produce neutrinos according to their gamma-ray fluxes in the 0.1 to 100 GeV range.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -390,28 +399,30 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-[&#39;nu_connected_ehe.yml&#39;,
- &#39;nu_diffuse_ehe_soft.yml&#39;,
- &#39;fsrq_low.yml&#39;,
- &#39;fsrq_ref.yml&#39;,
- &#39;bllac_high.yml&#39;,
- &#39;bllac_nobcu.yml&#39;,
- &#39;nu_diffuse_tracks.yml&#39;,
- &#39;nu_connected_hese.yml&#39;,
- &#39;nu_diffuse_hese_soft.yml&#39;,
- &#39;fsrq_high.yml&#39;,
- &#39;bllac_rbcu.yml&#39;,
- &#39;nu_diffuse_ehe.yml&#39;,
- &#39;bllac_ref.yml&#39;,
- &#39;fsrq_gpsel.yml&#39;,
+[&#39;bllac_rbcu.yml&#39;,
  &#39;fsrq_nobcu.yml&#39;,
- &#39;nu_diffuse_hese.yml&#39;,
- &#39;bllac_gpsel.yml&#39;,
+ &#39;nu_connected_hese.yml&#39;,
  &#39;nu_connected_tracks.yml&#39;,
- &#39;nu_diffuse_ehe_hard.yml&#39;,
- &#39;fsrq_rbcu.yml&#39;,
+ &#39;nu_diffuse_hese_hard.yml&#39;,
+ &#39;bllac_gpsel.yml&#39;,
+ &#39;nu_diffuse_ehe.yml&#39;,
+ &#39;fsrq_low.yml&#39;,
+ &#39;bllac_high.yml&#39;,
+ &#39;nu_diffuse_hese_soft.yml&#39;,
+ &#39;fsrq_ref_hard.yml&#39;,
  &#39;bllac_low.yml&#39;,
- &#39;nu_diffuse_hese_hard.yml&#39;]
+ &#39;nu_diffuse_tracks.yml&#39;,
+ &#39;fsrq_ref.yml&#39;,
+ &#39;fsrq_high.yml&#39;,
+ &#39;fsrq_gpsel.yml&#39;,
+ &#39;bllac_ref.yml&#39;,
+ &#39;bllac_ref_hard.yml&#39;,
+ &#39;nu_diffuse_ehe_soft.yml&#39;,
+ &#39;fsrq_rbcu.yml&#39;,
+ &#39;bllac_nobcu.yml&#39;,
+ &#39;nu_connected_ehe.yml&#39;,
+ &#39;nu_diffuse_hese.yml&#39;,
+ &#39;nu_diffuse_ehe_hard.yml&#39;]
 </pre></div></div>
 </div>
 <p>The connecting flux factor, <span class="math notranslate nohighlight">\(Y_{\nu\gamma}\)</span> can be set in the <code class="docutils literal notranslate"><span class="pre">nu_connected_...</span></code> config files or specified at run time. we may want to explore different flux factors and their implications, as we show below.</p>
@@ -526,7 +537,7 @@ OrderedDict([(&#39;n_alerts&#39;,
 </div>
 </div>
 <script type="application/vnd.jupyter.widget-state+json">
-{"state": {"5c27acc61fb1477a8a2bd894aedd08ba": {"model_module": "jupyter-vue", "model_module_version": "^1.7.0", "model_name": "ForceLoadModel", "state": {"_dom_classes": [], "_model_module": "jupyter-vue", "_model_module_version": "^1.7.0", "_model_name": "ForceLoadModel", "_view_count": null, "_view_module": null, "_view_module_version": "", "_view_name": null, "layout": "IPY_MODEL_a7116527a8584c01ba956cba1e44d917"}}, "90332e9c21564305903eb7b90382adf1": {"model_module": "jupyter-vuetify", "model_module_version": "^1.8.1", "model_name": "ThemeColorsModel", "state": {"_model_module": "jupyter-vuetify", "_model_module_version": "^1.8.1", "_model_name": "ThemeColorsModel", "_theme_name": "light", "_view_count": null, "_view_module": null, "_view_module_version": "^1.8.1", "_view_name": null, "accent": "#82B1FF", "anchor": null, "error": "#FF5252", "info": "#2196F3", "primary": "#1976D2", "secondary": "#424242", "success": "#4CAF50", "warning": "#FB8C00"}}, "9058dd7f53f047349a7af513d0879862": {"model_module": "jupyter-vuetify", "model_module_version": "^1.8.1", "model_name": "ThemeColorsModel", "state": {"_model_module": "jupyter-vuetify", "_model_module_version": "^1.8.1", "_model_name": "ThemeColorsModel", "_theme_name": "dark", "_view_count": null, "_view_module": null, "_view_module_version": "^1.8.1", "_view_name": null, "accent": "#FF4081", "anchor": null, "error": "#FF5252", "info": "#2196F3", "primary": "#2196F3", "secondary": "#424242", "success": "#4CAF50", "warning": "#FB8C00"}}, "a07e9a57863b45caa99493c45a491504": {"model_module": "jupyter-vuetify", "model_module_version": "^1.8.1", "model_name": "ThemeModel", "state": {"_model_module": "jupyter-vuetify", "_model_module_version": "^1.8.1", "_model_name": "ThemeModel", "_view_count": null, "_view_module": null, "_view_module_version": "^1.8.1", "_view_name": null, "dark": null}}, "a7116527a8584c01ba956cba1e44d917": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}}, "version_major": 2, "version_minor": 0}
+{"state": {"0208161ac9f84024b43e5411769871ff": {"model_module": "jupyter-vue", "model_module_version": "^1.7.0", "model_name": "ForceLoadModel", "state": {"_dom_classes": [], "_model_module": "jupyter-vue", "_model_module_version": "^1.7.0", "_model_name": "ForceLoadModel", "_view_count": null, "_view_module": null, "_view_module_version": "", "_view_name": null, "layout": "IPY_MODEL_b8a79a31c9e3425a87c952585911dc17"}}, "33182d820e7a4d09b9fc83866c16a869": {"model_module": "jupyter-vuetify", "model_module_version": "^1.8.2", "model_name": "ThemeColorsModel", "state": {"_model_module": "jupyter-vuetify", "_model_module_version": "^1.8.2", "_model_name": "ThemeColorsModel", "_theme_name": "light", "_view_count": null, "_view_module": null, "_view_module_version": "^1.8.2", "_view_name": null, "accent": "#82B1FF", "anchor": null, "error": "#FF5252", "info": "#2196F3", "primary": "#1976D2", "secondary": "#424242", "success": "#4CAF50", "warning": "#FB8C00"}}, "5e3cae19283c49c8b756b0c058b6c48e": {"model_module": "jupyter-vuetify", "model_module_version": "^1.8.2", "model_name": "ThemeColorsModel", "state": {"_model_module": "jupyter-vuetify", "_model_module_version": "^1.8.2", "_model_name": "ThemeColorsModel", "_theme_name": "dark", "_view_count": null, "_view_module": null, "_view_module_version": "^1.8.2", "_view_name": null, "accent": "#FF4081", "anchor": null, "error": "#FF5252", "info": "#2196F3", "primary": "#2196F3", "secondary": "#424242", "success": "#4CAF50", "warning": "#FB8C00"}}, "60dc835661874cb680bdea6ecb699ab5": {"model_module": "jupyter-vuetify", "model_module_version": "^1.8.2", "model_name": "ThemeModel", "state": {"_model_module": "jupyter-vuetify", "_model_module_version": "^1.8.2", "_model_name": "ThemeModel", "_view_count": null, "_view_module": null, "_view_module_version": "^1.8.2", "_view_name": null, "dark": null}}, "b8a79a31c9e3425a87c952585911dc17": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}}, "version_major": 2, "version_minor": 0}
 </script></section>
 
 
