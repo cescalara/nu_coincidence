@@ -2,7 +2,7 @@
  "cells": [
   {
    "cell_type": "markdown",
-   "id": "5e3baa31",
+   "id": "e7316655",
    "metadata": {},
    "source": [
     "# Blazar-neutrino connected simulation\n",
@@ -13,13 +13,13 @@
   {
    "cell_type": "code",
    "execution_count": 1,
-   "id": "4846a293",
+   "id": "20d44a24",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-07-04T14:22:51.582616Z",
-     "iopub.status.busy": "2022-07-04T14:22:51.582124Z",
-     "iopub.status.idle": "2022-07-04T14:22:54.944787Z",
-     "shell.execute_reply": "2022-07-04T14:22:54.943999Z"
+     "iopub.execute_input": "2022-07-14T10:17:17.427150Z",
+     "iopub.status.busy": "2022-07-14T10:17:17.426604Z",
+     "iopub.status.idle": "2022-07-14T10:17:21.230917Z",
+     "shell.execute_reply": "2022-07-14T10:17:21.229883Z"
     }
    },
    "outputs": [],
@@ -38,7 +38,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "2a7c9276",
+   "id": "b0787947",
    "metadata": {},
    "source": [
     "Firstly, we make sure that we have the necessary files for running an IceCube simulation by using the `icecube_tools` package"
@@ -47,13 +47,13 @@
   {
    "cell_type": "code",
    "execution_count": 2,
-   "id": "2e121381",
+   "id": "cf338f5a",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-07-04T14:22:54.949406Z",
-     "iopub.status.busy": "2022-07-04T14:22:54.948751Z",
-     "iopub.status.idle": "2022-07-04T14:23:00.159417Z",
-     "shell.execute_reply": "2022-07-04T14:23:00.158678Z"
+     "iopub.execute_input": "2022-07-14T10:17:21.236463Z",
+     "iopub.status.busy": "2022-07-14T10:17:21.235878Z",
+     "iopub.status.idle": "2022-07-14T10:17:29.489413Z",
+     "shell.execute_reply": "2022-07-14T10:17:29.488466Z"
     }
    },
    "outputs": [],
@@ -66,7 +66,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "0c2b83dd",
+   "id": "af3e5a6f",
    "metadata": {},
    "source": [
     "The inputs to `BlazarNuConnectedSim` are specified by the `.yml` config files provided with the `nu_coincidence` package. We can check what is available using the helper function `get_available_config()`."
@@ -75,43 +75,41 @@
   {
    "cell_type": "code",
    "execution_count": 3,
-   "id": "79cc33d2",
+   "id": "8e85cb36",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-07-04T14:23:00.163688Z",
-     "iopub.status.busy": "2022-07-04T14:23:00.163261Z",
-     "iopub.status.idle": "2022-07-04T14:23:00.177096Z",
-     "shell.execute_reply": "2022-07-04T14:23:00.176406Z"
+     "iopub.execute_input": "2022-07-14T10:17:29.493888Z",
+     "iopub.status.busy": "2022-07-14T10:17:29.493440Z",
+     "iopub.status.idle": "2022-07-14T10:17:29.512686Z",
+     "shell.execute_reply": "2022-07-14T10:17:29.511819Z"
     }
    },
    "outputs": [
     {
      "data": {
       "text/plain": [
-       "['bllac_rbcu.yml',\n",
-       " 'fsrq_nobcu.yml',\n",
-       " 'nu_connected_hese.yml',\n",
+       "['fsrq_high.yml',\n",
        " 'nu_connected_tracks.yml',\n",
-       " 'nu_diffuse_hese_hard.yml',\n",
-       " 'bllac_gpsel.yml',\n",
-       " 'nu_diffuse_ehe.yml',\n",
-       " 'fsrq_low.yml',\n",
-       " 'bllac_high.yml',\n",
-       " 'nu_diffuse_hese_soft.yml',\n",
-       " 'fsrq_ref_hard.yml',\n",
        " 'bllac_low.yml',\n",
-       " 'nu_diffuse_tracks.yml',\n",
-       " 'fsrq_ref.yml',\n",
-       " 'fsrq_high.yml',\n",
        " 'fsrq_gpsel.yml',\n",
-       " 'bllac_ref.yml',\n",
-       " 'bllac_ref_hard.yml',\n",
-       " 'nu_diffuse_ehe_soft.yml',\n",
-       " 'fsrq_rbcu.yml',\n",
-       " 'bllac_nobcu.yml',\n",
+       " 'fsrq_ref.yml',\n",
        " 'nu_connected_ehe.yml',\n",
+       " 'nu_diffuse_ehe.yml',\n",
+       " 'nu_diffuse_ehe_hard.yml',\n",
+       " 'fsrq_nobcu.yml',\n",
+       " 'nu_diffuse_hese_soft.yml',\n",
+       " 'bllac_nobcu.yml',\n",
+       " 'nu_diffuse_tracks.yml',\n",
+       " 'nu_connected_hese.yml',\n",
+       " 'fsrq_rbcu.yml',\n",
+       " 'nu_diffuse_ehe_soft.yml',\n",
        " 'nu_diffuse_hese.yml',\n",
-       " 'nu_diffuse_ehe_hard.yml']"
+       " 'fsrq_low.yml',\n",
+       " 'bllac_gpsel.yml',\n",
+       " 'bllac_rbcu.yml',\n",
+       " 'bllac_high.yml',\n",
+       " 'bllac_ref.yml',\n",
+       " 'nu_diffuse_hese_hard.yml']"
       ]
      },
      "execution_count": 3,
@@ -125,7 +123,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "0821e39f",
+   "id": "19b63df1",
    "metadata": {},
    "source": [
     "The connecting flux factor, $Y_{\\nu\\gamma}$ can be set in the `nu_connected_...` config files or specified at run time. we may want to explore different flux factors and their implications, as we show below."
@@ -134,13 +132,13 @@
   {
    "cell_type": "code",
    "execution_count": 4,
-   "id": "939bbb52",
+   "id": "c16098cb",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-07-04T14:23:00.180914Z",
-     "iopub.status.busy": "2022-07-04T14:23:00.180540Z",
-     "iopub.status.idle": "2022-07-04T14:23:00.184138Z",
-     "shell.execute_reply": "2022-07-04T14:23:00.183472Z"
+     "iopub.execute_input": "2022-07-14T10:17:29.517107Z",
+     "iopub.status.busy": "2022-07-14T10:17:29.516673Z",
+     "iopub.status.idle": "2022-07-14T10:17:29.520849Z",
+     "shell.execute_reply": "2022-07-14T10:17:29.519999Z"
     }
    },
    "outputs": [],
@@ -151,7 +149,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "336353a1",
+   "id": "f661f8cc",
    "metadata": {},
    "source": [
     "For this example, we use the reference blazar model (`bllac_ref.yml` and `fsrq_ref.yml`) together with the connected IceCube HESE and EHE alerts models (`nu_connected_hese.yml` and `nu_connected_ehe.yml`). This will run for a couple of mins."
@@ -160,13 +158,13 @@
   {
    "cell_type": "code",
    "execution_count": 5,
-   "id": "7bbf5f7a",
+   "id": "20c33fed",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-07-04T14:23:00.187486Z",
-     "iopub.status.busy": "2022-07-04T14:23:00.187063Z",
-     "iopub.status.idle": "2022-07-04T14:25:45.791584Z",
-     "shell.execute_reply": "2022-07-04T14:25:45.790824Z"
+     "iopub.execute_input": "2022-07-14T10:17:29.524598Z",
+     "iopub.status.busy": "2022-07-14T10:17:29.524097Z",
+     "iopub.status.idle": "2022-07-14T10:20:40.096552Z",
+     "shell.execute_reply": "2022-07-14T10:20:40.095527Z"
     }
    },
    "outputs": [],
@@ -190,7 +188,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "20e0d540",
+   "id": "8afa53ee",
    "metadata": {},
    "source": [
     "If working with different flux factors, there is a helper function to merge together the separate output files."
@@ -199,13 +197,13 @@
   {
    "cell_type": "code",
    "execution_count": 6,
-   "id": "f347d1e4",
+   "id": "f1e64343",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-07-04T14:25:45.795960Z",
-     "iopub.status.busy": "2022-07-04T14:25:45.795305Z",
-     "iopub.status.idle": "2022-07-04T14:25:45.812584Z",
-     "shell.execute_reply": "2022-07-04T14:25:45.811947Z"
+     "iopub.execute_input": "2022-07-14T10:20:40.100618Z",
+     "iopub.status.busy": "2022-07-14T10:20:40.100321Z",
+     "iopub.status.idle": "2022-07-14T10:20:40.125396Z",
+     "shell.execute_reply": "2022-07-14T10:20:40.124487Z"
     }
    },
    "outputs": [],
@@ -219,7 +217,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "a91acaca",
+   "id": "bd5f0987",
    "metadata": {},
    "source": [
     "The results are organised to store relevant information divided into the `results.bllac` and `results.fsrq` populations. We focus on the total number of alerts, `n_alerts`, and the number of sources that produce multiple detected neutrinos, `n_multi`, from each simulated survey."
@@ -228,13 +226,13 @@
   {
    "cell_type": "code",
    "execution_count": 7,
-   "id": "756935e6",
+   "id": "f507a3b0",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-07-04T14:25:45.816165Z",
-     "iopub.status.busy": "2022-07-04T14:25:45.815563Z",
-     "iopub.status.idle": "2022-07-04T14:25:45.820608Z",
-     "shell.execute_reply": "2022-07-04T14:25:45.820108Z"
+     "iopub.execute_input": "2022-07-14T10:20:40.129409Z",
+     "iopub.status.busy": "2022-07-14T10:20:40.129099Z",
+     "iopub.status.idle": "2022-07-14T10:20:40.135337Z",
+     "shell.execute_reply": "2022-07-14T10:20:40.134464Z"
     }
    },
    "outputs": [
@@ -267,13 +265,13 @@
   {
    "cell_type": "code",
    "execution_count": 8,
-   "id": "139bbed1",
+   "id": "0cc8f71f",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-07-04T14:25:45.823563Z",
-     "iopub.status.busy": "2022-07-04T14:25:45.823121Z",
-     "iopub.status.idle": "2022-07-04T14:25:45.828105Z",
-     "shell.execute_reply": "2022-07-04T14:25:45.827443Z"
+     "iopub.execute_input": "2022-07-14T10:20:40.139863Z",
+     "iopub.status.busy": "2022-07-14T10:20:40.139435Z",
+     "iopub.status.idle": "2022-07-14T10:20:40.146097Z",
+     "shell.execute_reply": "2022-07-14T10:20:40.145197Z"
     }
    },
    "outputs": [
@@ -282,16 +280,16 @@
       "text/plain": [
        "OrderedDict([('n_alerts',\n",
        "              array([[0, 0],\n",
-       "                     [0, 0]])),\n",
+       "                     [0, 3]])),\n",
        "             ('n_alerts_flare',\n",
        "              array([[0, 0],\n",
-       "                     [0, 0]])),\n",
+       "                     [0, 3]])),\n",
        "             ('n_multi',\n",
        "              array([[0, 0],\n",
-       "                     [0, 0]])),\n",
+       "                     [0, 1]])),\n",
        "             ('n_multi_flare',\n",
        "              array([[0, 0],\n",
-       "                     [0, 0]]))])"
+       "                     [0, 1]]))])"
       ]
      },
      "execution_count": 8,
@@ -306,7 +304,7 @@
   {
    "cell_type": "code",
    "execution_count": null,
-   "id": "31de1d1e",
+   "id": "f0e9da71",
    "metadata": {},
    "outputs": [],
    "source": []
@@ -333,84 +331,7 @@
   "widgets": {
    "application/vnd.jupyter.widget-state+json": {
     "state": {
-     "0208161ac9f84024b43e5411769871ff": {
-      "model_module": "jupyter-vue",
-      "model_module_version": "^1.7.0",
-      "model_name": "ForceLoadModel",
-      "state": {
-       "_dom_classes": [],
-       "_model_module": "jupyter-vue",
-       "_model_module_version": "^1.7.0",
-       "_model_name": "ForceLoadModel",
-       "_view_count": null,
-       "_view_module": null,
-       "_view_module_version": "",
-       "_view_name": null,
-       "layout": "IPY_MODEL_b8a79a31c9e3425a87c952585911dc17"
-      }
-     },
-     "33182d820e7a4d09b9fc83866c16a869": {
-      "model_module": "jupyter-vuetify",
-      "model_module_version": "^1.8.2",
-      "model_name": "ThemeColorsModel",
-      "state": {
-       "_model_module": "jupyter-vuetify",
-       "_model_module_version": "^1.8.2",
-       "_model_name": "ThemeColorsModel",
-       "_theme_name": "light",
-       "_view_count": null,
-       "_view_module": null,
-       "_view_module_version": "^1.8.2",
-       "_view_name": null,
-       "accent": "#82B1FF",
-       "anchor": null,
-       "error": "#FF5252",
-       "info": "#2196F3",
-       "primary": "#1976D2",
-       "secondary": "#424242",
-       "success": "#4CAF50",
-       "warning": "#FB8C00"
-      }
-     },
-     "5e3cae19283c49c8b756b0c058b6c48e": {
-      "model_module": "jupyter-vuetify",
-      "model_module_version": "^1.8.2",
-      "model_name": "ThemeColorsModel",
-      "state": {
-       "_model_module": "jupyter-vuetify",
-       "_model_module_version": "^1.8.2",
-       "_model_name": "ThemeColorsModel",
-       "_theme_name": "dark",
-       "_view_count": null,
-       "_view_module": null,
-       "_view_module_version": "^1.8.2",
-       "_view_name": null,
-       "accent": "#FF4081",
-       "anchor": null,
-       "error": "#FF5252",
-       "info": "#2196F3",
-       "primary": "#2196F3",
-       "secondary": "#424242",
-       "success": "#4CAF50",
-       "warning": "#FB8C00"
-      }
-     },
-     "60dc835661874cb680bdea6ecb699ab5": {
-      "model_module": "jupyter-vuetify",
-      "model_module_version": "^1.8.2",
-      "model_name": "ThemeModel",
-      "state": {
-       "_model_module": "jupyter-vuetify",
-       "_model_module_version": "^1.8.2",
-       "_model_name": "ThemeModel",
-       "_view_count": null,
-       "_view_module": null,
-       "_view_module_version": "^1.8.2",
-       "_view_name": null,
-       "dark": null
-      }
-     },
-     "b8a79a31c9e3425a87c952585911dc17": {
+     "0d296c76a52b40f0b66e7fa2b629be3d": {
       "model_module": "@jupyter-widgets/base",
       "model_module_version": "1.2.0",
       "model_name": "LayoutModel",
@@ -460,6 +381,83 @@
        "top": null,
        "visibility": null,
        "width": null
+      }
+     },
+     "3d3ebe1bc73e49fab368a1c006a11052": {
+      "model_module": "jupyter-vuetify",
+      "model_module_version": "^1.8.2",
+      "model_name": "ThemeColorsModel",
+      "state": {
+       "_model_module": "jupyter-vuetify",
+       "_model_module_version": "^1.8.2",
+       "_model_name": "ThemeColorsModel",
+       "_theme_name": "light",
+       "_view_count": null,
+       "_view_module": null,
+       "_view_module_version": "^1.8.2",
+       "_view_name": null,
+       "accent": "#82B1FF",
+       "anchor": null,
+       "error": "#FF5252",
+       "info": "#2196F3",
+       "primary": "#1976D2",
+       "secondary": "#424242",
+       "success": "#4CAF50",
+       "warning": "#FB8C00"
+      }
+     },
+     "6732be76508d405ab4c1d8b783222f6e": {
+      "model_module": "jupyter-vuetify",
+      "model_module_version": "^1.8.2",
+      "model_name": "ThemeColorsModel",
+      "state": {
+       "_model_module": "jupyter-vuetify",
+       "_model_module_version": "^1.8.2",
+       "_model_name": "ThemeColorsModel",
+       "_theme_name": "dark",
+       "_view_count": null,
+       "_view_module": null,
+       "_view_module_version": "^1.8.2",
+       "_view_name": null,
+       "accent": "#FF4081",
+       "anchor": null,
+       "error": "#FF5252",
+       "info": "#2196F3",
+       "primary": "#2196F3",
+       "secondary": "#424242",
+       "success": "#4CAF50",
+       "warning": "#FB8C00"
+      }
+     },
+     "a10a996632cc4b65a2ad41e79318dd13": {
+      "model_module": "jupyter-vuetify",
+      "model_module_version": "^1.8.2",
+      "model_name": "ThemeModel",
+      "state": {
+       "_model_module": "jupyter-vuetify",
+       "_model_module_version": "^1.8.2",
+       "_model_name": "ThemeModel",
+       "_view_count": null,
+       "_view_module": null,
+       "_view_module_version": "^1.8.2",
+       "_view_name": null,
+       "dark": null
+      }
+     },
+     "e9d733f8e92c42a186354a0f2a8d683b": {
+      "model_module": "jupyter-vue",
+      "model_module_version": "^1.7.0",
+      "model_name": "ForceLoadModel",
+      "state": {
+       "_dom_classes": [],
+       "_model_module": "jupyter-vue",
+       "_model_module_version": "^1.7.0",
+       "_model_name": "ForceLoadModel",
+       "_view_count": null,
+       "_view_module": null,
+       "_view_module_version": "",
+       "_view_name": null,
+       "layout": "IPY_MODEL_0d296c76a52b40f0b66e7fa2b629be3d"
       }
      }
     },

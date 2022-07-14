@@ -2,7 +2,7 @@
  "cells": [
   {
    "cell_type": "markdown",
-   "id": "5dca3fe2",
+   "id": "4a438823",
    "metadata": {},
    "source": [
     "# Blazar-neutrino chance coincidence simulation\n",
@@ -13,13 +13,13 @@
   {
    "cell_type": "code",
    "execution_count": 1,
-   "id": "42a00661",
+   "id": "3ec1e7ec",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-07-04T14:19:19.691111Z",
-     "iopub.status.busy": "2022-07-04T14:19:19.690780Z",
-     "iopub.status.idle": "2022-07-04T14:19:25.076118Z",
-     "shell.execute_reply": "2022-07-04T14:19:25.075126Z"
+     "iopub.execute_input": "2022-07-14T10:12:05.324842Z",
+     "iopub.status.busy": "2022-07-14T10:12:05.324146Z",
+     "iopub.status.idle": "2022-07-14T10:12:11.022991Z",
+     "shell.execute_reply": "2022-07-14T10:12:11.021975Z"
     }
    },
    "outputs": [],
@@ -38,7 +38,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "38d181df",
+   "id": "ee345e2e",
    "metadata": {},
    "source": [
     "Firstly, we make sure that we have the necessary files for running an IceCube simulation by using the `icecube_tools` package"
@@ -47,13 +47,13 @@
   {
    "cell_type": "code",
    "execution_count": 2,
-   "id": "11d0434f",
+   "id": "e5739073",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-07-04T14:19:25.081407Z",
-     "iopub.status.busy": "2022-07-04T14:19:25.080306Z",
-     "iopub.status.idle": "2022-07-04T14:20:30.201718Z",
-     "shell.execute_reply": "2022-07-04T14:20:30.200979Z"
+     "iopub.execute_input": "2022-07-14T10:12:11.032339Z",
+     "iopub.status.busy": "2022-07-14T10:12:11.027072Z",
+     "iopub.status.idle": "2022-07-14T10:12:58.004170Z",
+     "shell.execute_reply": "2022-07-14T10:12:58.003277Z"
     }
    },
    "outputs": [
@@ -70,7 +70,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20181018_All-sky_point-source_IceCube_da...:   9%|▉         | 1048576/11730609 [00:01<00:12, 888728.01it/s]"
+      "20181018_All-sky_point-source_IceCube_da...:   9%|▉         | 1048576/11730609 [00:00<00:02, 4097277.65it/s]"
      ]
     },
     {
@@ -78,7 +78,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20181018_All-sky_point-source_IceCube_da...:  18%|█▊        | 2097152/11730609 [00:01<00:07, 1360103.30it/s]"
+      "20181018_All-sky_point-source_IceCube_da...:  27%|██▋       | 3145728/11730609 [00:00<00:00, 8652248.43it/s]"
      ]
     },
     {
@@ -86,7 +86,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20181018_All-sky_point-source_IceCube_da...:  27%|██▋       | 3145728/11730609 [00:02<00:05, 1570725.15it/s]"
+      "20181018_All-sky_point-source_IceCube_da...:  54%|█████▎    | 6291456/11730609 [00:00<00:00, 15553964.85it/s]"
      ]
     },
     {
@@ -94,71 +94,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20181018_All-sky_point-source_IceCube_da...:  36%|███▌      | 4194304/11730609 [00:02<00:04, 1647227.99it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20181018_All-sky_point-source_IceCube_da...:  45%|████▍     | 5242880/11730609 [00:03<00:03, 1694450.34it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20181018_All-sky_point-source_IceCube_da...:  54%|█████▎    | 6291456/11730609 [00:03<00:03, 1784228.13it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20181018_All-sky_point-source_IceCube_da...:  63%|██████▎   | 7340032/11730609 [00:04<00:02, 1822552.61it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20181018_All-sky_point-source_IceCube_da...:  72%|███████▏  | 8388608/11730609 [00:05<00:01, 1846006.65it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20181018_All-sky_point-source_IceCube_da...:  80%|████████  | 9437184/11730609 [00:05<00:01, 1901563.90it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20181018_All-sky_point-source_IceCube_da...:  89%|████████▉ | 10485760/11730609 [00:06<00:00, 1904765.29it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20181018_All-sky_point-source_IceCube_da...:  98%|█████████▊| 11534336/11730609 [00:06<00:00, 1901098.43it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20181018_All-sky_point-source_IceCube_da...: 100%|██████████| 11730609/11730609 [00:06<00:00, 1748466.61it/s]"
+      "20181018_All-sky_point-source_IceCube_da...: 100%|██████████| 11730609/11730609 [00:00<00:00, 19728415.19it/s]"
      ]
     },
     {
@@ -181,7 +117,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:   6%|▌         | 1048576/18812495 [00:01<00:20, 867856.44it/s]"
+      "20131121_Search_for_contained_neutrino_e...:   6%|▌         | 1048576/18812495 [00:00<00:05, 3524827.02it/s]"
      ]
     },
     {
@@ -189,7 +125,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  11%|█         | 2097152/18812495 [00:01<00:12, 1330671.02it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  11%|█         | 2097152/18812495 [00:00<00:03, 5463648.17it/s]"
      ]
     },
     {
@@ -197,7 +133,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  17%|█▋        | 3145728/18812495 [00:02<00:09, 1721493.56it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  22%|██▏       | 4194304/18812495 [00:00<00:01, 8271525.04it/s]"
      ]
     },
     {
@@ -205,7 +141,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  22%|██▏       | 4194304/18812495 [00:02<00:06, 2147435.25it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  28%|██▊       | 5242880/18812495 [00:00<00:01, 8848600.05it/s]"
      ]
     },
     {
@@ -213,7 +149,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  28%|██▊       | 5242880/18812495 [00:02<00:05, 2545560.05it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  39%|███▉      | 7340032/18812495 [00:00<00:01, 9696740.78it/s]"
      ]
     },
     {
@@ -221,7 +157,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  33%|███▎      | 6291456/18812495 [00:02<00:04, 3044816.06it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  50%|█████     | 9437184/18812495 [00:01<00:00, 9893562.45it/s]"
      ]
     },
     {
@@ -229,7 +165,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  39%|███▉      | 7340032/18812495 [00:03<00:03, 3491513.75it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  56%|█████▌    | 10485760/18812495 [00:01<00:00, 8545513.11it/s]"
      ]
     },
     {
@@ -237,7 +173,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  45%|████▍     | 8388608/18812495 [00:03<00:02, 3964934.61it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  61%|██████▏   | 11534336/18812495 [00:01<00:00, 7813857.29it/s]"
      ]
     },
     {
@@ -245,7 +181,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  50%|█████     | 9437184/18812495 [00:03<00:02, 4521553.73it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  67%|██████▋   | 12582912/18812495 [00:01<00:00, 7329832.39it/s]"
      ]
     },
     {
@@ -253,7 +189,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  56%|█████▌    | 10485760/18812495 [00:03<00:01, 4792209.29it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  72%|███████▏  | 13631488/18812495 [00:01<00:00, 7035620.98it/s]"
      ]
     },
     {
@@ -261,7 +197,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  61%|██████▏   | 11534336/18812495 [00:03<00:01, 5207136.26it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  78%|███████▊  | 14680064/18812495 [00:01<00:00, 6950351.02it/s]"
      ]
     },
     {
@@ -269,7 +205,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  67%|██████▋   | 12582912/18812495 [00:03<00:01, 5358492.36it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  84%|████████▎ | 15728640/18812495 [00:02<00:00, 6770856.29it/s]"
      ]
     },
     {
@@ -277,7 +213,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  72%|███████▏  | 13631488/18812495 [00:04<00:00, 5236444.82it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  89%|████████▉ | 16777216/18812495 [00:02<00:00, 6781188.15it/s]"
      ]
     },
     {
@@ -285,7 +221,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  78%|███████▊  | 14680064/18812495 [00:04<00:00, 4956351.24it/s]"
+      "20131121_Search_for_contained_neutrino_e...:  95%|█████████▍| 17825792/18812495 [00:02<00:00, 6170260.20it/s]"
      ]
     },
     {
@@ -293,7 +229,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  84%|████████▎ | 15728640/18812495 [00:04<00:00, 4624566.91it/s]"
+      "20131121_Search_for_contained_neutrino_e...: 100%|██████████| 18812495/18812495 [00:02<00:00, 4915163.70it/s]"
      ]
     },
     {
@@ -301,31 +237,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20131121_Search_for_contained_neutrino_e...:  89%|████████▉ | 16777216/18812495 [00:04<00:00, 4609137.15it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20131121_Search_for_contained_neutrino_e...:  95%|█████████▍| 17825792/18812495 [00:05<00:00, 4311628.72it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20131121_Search_for_contained_neutrino_e...: 100%|██████████| 18812495/18812495 [00:05<00:00, 4017355.77it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20131121_Search_for_contained_neutrino_e...: 100%|██████████| 18812495/18812495 [00:05<00:00, 3426410.62it/s]"
+      "20131121_Search_for_contained_neutrino_e...: 100%|██████████| 18812495/18812495 [00:02<00:00, 6808181.85it/s]"
      ]
     },
     {
@@ -348,7 +260,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:   2%|▏         | 1048576/43711022 [00:01<00:45, 932557.29it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:   2%|▏         | 1048576/43711022 [00:00<00:13, 3128365.12it/s]"
      ]
     },
     {
@@ -356,7 +268,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:   5%|▍         | 2097152/43711022 [00:01<00:26, 1567195.55it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:   5%|▍         | 2097152/43711022 [00:00<00:09, 4378685.77it/s]"
      ]
     },
     {
@@ -364,7 +276,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:   7%|▋         | 3145728/43711022 [00:01<00:19, 2133420.36it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:   7%|▋         | 3145728/43711022 [00:00<00:07, 5672550.19it/s]"
      ]
     },
     {
@@ -372,7 +284,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  10%|▉         | 4194304/43711022 [00:02<00:15, 2575861.87it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  10%|▉         | 4194304/43711022 [00:00<00:05, 6902703.59it/s]"
      ]
     },
     {
@@ -380,7 +292,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  12%|█▏        | 5242880/43711022 [00:02<00:13, 2782567.99it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  14%|█▍        | 6291456/43711022 [00:00<00:03, 9524522.65it/s]"
      ]
     },
     {
@@ -388,7 +300,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  14%|█▍        | 6291456/43711022 [00:02<00:12, 2960092.27it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  19%|█▉        | 8388608/43711022 [00:00<00:02, 12327740.63it/s]"
      ]
     },
     {
@@ -396,7 +308,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  17%|█▋        | 7340032/43711022 [00:03<00:12, 2970124.77it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  26%|██▋       | 11534336/43711022 [00:01<00:02, 15481215.63it/s]"
      ]
     },
     {
@@ -404,7 +316,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  19%|█▉        | 8388608/43711022 [00:03<00:12, 2810968.78it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  31%|███       | 13631488/43711022 [00:01<00:01, 16461780.90it/s]"
      ]
     },
     {
@@ -412,7 +324,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  22%|██▏       | 9437184/43711022 [00:03<00:11, 2860646.15it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  36%|███▌      | 15728640/43711022 [00:01<00:01, 16458570.34it/s]"
      ]
     },
     {
@@ -420,7 +332,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  24%|██▍       | 10485760/43711022 [00:04<00:11, 2892939.05it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  41%|████      | 17825792/43711022 [00:01<00:01, 15487209.53it/s]"
      ]
     },
     {
@@ -428,7 +340,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  26%|██▋       | 11534336/43711022 [00:04<00:11, 2924232.79it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  46%|████▌     | 19922944/43711022 [00:01<00:01, 15063463.75it/s]"
      ]
     },
     {
@@ -436,7 +348,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  29%|██▉       | 12582912/43711022 [00:04<00:10, 2945847.32it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  50%|█████     | 22020096/43711022 [00:01<00:01, 14946138.96it/s]"
      ]
     },
     {
@@ -444,7 +356,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  31%|███       | 13631488/43711022 [00:05<00:10, 2974926.87it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  55%|█████▌    | 24117248/43711022 [00:01<00:01, 14862444.51it/s]"
      ]
     },
     {
@@ -452,7 +364,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  34%|███▎      | 14680064/43711022 [00:05<00:10, 2710077.15it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  60%|█████▉    | 26214400/43711022 [00:02<00:01, 14901878.71it/s]"
      ]
     },
     {
@@ -460,7 +372,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  36%|███▌      | 15728640/43711022 [00:06<00:10, 2594820.19it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  65%|██████▍   | 28311552/43711022 [00:02<00:01, 14618504.13it/s]"
      ]
     },
     {
@@ -468,7 +380,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  38%|███▊      | 16777216/43711022 [00:06<00:10, 2554756.68it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  70%|██████▉   | 30408704/43711022 [00:02<00:01, 13134615.54it/s]"
      ]
     },
     {
@@ -476,7 +388,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  41%|████      | 17825792/43711022 [00:06<00:10, 2530721.29it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  74%|███████▍  | 32505856/43711022 [00:02<00:00, 12291310.67it/s]"
      ]
     },
     {
@@ -484,7 +396,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  43%|████▎     | 18874368/43711022 [00:07<00:09, 2524274.63it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  79%|███████▉  | 34603008/43711022 [00:02<00:00, 10500854.51it/s]"
      ]
     },
     {
@@ -492,7 +404,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  46%|████▌     | 19922944/43711022 [00:07<00:09, 2498692.27it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  84%|████████▍ | 36700160/43711022 [00:03<00:00, 8414232.49it/s] "
      ]
     },
     {
@@ -500,7 +412,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  48%|████▊     | 20971520/43711022 [00:08<00:09, 2287928.38it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  86%|████████▋ | 37748736/43711022 [00:03<00:00, 7283527.65it/s]"
      ]
     },
     {
@@ -508,7 +420,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  50%|█████     | 22020096/43711022 [00:09<00:10, 1976427.04it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  89%|████████▉ | 38797312/43711022 [00:03<00:00, 6421931.42it/s]"
      ]
     },
     {
@@ -516,7 +428,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  53%|█████▎    | 23068672/43711022 [00:09<00:11, 1865737.03it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  91%|█████████ | 39845888/43711022 [00:04<00:00, 5105974.71it/s]"
      ]
     },
     {
@@ -524,7 +436,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  55%|█████▌    | 24117248/43711022 [00:10<00:10, 1802832.49it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  94%|█████████▎| 40894464/43711022 [00:04<00:00, 4218186.48it/s]"
      ]
     },
     {
@@ -532,7 +444,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  58%|█████▊    | 25165824/43711022 [00:10<00:10, 1757834.70it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  96%|█████████▌| 41943040/43711022 [00:04<00:00, 3749083.32it/s]"
      ]
     },
     {
@@ -540,7 +452,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  60%|█████▉    | 26214400/43711022 [00:11<00:09, 1756753.15it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...:  98%|█████████▊| 42991616/43711022 [00:05<00:00, 2966923.59it/s]"
      ]
     },
     {
@@ -548,7 +460,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  62%|██████▏   | 27262976/43711022 [00:12<00:09, 1718317.54it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...: 100%|██████████| 43711022/43711022 [00:06<00:00, 2171852.70it/s]"
      ]
     },
     {
@@ -556,135 +468,7 @@
      "output_type": "stream",
      "text": [
       "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  65%|██████▍   | 28311552/43711022 [00:12<00:09, 1601437.56it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  67%|██████▋   | 29360128/43711022 [00:13<00:09, 1568485.24it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  70%|██████▉   | 30408704/43711022 [00:14<00:08, 1589763.95it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  72%|███████▏  | 31457280/43711022 [00:14<00:07, 1616809.12it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  74%|███████▍  | 32505856/43711022 [00:15<00:06, 1631303.15it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  77%|███████▋  | 33554432/43711022 [00:16<00:06, 1492664.64it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  79%|███████▉  | 34603008/43711022 [00:17<00:06, 1332707.40it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  82%|████████▏ | 35651584/43711022 [00:18<00:06, 1261294.47it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  84%|████████▍ | 36700160/43711022 [00:19<00:05, 1221836.16it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  86%|████████▋ | 37748736/43711022 [00:20<00:05, 1185028.38it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  89%|████████▉ | 38797312/43711022 [00:21<00:04, 1174435.66it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  91%|█████████ | 39845888/43711022 [00:21<00:03, 1195651.66it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  94%|█████████▎| 40894464/43711022 [00:22<00:02, 1261282.00it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  96%|█████████▌| 41943040/43711022 [00:23<00:01, 1335818.63it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...:  98%|█████████▊| 42991616/43711022 [00:23<00:00, 1460969.25it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...: 100%|██████████| 43711022/43711022 [00:24<00:00, 1563989.87it/s]"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "\r",
-      "20150820_Astrophysical_muon_neutrino_flu...: 100%|██████████| 43711022/43711022 [00:24<00:00, 1805279.80it/s]"
+      "20150820_Astrophysical_muon_neutrino_flu...: 100%|██████████| 43711022/43711022 [00:06<00:00, 7202540.88it/s]"
      ]
     },
     {
@@ -704,7 +488,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "de8e075b",
+   "id": "ad906058",
    "metadata": {},
    "source": [
     "The inputs to `BlazarNuCoincidenceSim` are specified by the `.yml` config files provided with the `nu_coincidence` package. We can check what is available using the helper function `get_available_config()`."
@@ -713,43 +497,41 @@
   {
    "cell_type": "code",
    "execution_count": 3,
-   "id": "d82e051f",
+   "id": "0233a530",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-07-04T14:20:30.206297Z",
-     "iopub.status.busy": "2022-07-04T14:20:30.205894Z",
-     "iopub.status.idle": "2022-07-04T14:20:30.221926Z",
-     "shell.execute_reply": "2022-07-04T14:20:30.221303Z"
+     "iopub.execute_input": "2022-07-14T10:12:58.008996Z",
+     "iopub.status.busy": "2022-07-14T10:12:58.007801Z",
+     "iopub.status.idle": "2022-07-14T10:12:58.023777Z",
+     "shell.execute_reply": "2022-07-14T10:12:58.022973Z"
     }
    },
    "outputs": [
     {
      "data": {
       "text/plain": [
-       "['bllac_rbcu.yml',\n",
-       " 'fsrq_nobcu.yml',\n",
-       " 'nu_connected_hese.yml',\n",
+       "['fsrq_high.yml',\n",
        " 'nu_connected_tracks.yml',\n",
-       " 'nu_diffuse_hese_hard.yml',\n",
-       " 'bllac_gpsel.yml',\n",
-       " 'nu_diffuse_ehe.yml',\n",
-       " 'fsrq_low.yml',\n",
-       " 'bllac_high.yml',\n",
-       " 'nu_diffuse_hese_soft.yml',\n",
-       " 'fsrq_ref_hard.yml',\n",
        " 'bllac_low.yml',\n",
-       " 'nu_diffuse_tracks.yml',\n",
-       " 'fsrq_ref.yml',\n",
-       " 'fsrq_high.yml',\n",
        " 'fsrq_gpsel.yml',\n",
-       " 'bllac_ref.yml',\n",
-       " 'bllac_ref_hard.yml',\n",
-       " 'nu_diffuse_ehe_soft.yml',\n",
-       " 'fsrq_rbcu.yml',\n",
-       " 'bllac_nobcu.yml',\n",
+       " 'fsrq_ref.yml',\n",
        " 'nu_connected_ehe.yml',\n",
+       " 'nu_diffuse_ehe.yml',\n",
+       " 'nu_diffuse_ehe_hard.yml',\n",
+       " 'fsrq_nobcu.yml',\n",
+       " 'nu_diffuse_hese_soft.yml',\n",
+       " 'bllac_nobcu.yml',\n",
+       " 'nu_diffuse_tracks.yml',\n",
+       " 'nu_connected_hese.yml',\n",
+       " 'fsrq_rbcu.yml',\n",
+       " 'nu_diffuse_ehe_soft.yml',\n",
        " 'nu_diffuse_hese.yml',\n",
-       " 'nu_diffuse_ehe_hard.yml']"
+       " 'fsrq_low.yml',\n",
+       " 'bllac_gpsel.yml',\n",
+       " 'bllac_rbcu.yml',\n",
+       " 'bllac_high.yml',\n",
+       " 'bllac_ref.yml',\n",
+       " 'nu_diffuse_hese_hard.yml']"
       ]
      },
      "execution_count": 3,
@@ -763,7 +545,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "0cf590bd",
+   "id": "6434b8f9",
    "metadata": {},
    "source": [
     "For this example, we can use the reference blazar model (`bllac_ref.yml` and `fsrq_ref.yml`) together with the diffuse IceCube HESE and EHE alerts models (`nu_diffuse_hese.yml` and `nu_diffuse_ehe.yml`)."
@@ -772,13 +554,13 @@
   {
    "cell_type": "code",
    "execution_count": 4,
-   "id": "6e5ccbf7",
+   "id": "4cf8143c",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-07-04T14:20:30.225553Z",
-     "iopub.status.busy": "2022-07-04T14:20:30.225089Z",
-     "iopub.status.idle": "2022-07-04T14:22:48.523016Z",
-     "shell.execute_reply": "2022-07-04T14:22:48.522172Z"
+     "iopub.execute_input": "2022-07-14T10:12:58.027549Z",
+     "iopub.status.busy": "2022-07-14T10:12:58.027261Z",
+     "iopub.status.idle": "2022-07-14T10:17:14.264563Z",
+     "shell.execute_reply": "2022-07-14T10:17:14.263637Z"
     }
    },
    "outputs": [],
@@ -798,7 +580,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "3c6e6ece",
+   "id": "a3e5a8d7",
    "metadata": {},
    "source": [
     "The results are organised to store relevant information on the number of different coincidences, divided into the `results.bllac` and `results.fsrq` populations. We study *spatial*, *variable* and *flaring* coincidences. In just 2 simulations, we expect to see spatial and variable coincidences, but flaring coincidences are unlikely. In the event that flaring coincidences occur, several other population/neutrino properties are also stored for further analysis."
@@ -807,13 +589,13 @@
   {
    "cell_type": "code",
    "execution_count": 5,
-   "id": "12dfd0b3",
+   "id": "5dc5f09b",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-07-04T14:22:48.527092Z",
-     "iopub.status.busy": "2022-07-04T14:22:48.526666Z",
-     "iopub.status.idle": "2022-07-04T14:22:48.536528Z",
-     "shell.execute_reply": "2022-07-04T14:22:48.535921Z"
+     "iopub.execute_input": "2022-07-14T10:17:14.269650Z",
+     "iopub.status.busy": "2022-07-14T10:17:14.269362Z",
+     "iopub.status.idle": "2022-07-14T10:17:14.283984Z",
+     "shell.execute_reply": "2022-07-14T10:17:14.283157Z"
     }
    },
    "outputs": [],
@@ -824,23 +606,23 @@
   {
    "cell_type": "code",
    "execution_count": 6,
-   "id": "4f5e77c5",
+   "id": "3494f4ce",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-07-04T14:22:48.539540Z",
-     "iopub.status.busy": "2022-07-04T14:22:48.539171Z",
-     "iopub.status.idle": "2022-07-04T14:22:48.544785Z",
-     "shell.execute_reply": "2022-07-04T14:22:48.544289Z"
+     "iopub.execute_input": "2022-07-14T10:17:14.287512Z",
+     "iopub.status.busy": "2022-07-14T10:17:14.287240Z",
+     "iopub.status.idle": "2022-07-14T10:17:14.294282Z",
+     "shell.execute_reply": "2022-07-14T10:17:14.293526Z"
     }
    },
    "outputs": [
     {
      "data": {
       "text/plain": [
-       "OrderedDict([('n_spatial', array([ 9., 21.])),\n",
-       "             ('n_spatial_astro', array([3., 9.])),\n",
-       "             ('n_variable', array([0., 1.])),\n",
-       "             ('n_variable_astro', array([0., 0.])),\n",
+       "OrderedDict([('n_spatial', array([11., 23.])),\n",
+       "             ('n_spatial_astro', array([ 3., 10.])),\n",
+       "             ('n_variable', array([1., 3.])),\n",
+       "             ('n_variable_astro', array([0., 1.])),\n",
        "             ('n_flaring', array([0., 0.])),\n",
        "             ('n_flaring_astro', array([0., 0.])),\n",
        "             ('matched_flare_amplitudes', array([], dtype=float64)),\n",
@@ -864,7 +646,7 @@
   },
   {
    "cell_type": "markdown",
-   "id": "49c72209",
+   "id": "61eafe8b",
    "metadata": {},
    "source": [
     "As we ran 2 simulations, we have a coincidence count for each case."
@@ -873,20 +655,20 @@
   {
    "cell_type": "code",
    "execution_count": 7,
-   "id": "2934e85b",
+   "id": "a21fcc5e",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-07-04T14:22:48.547952Z",
-     "iopub.status.busy": "2022-07-04T14:22:48.547596Z",
-     "iopub.status.idle": "2022-07-04T14:22:48.552306Z",
-     "shell.execute_reply": "2022-07-04T14:22:48.551656Z"
+     "iopub.execute_input": "2022-07-14T10:17:14.297923Z",
+     "iopub.status.busy": "2022-07-14T10:17:14.297574Z",
+     "iopub.status.idle": "2022-07-14T10:17:14.304874Z",
+     "shell.execute_reply": "2022-07-14T10:17:14.304097Z"
     }
    },
    "outputs": [
     {
      "data": {
       "text/plain": [
-       "array([ 9., 21.])"
+       "array([11., 23.])"
       ]
      },
      "execution_count": 7,
@@ -901,33 +683,630 @@
   {
    "cell_type": "code",
    "execution_count": 8,
-   "id": "2e3e9e1a",
+   "id": "599ece41",
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2022-07-04T14:22:48.556180Z",
-     "iopub.status.busy": "2022-07-04T14:22:48.555564Z",
-     "iopub.status.idle": "2022-07-04T14:22:48.561308Z",
-     "shell.execute_reply": "2022-07-04T14:22:48.560635Z"
+     "iopub.execute_input": "2022-07-14T10:17:14.308269Z",
+     "iopub.status.busy": "2022-07-14T10:17:14.307971Z",
+     "iopub.status.idle": "2022-07-14T10:17:14.341062Z",
+     "shell.execute_reply": "2022-07-14T10:17:14.340295Z"
     }
    },
    "outputs": [
     {
      "data": {
       "text/plain": [
-       "OrderedDict([('n_spatial', array([2., 8.])),\n",
-       "             ('n_spatial_astro', array([1., 4.])),\n",
-       "             ('n_variable', array([1., 2.])),\n",
-       "             ('n_variable_astro', array([1., 1.])),\n",
-       "             ('n_flaring', array([0., 0.])),\n",
+       "OrderedDict([('n_spatial', array([3., 6.])),\n",
+       "             ('n_spatial_astro', array([0., 3.])),\n",
+       "             ('n_variable', array([0., 2.])),\n",
+       "             ('n_variable_astro', array([0., 1.])),\n",
+       "             ('n_flaring', array([0., 1.])),\n",
        "             ('n_flaring_astro', array([0., 0.])),\n",
-       "             ('matched_flare_amplitudes', array([], dtype=float64)),\n",
-       "             ('matched_nu_ras', []),\n",
-       "             ('matched_nu_decs', []),\n",
-       "             ('matched_nu_ang_errs', []),\n",
-       "             ('matched_nu_times', []),\n",
-       "             ('pop_ras', []),\n",
-       "             ('pop_decs', []),\n",
-       "             ('pop_fluxes', [])])"
+       "             ('matched_flare_amplitudes', array([1.6018223])),\n",
+       "             ('matched_nu_ras', [array([112.69848512])]),\n",
+       "             ('matched_nu_decs', [array([8.44944452])]),\n",
+       "             ('matched_nu_ang_errs', [array([2.48188006])]),\n",
+       "             ('matched_nu_times', [array([5.78106083])]),\n",
+       "             ('pop_ras',\n",
+       "              [array([333.10700628, 129.43056152, 167.38837497, 321.17540314,\n",
+       "                       54.90440987,  70.36895414, 139.76369316,  50.06011685,\n",
+       "                       58.14913264, 348.21492984, 200.46420201, 350.48309614,\n",
+       "                       41.29180431, 168.46827817, 267.11310188,  57.80003727,\n",
+       "                      279.47265906, 240.92995227,  42.2466193 ,  77.60031977,\n",
+       "                      247.4650512 ,   2.24600884, 163.95074395,  80.99920825,\n",
+       "                      328.88640845, 259.46555865, 327.45519344, 189.8145337 ,\n",
+       "                       40.42808987, 167.15363882, 331.69498559,  41.12586185,\n",
+       "                      131.34383991,  25.67790634, 359.57838933, 223.55633725,\n",
+       "                       49.3744598 , 282.47094351, 223.63730407, 200.03206745,\n",
+       "                      321.88840112, 271.16367091, 225.37718145, 315.48308689,\n",
+       "                      154.57044696,  43.67181081, 178.49316135, 218.04702115,\n",
+       "                      208.13850099,  23.50335323, 353.57998984, 137.61839699,\n",
+       "                      298.98814834,  18.54834611, 180.14440365, 139.82125249,\n",
+       "                      224.3772198 , 139.89307447,  39.3865845 , 345.92940797,\n",
+       "                      197.80518221, 265.68744371, 260.42629529, 266.93055727,\n",
+       "                      104.2927555 ,  55.0196915 , 185.94056996, 234.92365935,\n",
+       "                      321.5320826 , 354.43042639, 243.48459566, 293.44267526,\n",
+       "                      111.27180528, 119.56776805, 234.3936576 , 205.44091003,\n",
+       "                      131.54583987, 165.09617207, 173.83969142,  43.55583393,\n",
+       "                      257.99741676, 231.43703046,  91.58384729,  20.49352384,\n",
+       "                      300.7489378 , 174.13317149, 249.55342463, 192.8392617 ,\n",
+       "                      244.59801586, 317.14580868, 192.36213571, 272.53076814,\n",
+       "                      329.30230194, 188.52125636, 212.77716784, 323.07936064,\n",
+       "                      204.06620999,  93.28290104, 213.35354935, 111.7639763 ,\n",
+       "                      136.98190588, 115.00908485, 306.67538531, 270.90345553,\n",
+       "                      326.90664045, 225.0417263 , 166.34644035,  44.10657413,\n",
+       "                       79.02054466, 247.25155421, 157.62341379, 195.01507409,\n",
+       "                      210.27743507, 274.45835728, 234.8155504 ,  12.4404955 ,\n",
+       "                      197.97137618, 138.35115787, 240.95058225, 133.59772451,\n",
+       "                      112.58802004,  20.99076833, 137.78666347, 160.22328276,\n",
+       "                      291.12782634, 241.74586177, 213.29921305, 354.59336713,\n",
+       "                      184.43234947, 265.96877455, 159.00027627, 213.92146689,\n",
+       "                       71.48647787, 323.10482578,   0.73742346, 275.34972452,\n",
+       "                      319.17097511, 104.82529917, 222.49680803,  39.52396896,\n",
+       "                       42.56448215, 190.25023574, 237.84291472,  27.29325239,\n",
+       "                      185.35304539, 135.56146507, 287.96514191, 294.64805133,\n",
+       "                      126.82643645, 124.30377828,  46.08307374, 325.83030473,\n",
+       "                       59.00130888, 284.2968418 , 271.07934325, 243.09289585,\n",
+       "                       25.37123823, 285.45527619,  37.56792418, 298.80567575,\n",
+       "                      157.2691585 , 267.10423826, 245.47594655,  33.58991983,\n",
+       "                      286.89002478, 139.42074977, 317.10599832, 120.96822853,\n",
+       "                       94.76833151, 128.19055178,  21.1453016 , 242.06860189,\n",
+       "                       50.5805066 , 146.84751972, 233.33069002, 265.47488193,\n",
+       "                       53.60048799, 213.8864385 , 320.40109331, 107.98035701,\n",
+       "                        4.27188618, 335.82219084, 146.89311311, 255.48544844,\n",
+       "                      280.60780169, 304.69935921, 275.81402354, 156.35260665,\n",
+       "                       41.64494767, 101.16474778, 278.46589088, 145.63913502,\n",
+       "                       64.13734501, 174.69163373, 149.25727579, 117.52998911,\n",
+       "                      305.54978418, 222.31690304, 150.79405979, 199.72928659,\n",
+       "                        8.12477165, 166.54761542, 223.71349669, 154.53867009,\n",
+       "                      336.79548257, 290.0785817 , 259.91640654, 122.0198228 ,\n",
+       "                      176.46613949, 272.32841321, 296.74158391, 179.50589146,\n",
+       "                      210.45622728, 279.36542491,  30.50115018,  27.35023017,\n",
+       "                       46.53509088, 245.88353016,  60.39685498, 325.20365182,\n",
+       "                      124.10290616, 222.11049084,  38.45177051, 327.62421054,\n",
+       "                      238.81299811, 206.50011197,  26.07187773, 154.83777312,\n",
+       "                      232.24048763,  65.77099801, 117.0917119 ,  28.33165737,\n",
+       "                      309.89642212, 109.67865667, 210.88307291, 292.20056956,\n",
+       "                      266.09657789, 264.30194875, 191.33729189,  57.89012832,\n",
+       "                      313.85006845, 219.77341764, 216.63717728, 135.24348264,\n",
+       "                      148.10231786, 107.57175887, 259.15618918, 112.83158802,\n",
+       "                      352.20122987, 322.83345198,  64.02596607,  97.11093646,\n",
+       "                       24.64279492,  61.53893511, 213.00163984,  22.319721  ,\n",
+       "                      305.40801167,  79.78075665, 118.15180848,  71.58630637,\n",
+       "                      242.20969662, 355.95017875, 129.0031166 , 356.86652982,\n",
+       "                      252.32800602,  41.22777935,  68.20823859,  44.88522897,\n",
+       "                      199.34418391, 219.95918256, 322.53076939,  58.79861847,\n",
+       "                      157.99604724, 211.94645619, 104.20651896, 202.32685916,\n",
+       "                      102.59072259, 163.38339759,  52.04836842, 290.47969777,\n",
+       "                      148.95140161,  55.45156741, 351.38495825, 163.03363002,\n",
+       "                      244.17948931, 261.86103408, 181.50920993, 349.56415873,\n",
+       "                      228.55433237, 320.70083116,  46.08207462,  49.75772364,\n",
+       "                      278.92411117, 108.77186626, 354.66531561, 162.23902606,\n",
+       "                       85.90824898,  47.58232746,  58.69443403, 353.30748699,\n",
+       "                       93.41340502, 169.20344776, 296.04755703, 226.89535876,\n",
+       "                       58.8215241 , 207.2093527 , 156.34205517,  26.21761081,\n",
+       "                      245.65030936, 335.75216948,   5.10103075, 175.24599661,\n",
+       "                        3.25521841, 158.14033348, 354.39082251, 327.12128908,\n",
+       "                      170.80910326,  26.19137142,  83.37554427, 339.68233279,\n",
+       "                      191.09881881, 265.16032983, 239.50854745, 255.22206507,\n",
+       "                      224.31888009,  42.82306524, 227.70348991, 205.63794069,\n",
+       "                      249.27768098, 153.1850863 ,  28.38001182,  52.05540738,\n",
+       "                      340.64369155,   5.84426341, 115.85611618, 271.3336215 ,\n",
+       "                      129.30129468, 127.6742024 , 315.34293835,  78.35259842,\n",
+       "                      280.08201902, 100.71890132, 281.91266567, 326.09209106,\n",
+       "                      125.17470262, 311.95238857, 178.11206147, 286.9495195 ,\n",
+       "                       90.6687047 ,  86.8809929 , 354.69315734,  42.15454317,\n",
+       "                      115.59311379, 301.66994229, 356.14004263, 201.6339933 ,\n",
+       "                      209.98485903, 159.59227252, 200.10358221,   3.16843724,\n",
+       "                      275.56192289, 195.02959976, 350.27650427, 299.82245116,\n",
+       "                      202.80395731, 179.272687  , 228.22077116, 348.63910016,\n",
+       "                      119.39604177, 118.24611412, 102.07817669,  77.26936437,\n",
+       "                      320.00348702,  46.56029608, 301.73694601, 130.94194625,\n",
+       "                      341.5394112 ,  96.68994341,  53.82172804,  76.7867934 ,\n",
+       "                      358.9399838 , 161.54456324,   1.14278422,  87.03528531,\n",
+       "                      202.15173369, 219.08401269, 150.57044064,  45.95481068,\n",
+       "                      249.12711834, 253.7294051 , 311.05477148, 153.74518426,\n",
+       "                      214.19989153, 222.66441229,  99.33044146, 256.44685161,\n",
+       "                       75.2269123 , 147.54396228, 223.87236216, 248.27646101,\n",
+       "                       58.88236084,  98.24066765,   4.02919895, 162.06470315,\n",
+       "                      114.54408865, 178.94283804, 353.85765881,  64.92552849,\n",
+       "                      154.75429772,  17.81226302, 238.5587223 ,   5.38559853,\n",
+       "                      236.84407962, 252.40982985, 148.38984131, 106.95066346,\n",
+       "                        2.21603333, 108.04069258, 191.65955119, 192.75900664,\n",
+       "                      118.71668646, 251.28274775,  93.38860585, 185.561242  ,\n",
+       "                      273.40247746, 330.09790188, 232.98436649, 259.77100187,\n",
+       "                      230.72588118,  56.88163183,  66.0837714 , 148.18755985,\n",
+       "                       42.47964437, 107.63060212, 311.08644675, 298.1108419 ,\n",
+       "                      272.75808277, 243.65026867, 103.49240157,  92.14027598,\n",
+       "                       90.57718674, 212.98923898, 153.89549769, 219.59315637,\n",
+       "                       83.49914419, 287.4081618 , 332.45998237,  62.49045829,\n",
+       "                       11.31013753, 175.84704591, 329.31460755,   6.34456693,\n",
+       "                      156.64880007, 135.8437429 , 309.19735081, 286.3214016 ,\n",
+       "                      160.62072601,  50.95039458,  32.88511757,  16.90298964,\n",
+       "                      259.21222012,  99.41243381, 314.43515327,  89.25986987,\n",
+       "                        4.93887788, 266.55455643, 325.45480794, 340.27256407,\n",
+       "                      291.51924188, 317.59532045, 244.30470658, 125.30898272,\n",
+       "                      336.65407254, 346.42309375, 261.84321757, 129.04558883,\n",
+       "                      327.55431483, 303.89231842,   8.06738502,  53.16346338,\n",
+       "                      143.43098425, 359.79876959, 240.8808719 , 301.95991738,\n",
+       "                      201.88062032,  53.72452908, 310.42430012,  40.89437463,\n",
+       "                      164.85325068,  35.06217897,  96.18224698, 311.35306404,\n",
+       "                      246.73771555, 185.77677478,  44.12493007, 187.11813685,\n",
+       "                       37.27663138, 342.42072105,  56.49050791, 141.87080313,\n",
+       "                      206.58589787, 343.11361138, 210.56056976, 128.05379271,\n",
+       "                      100.70299096,  79.56709586,  56.49488832, 202.63105019,\n",
+       "                      261.5253467 ,  34.67036656,   6.96983952, 171.0658564 ,\n",
+       "                       95.99640176,   1.93598656,  94.08290772, 282.37674367,\n",
+       "                       10.5190056 , 344.24232799, 157.21888472, 214.24341924,\n",
+       "                      329.09506815, 283.93758913,  88.25427639, 280.53763762,\n",
+       "                      141.11522984, 321.74681022, 310.78360496, 169.12010752,\n",
+       "                        1.68375358,  26.32887929,   2.2041143 , 305.84866334,\n",
+       "                      319.15803316, 181.94819364, 275.12908328, 225.60782736,\n",
+       "                      260.94287785, 343.78878191, 292.29398118, 266.24701569,\n",
+       "                      311.7679969 , 250.30748196, 241.87935904, 299.44622018,\n",
+       "                      190.18075787, 150.8811484 , 298.88434201, 236.56600402,\n",
+       "                      209.97804625, 317.19120698, 124.55894354, 193.08580946,\n",
+       "                       65.79625987, 214.34023241, 271.49815794, 206.2975305 ,\n",
+       "                       72.55200391, 324.70644274, 276.32758212, 155.63208129,\n",
+       "                       62.01455729,  80.05910873, 153.82060629, 255.8561394 ,\n",
+       "                      329.72865022, 353.42817191, 274.92788021,  79.71899571,\n",
+       "                        9.36530947, 227.45340452, 130.4591595 , 198.57685987,\n",
+       "                      152.20071862, 257.68856397,  57.69147002, 249.49220475,\n",
+       "                      214.15626171, 255.88228836,  21.90458714, 332.73937766,\n",
+       "                      337.11592524, 305.39400569, 107.27486901, 132.85933833,\n",
+       "                       69.03774671,  68.77783103, 237.71886563,  30.90558797,\n",
+       "                      322.31056657,  86.11634979, 144.10776744, 316.25500676,\n",
+       "                      250.07320962, 348.82279377, 313.70225628, 104.46216174,\n",
+       "                      191.06922522, 170.20159134, 145.17791126, 299.6575488 ,\n",
+       "                      194.49301405, 270.35795989,  25.81383801,  72.44043079,\n",
+       "                      142.08524876, 103.69130862, 309.32441615, 192.61673819,\n",
+       "                      260.91315315, 299.68958314, 314.27425772, 284.45089551,\n",
+       "                      179.85800033, 194.60291497, 130.17797581, 104.69976044,\n",
+       "                      214.56167828, 252.97737858, 202.36047226, 125.78638771,\n",
+       "                      101.26480211, 279.1490034 ,  79.8873094 , 357.79397709,\n",
+       "                      177.03373755, 162.42622381,  74.9847832 , 165.26715887,\n",
+       "                      219.17680274, 353.08552029, 328.86363931,  87.18070288,\n",
+       "                      333.94184642,  61.61519495,  17.44607486,  30.32209612,\n",
+       "                      143.3751492 , 276.3218225 , 357.26847626, 182.37289962,\n",
+       "                      107.08888606,  77.50644571,  39.26872687,  58.84077444,\n",
+       "                      329.59702115, 148.92388246, 296.72029592, 281.99598757,\n",
+       "                      335.61111442,   3.79682798, 295.78686415,  94.45472377,\n",
+       "                       81.62934515, 341.5054939 , 245.43272214, 346.38711863,\n",
+       "                      328.05884693, 353.30835273, 305.69466649,  29.61287539,\n",
+       "                        1.12962185, 333.82921924, 260.09191431, 123.80020442,\n",
+       "                      238.94672064, 274.63638382, 197.70568954, 180.49415557,\n",
+       "                      250.37866124, 312.31605109, 302.25329116, 295.29790439,\n",
+       "                      170.38810734, 169.40558463,  71.54554268, 173.26477738,\n",
+       "                       74.83223621, 255.12443284,  78.95696288, 281.21591258,\n",
+       "                      178.15348709, 181.39830887,  53.22524261,  11.62616998,\n",
+       "                       86.56886801, 356.17920792, 211.13971144, 137.77494033,\n",
+       "                      167.86384623, 192.83219931, 264.28851378,  84.77798366,\n",
+       "                      167.59491098, 113.21988534, 262.86634743, 331.6656487 ,\n",
+       "                       41.50218912, 302.15929952,   5.29474342, 124.04297013,\n",
+       "                      150.1999427 , 325.68711598,  36.70881113, 175.84211102,\n",
+       "                      200.59013839, 272.68351242, 168.3814241 , 158.82263025,\n",
+       "                      165.7466515 , 190.21612749, 218.6769277 ,  94.41010008,\n",
+       "                      132.99565654,  14.74642506, 278.738597  , 350.61284052,\n",
+       "                      177.15639398,  29.608101  , 104.93202683, 181.26471662,\n",
+       "                      214.18647722, 107.6421094 , 342.42459992, 153.84855507,\n",
+       "                        7.45915564, 352.95522861,  70.44210397, 255.90137601,\n",
+       "                       53.46971794, 308.47779184,   9.50998436, 190.49503017,\n",
+       "                       16.67859691, 314.44260034, 110.48537272, 357.94623262,\n",
+       "                      114.72289972,   6.14332253, 106.30955231,  59.53134492,\n",
+       "                      310.12632373, 269.31808958,  64.38755071, 280.88806155,\n",
+       "                      190.249002  , 269.56012542, 192.61675195,  59.56904152,\n",
+       "                      279.55527612, 190.48312086,  93.55258519, 277.32250478,\n",
+       "                      345.37178378,  44.51526446,  90.41933632, 129.73664038,\n",
+       "                      318.71325525, 123.6087378 , 330.75968358, 302.26556053,\n",
+       "                      275.30478297, 216.15952928, 288.77245339, 107.10836253,\n",
+       "                      175.64718318, 350.62451708, 303.69571016, 140.02848982,\n",
+       "                       16.13115213,   9.03394007,  15.62357733, 353.42319782,\n",
+       "                      241.39558333, 172.47116679, 232.26319629, 331.45322271,\n",
+       "                      240.82707127, 129.03326993, 267.97450536, 321.71480703,\n",
+       "                      247.39003952,  73.6348527 ,  90.47218268, 204.34444619,\n",
+       "                       63.45165167, 261.31367948,  26.3914366 , 341.18168843,\n",
+       "                      178.78048273, 116.27474291, 306.51858867, 172.11831101,\n",
+       "                       55.50683504, 136.64696213, 131.47160877])]),\n",
+       "             ('pop_decs',\n",
+       "              [array([-3.45754433e+01,  4.40649177e+01, -3.51089517e+01,  2.62837590e+01,\n",
+       "                       1.65176543e+01,  1.54073656e+01,  2.63070977e+01,  6.97042055e+01,\n",
+       "                      -5.63114046e+00, -1.94126376e+01, -1.31733135e+01,  1.94654380e+01,\n",
+       "                       7.06853657e+01, -2.40957498e+01,  4.51604831e+01, -8.54609676e+01,\n",
+       "                      -3.06076648e+01, -3.80154411e+00,  4.21783366e+01,  3.26716295e-01,\n",
+       "                      -2.65394529e+01,  3.63023597e+01,  3.38710078e+01, -1.29193698e+01,\n",
+       "                       4.03882109e+01, -1.29781717e-01,  1.98171312e+01, -5.06279915e+01,\n",
+       "                       1.03777380e+01, -2.72840388e+01,  1.17446158e+01, -1.51154615e+01,\n",
+       "                      -4.89127130e+01, -2.69847936e+01,  6.06856346e+01, -5.99570918e+01,\n",
+       "                       2.05191419e+01,  3.56892942e+01, -5.94413404e+01,  1.09257574e+01,\n",
+       "                      -3.01318585e+01,  4.05571789e+01,  9.12309043e+00,  4.73839450e+00,\n",
+       "                      -7.58335944e+00, -4.55386686e+01,  5.88968893e+01,  4.77311355e+01,\n",
+       "                       2.79999314e+01, -4.67488492e+00, -3.17724973e+01,  7.91127762e+01,\n",
+       "                       4.51115535e+00, -3.95526390e+01, -3.42635684e+01,  3.29057538e+01,\n",
+       "                      -2.36683630e+01, -2.26242458e+01, -5.99099026e+01, -3.73331731e+01,\n",
+       "                       1.76688865e+00, -1.37630734e+01,  3.90872029e+01,  9.59164756e+00,\n",
+       "                      -8.69723733e+00,  7.10799540e+01,  5.95030119e-02,  2.40141981e+01,\n",
+       "                       4.89915580e+00, -8.75608643e+00,  6.24033247e+00,  7.30061223e+01,\n",
+       "                      -3.43717287e+01,  3.00400999e+00, -7.53397534e+01, -4.30388972e+01,\n",
+       "                       2.90145043e+01, -5.34627782e+01, -6.06721761e+01,  2.45571395e+01,\n",
+       "                       6.04631763e+01, -2.85245039e+01, -2.46761282e+01,  2.50623482e+01,\n",
+       "                       2.19937036e+01, -4.36325375e+01,  1.24051751e+01, -4.70038461e+01,\n",
+       "                       1.36980313e+01,  5.06318047e+01, -7.22872226e+01, -5.14187145e+01,\n",
+       "                      -5.35240548e+01, -6.45738478e+01, -3.83289676e+01,  1.05207192e+01,\n",
+       "                      -8.39071065e+01, -3.80389091e+01,  7.83248450e+01,  5.98249371e+01,\n",
+       "                      -1.24992195e+01,  4.85487972e+01,  1.42749377e+01, -1.88681696e+01,\n",
+       "                      -1.45960233e+01,  5.00796061e+01,  8.78631160e+00,  3.96101643e+01,\n",
+       "                       6.38502822e+01, -6.91215720e+01, -3.11746913e+01, -2.56661473e+01,\n",
+       "                       2.15060756e+01, -1.31029862e+01, -3.03534045e-01, -7.76517369e+01,\n",
+       "                       1.68948174e+01, -7.40615587e+01, -1.61977374e+01,  6.49898136e+01,\n",
+       "                       3.04266949e+01,  6.75588320e+01,  5.12773743e+01,  2.85979880e+01,\n",
+       "                      -8.81258883e+01, -5.00080494e+00,  1.74099217e-01, -3.71456293e+01,\n",
+       "                       1.68187721e+01,  2.64881815e+01, -4.17683769e+01,  2.66389761e+00,\n",
+       "                       2.64749531e+01, -1.61744932e+01, -2.47927487e+01,  8.59961750e+00,\n",
+       "                       2.72924481e+01, -3.05771783e+01,  2.00228261e+01, -4.46720747e+01,\n",
+       "                      -7.19714708e+00,  3.22461269e+01, -1.35121680e+01,  1.70927578e+01,\n",
+       "                      -3.11936220e+01,  2.82349867e+00,  6.63403929e+01,  3.35756237e+01,\n",
+       "                       4.85844400e+01,  1.70894217e+01,  6.42986648e+01,  6.50748725e+00,\n",
+       "                      -3.58590904e+01, -5.37091072e+01, -6.55968593e+01, -3.40950681e+01,\n",
+       "                       1.47286429e+01,  2.91451007e+01,  3.45071898e+01, -2.72772703e+01,\n",
+       "                       4.39851452e+01, -2.02346932e+01, -4.92245386e+01,  4.51856900e+00,\n",
+       "                       8.15777026e+00, -1.22966160e+01, -3.69456882e+01,  6.35392610e+01,\n",
+       "                      -3.78327585e+01, -4.99196600e+00,  5.75301519e+01,  1.04491652e+01,\n",
+       "                      -3.28401207e+01,  5.55087341e+01,  3.02354910e+01, -7.78198089e+01,\n",
+       "                      -5.11216080e+01, -6.38039858e+01, -3.70008168e+01, -3.42398067e+01,\n",
+       "                      -1.36874113e+01,  2.90632510e+01, -5.80327172e+01, -1.98746515e+01,\n",
+       "                       4.23884378e+00, -4.66320045e-01, -1.13325469e+01, -6.99838516e+01,\n",
+       "                      -3.78333179e+01,  4.64538101e+01,  4.40600228e+01,  2.75554968e+01,\n",
+       "                      -1.08902196e+01, -5.44889830e+00,  1.25539813e+01, -1.64515822e+01,\n",
+       "                       1.10610805e+00, -1.30494798e+01,  6.06698390e+01, -8.85644289e+00,\n",
+       "                      -2.89532623e+01, -1.77646411e+01, -3.77140694e+01, -3.37445818e+01,\n",
+       "                      -6.02426416e+00, -4.67951728e+00,  1.91385466e+01, -2.27299682e+01,\n",
+       "                      -9.03069948e+00,  4.79417495e+01,  4.82935315e+01, -1.29226990e+01,\n",
+       "                      -2.05708032e+00,  7.93056206e+00,  8.26507129e+01, -5.63391016e+01,\n",
+       "                       7.10419053e+00, -1.07001745e+01, -2.49472269e+01,  3.95218509e+01,\n",
+       "                      -3.20964177e+01, -3.94830137e+01,  4.25799379e+01,  3.36413521e+01,\n",
+       "                       3.72243490e+01, -4.84099844e+01,  3.72965222e+01,  3.76203334e+01,\n",
+       "                       6.71565434e+00, -3.64473077e+01, -4.31182074e+01,  5.34904128e+01,\n",
+       "                       9.85755680e+00,  2.52898425e-01, -3.86038109e+01,  8.26830892e+00,\n",
+       "                      -4.50151119e+00, -5.64604521e+01,  4.23077160e+01,  3.27717543e+01,\n",
+       "                      -5.52243761e+01,  2.97208951e+01, -3.55173391e+01, -2.44216875e+01,\n",
+       "                       2.10601743e+01, -1.95322293e+01, -5.97301791e+01, -2.41019419e+01,\n",
+       "                      -5.03232159e+01,  3.13002375e+01, -8.86369326e+00,  4.18281980e+01,\n",
+       "                      -4.21838852e+01,  2.93140989e+01, -4.89552255e+01,  4.13773992e+01,\n",
+       "                       2.19734371e+01, -1.66169060e+00,  4.81011814e+01, -9.16734695e+00,\n",
+       "                       2.42546036e+01, -1.14510028e+01,  5.77253197e+01, -2.74513611e+01,\n",
+       "                       2.91345514e+01,  2.72292235e+01,  9.03241656e+00,  1.62591443e+01,\n",
+       "                      -1.15313364e+00,  7.05653117e+01,  2.65729556e+00,  4.08607469e+01,\n",
+       "                       1.42336957e+01,  1.52665406e+01,  5.01150064e+01,  3.09788422e+01,\n",
+       "                       1.08053132e+00,  4.08198661e+01,  8.32444923e+00, -3.40055504e+01,\n",
+       "                      -2.91450709e+01, -5.35225337e+01,  4.32488649e+01, -2.14513536e+00,\n",
+       "                      -2.84776020e+00, -5.55052607e+01, -1.73783062e+01,  6.01129226e+00,\n",
+       "                       6.92265739e+01, -2.74394905e+01,  7.36271124e+01, -5.43273854e+01,\n",
+       "                       5.65004091e+01,  4.49151192e+01,  4.33162606e+01,  6.28654535e+01,\n",
+       "                      -4.88200505e+00,  1.57691461e+01, -2.85782214e+01, -9.13345753e+00,\n",
+       "                      -6.98068219e+01,  1.78792175e+01, -6.23128787e+01,  1.10612448e+01,\n",
+       "                       1.73784636e+01,  3.52620225e+01,  6.49750321e+00,  9.79854556e+00,\n",
+       "                      -3.51982309e+01, -5.46346572e+01,  4.81326530e-01,  1.78396334e+00,\n",
+       "                       8.16920884e+00, -3.66098382e+01, -7.34944332e+01, -3.33181479e+01,\n",
+       "                      -5.44139488e+01,  2.36628924e+01,  2.33928147e+01,  1.96034251e+01,\n",
+       "                       3.94264858e+01,  3.27195740e+01, -3.10947156e+00, -7.64994286e+01,\n",
+       "                       1.47248176e+01, -3.45626652e+01, -4.40149279e+01,  8.05125414e+01,\n",
+       "                       7.22537441e+01,  6.08606911e+01, -3.06958736e+01, -6.17685643e+01,\n",
+       "                       5.60053647e+01, -4.86147951e+01,  1.94211876e+01, -4.74245476e+01,\n",
+       "                      -2.11293728e+01, -7.01525371e+01, -4.09982868e+01,  3.31791252e+01,\n",
+       "                      -3.82989786e+00, -2.46327562e+01, -6.31421626e+00,  5.02674773e+00,\n",
+       "                       2.30752018e+01,  3.54069248e+01, -3.03014481e+01,  3.43346322e-01,\n",
+       "                      -5.25924909e+01,  6.30837181e+01, -6.93145475e+01,  1.82711873e+01,\n",
+       "                      -1.68309967e+01, -1.48471123e+01, -5.92055072e+01,  3.65046493e+01,\n",
+       "                       3.20362186e+01,  4.64897450e+01, -2.73207374e+01,  8.27713148e+01,\n",
+       "                       4.09982709e+01,  1.09909061e+01, -4.83400055e+01, -5.85858971e+01,\n",
+       "                      -3.56806366e+01, -3.81116917e+01,  1.51798094e+01,  1.88013724e+01,\n",
+       "                       5.03641072e+00, -5.29173170e+01,  7.41876544e+01, -2.33355956e+01,\n",
+       "                      -3.43750821e+01, -5.26493455e+01, -2.30563380e+01, -4.02276309e-01,\n",
+       "                       6.29643396e+01,  5.34609785e+00, -4.58370947e+01,  3.20949779e+01,\n",
+       "                       2.06733897e+01,  3.11447725e+01,  1.25008379e+01,  7.08336616e+01,\n",
+       "                       8.49318888e+00,  3.22814905e+01, -6.07953006e+01, -4.74555027e+00,\n",
+       "                      -9.91380143e+00, -8.02280079e+01,  4.41945626e+01, -6.21098637e+01,\n",
+       "                      -5.12343077e+01,  1.86192761e+01,  5.73122525e+00,  7.15493837e+01,\n",
+       "                      -2.13795911e+01, -1.68038578e+01, -1.72903836e+01,  1.01696119e+01,\n",
+       "                       5.05532138e+01, -3.05715691e+01,  3.62835029e+01,  2.10264774e+01,\n",
+       "                       1.77141477e+01, -3.20016706e+01, -1.69471106e+01, -1.35729558e+01,\n",
+       "                       1.21910064e+01, -6.15764094e-01, -1.08440835e+01,  3.47668387e+01,\n",
+       "                      -1.72363421e+01, -1.44178665e+01,  6.32387199e+01,  2.28055389e+01,\n",
+       "                       1.32946112e+01,  7.54354293e+01,  3.95821335e+00,  5.18822808e+01,\n",
+       "                      -4.23798382e+01,  2.16883971e+01, -6.07981744e+00,  4.32349562e+01,\n",
+       "                       2.55158683e+01,  5.04260160e+00,  6.20760396e+01, -6.74662436e+01,\n",
+       "                       1.37812045e+01, -1.78777987e+01,  2.11463959e+01, -7.09586966e+00,\n",
+       "                       3.73904722e+00, -2.61963770e+01,  1.50095707e+01, -6.87163825e+01,\n",
+       "                       4.74497640e+01,  5.40384496e+01, -3.23476895e+01, -7.67244377e+01,\n",
+       "                       1.29536638e+00,  1.04590536e+01,  3.62957972e+01,  3.96352660e+01,\n",
+       "                       1.60985178e+01,  2.53930689e+01, -6.59683417e+01,  1.75159072e+01,\n",
+       "                      -1.79630274e+01, -2.79637162e+01, -2.22565754e+01,  1.84909259e+01,\n",
+       "                       1.80124312e+00,  7.21025830e+01,  4.56234596e+01,  2.45460627e+01,\n",
+       "                       2.49869676e+01,  8.70949474e+00,  4.60841969e+00, -4.26065798e+01,\n",
+       "                       4.19195428e+01,  3.67521787e+01,  4.17044618e+00,  4.47954439e+01,\n",
+       "                      -5.08906535e+01, -1.65296305e+01, -4.49334974e+01, -3.67147394e+01,\n",
+       "                       7.19628990e+01,  3.50312047e+01, -6.04580046e+00, -2.21872197e+00,\n",
+       "                      -7.58055992e+00, -3.65055535e+01, -4.72801710e+01, -1.57581618e+01,\n",
+       "                       5.29605526e+01,  3.40024806e+01, -3.66938246e+01,  7.22102265e+00,\n",
+       "                      -4.63981024e+01, -4.52831058e+00,  1.31955300e+00, -2.35610717e+00,\n",
+       "                       3.44886803e+01, -4.39611349e+01,  2.15167579e+01,  3.60214657e+01,\n",
+       "                       1.34397690e+01,  1.60594755e+01, -3.62396402e+01,  9.06470470e+00,\n",
+       "                       4.12541599e+01,  1.31081496e+01,  4.12690628e+01, -5.71974568e+01,\n",
+       "                       3.84850672e+01,  2.27557768e+01, -7.54210888e+00, -2.63035673e+01,\n",
+       "                       4.74815568e+01, -4.02864959e+01,  4.40382851e+01, -3.16761220e+01,\n",
+       "                      -2.14967107e+01, -1.99265735e+01, -5.12259718e+01,  5.52669536e+01,\n",
+       "                      -6.91521459e+01, -2.99771508e+01,  3.50406887e+01,  7.83002128e+01,\n",
+       "                      -3.32621253e+01,  1.34832237e+01, -1.70602649e+01,  4.89292344e+01,\n",
+       "                      -1.49276834e+01, -5.61042054e+01, -3.68479762e+00, -4.44980901e+01,\n",
+       "                       4.70079658e+01, -3.45892255e+01,  9.87747446e+00, -5.45830713e+01,\n",
+       "                      -5.24571474e+00, -6.10695923e+01, -1.47327905e+01,  7.65292394e+01,\n",
+       "                      -4.33375584e+01, -4.09671400e+01, -3.17451131e+01, -3.30344674e+01,\n",
+       "                      -3.19368086e+01, -4.36966136e+01,  2.55103371e+01, -1.86623149e+01,\n",
+       "                       6.12219194e+01, -1.84130959e+01, -7.81816140e+01, -2.09675331e+00,\n",
+       "                       1.17840700e+01, -3.25285355e-02,  1.12453323e+01,  1.48697095e+01,\n",
+       "                      -1.62989358e+01,  3.50723941e+01, -8.30016303e+00, -3.68789554e+01,\n",
+       "                       1.71759648e+01,  1.03055176e+01,  3.89649103e+01,  6.31172914e+00,\n",
+       "                       4.02242076e+00, -4.76191349e+01,  1.37056170e+00, -4.72210164e+00,\n",
+       "                      -5.71706590e+01, -4.03613065e+01,  1.55534461e+01, -4.24505151e+01,\n",
+       "                       7.11012765e+01, -2.43645255e+01,  1.27687579e+01, -6.37732652e+00,\n",
+       "                      -4.03784617e+01, -3.33834419e+01,  5.98049985e+01,  2.74019170e+01,\n",
+       "                      -4.67835884e+00,  4.66652804e+01,  3.97632906e+01,  8.38717230e-01,\n",
+       "                      -5.94203205e+01,  3.28084078e+01, -3.51485883e+01,  3.66656978e+01,\n",
+       "                      -4.06724750e+01,  7.32337676e+01, -7.60125788e+01,  8.83384649e+01,\n",
+       "                      -3.21020490e+01,  6.57266836e+01,  5.73089226e+00,  2.66836661e+01,\n",
+       "                      -4.72789874e+01, -4.27271002e+01,  2.79533808e+01,  1.97989177e+01,\n",
+       "                      -1.79657004e+01,  2.51875083e+01, -2.24634773e+01,  7.46478163e+00,\n",
+       "                       2.23193447e+01, -6.07952196e+01,  3.99622208e+01,  6.11041327e+01,\n",
+       "                      -8.22846242e+01,  4.09214249e+01,  4.77880919e+01,  2.22267260e+01,\n",
+       "                      -2.31930791e+01, -4.13503895e+01, -2.12498637e-01,  4.53649609e+00,\n",
+       "                      -1.73900330e+01,  6.97011169e+00,  1.17468428e+00, -3.92466881e+01,\n",
+       "                      -4.39563566e+01,  1.47219146e+01,  4.16808129e+01, -4.79141102e+00,\n",
+       "                       5.87311150e+01, -3.53335458e+01, -1.61808076e+01,  1.06915324e+00,\n",
+       "                       3.32549755e+01,  5.26718073e+00, -3.65181084e+01, -4.96534154e+00,\n",
+       "                       5.85269810e+01,  6.69179883e+01,  6.66324924e+00, -3.43709648e+01,\n",
+       "                      -3.29838807e+01, -4.85401584e+01, -7.21342418e+01,  3.75593910e+01,\n",
+       "                      -2.30151570e+01,  8.38689809e+00, -3.74502101e+00,  1.08601590e+01,\n",
+       "                       2.21395049e+01,  5.03621523e+01, -2.67596455e+01, -7.49769431e+01,\n",
+       "                       1.80675790e+01,  1.64684954e+01, -4.02222686e+01,  7.10241514e+01,\n",
+       "                      -7.68439838e+01,  5.92142527e+01,  4.55544647e+01,  1.10536158e+01,\n",
+       "                       6.88391284e+01, -6.48207459e+01,  8.65245753e+00, -2.81929177e+01,\n",
+       "                       7.27472109e+00,  5.07963726e+01,  2.14414146e+01, -2.09694696e+01,\n",
+       "                       4.27566545e+01,  3.73250931e+01, -4.68881198e+01,  3.62334449e+01,\n",
+       "                       3.29732298e+01, -1.88875911e+01,  1.16328754e+01, -2.05110461e+01,\n",
+       "                       2.49220301e+01, -4.25314022e+01,  1.28462653e+01,  5.46680529e+01,\n",
+       "                       1.99341736e+01,  4.00868690e+01, -1.99595268e+01,  5.54119527e+01,\n",
+       "                      -1.62068020e+01, -4.35359747e+00,  1.37507514e+01,  5.38314676e+01,\n",
+       "                      -1.86588591e+01, -1.65828383e+01, -2.55986641e+01,  1.14964421e+01,\n",
+       "                      -5.43557772e+00,  4.43521762e+01, -3.08511263e+01,  3.47423712e+01,\n",
+       "                       7.66709392e+01,  2.79221964e+01, -2.91783307e+01, -9.97882646e+00,\n",
+       "                       2.82326031e+01,  6.75666523e+01,  2.23818523e+01, -5.78945237e+01,\n",
+       "                      -2.38490190e+01,  4.81169341e+00, -4.42432551e+00, -6.37095703e+01,\n",
+       "                      -3.92542733e+01, -5.21082251e+00, -3.60595825e+01,  7.70572600e+00,\n",
+       "                       1.54929486e+01, -1.04761199e+01,  5.21201983e+01,  3.34844801e+01,\n",
+       "                      -6.33949861e+01, -3.16202674e+01,  1.13425745e+01, -3.87406937e+01,\n",
+       "                      -6.81327552e+00, -2.51722750e+01,  2.70104633e+01, -2.08208596e+01,\n",
+       "                       2.30987248e+00,  4.79659605e+01,  5.18438293e+01, -7.14658850e+01,\n",
+       "                      -3.11154964e+01,  5.66554158e+00,  4.69125575e+01, -2.43657430e+01,\n",
+       "                       7.32779889e+01,  5.47023106e+01,  5.04561040e+01,  2.69632454e+01,\n",
+       "                      -1.15667819e+01, -9.91847759e+00,  1.19927747e+01, -4.43017065e+01,\n",
+       "                       5.17796922e+01,  1.98505239e+01, -2.62996132e+01, -8.34879329e+00,\n",
+       "                       4.85596946e+00,  2.14196447e+01,  2.82177220e+01,  3.36642290e+01,\n",
+       "                      -7.86367674e+01, -3.69529251e+01,  5.35277502e+01,  1.84942223e+01,\n",
+       "                       9.13015021e+00, -5.33835270e+01, -9.11276828e+00,  7.69052498e+00,\n",
+       "                       2.60150945e+01, -6.53199573e+01, -5.82816639e+00, -3.14835585e+01,\n",
+       "                       4.13225214e+01, -7.07591986e+00, -7.51503736e+01, -3.68582781e+01,\n",
+       "                       1.01467598e+01,  1.75506684e+00, -2.71112032e+01,  2.53975900e-01,\n",
+       "                      -9.82355225e+00, -3.81856074e+01, -4.47446579e+01, -3.26635590e+01,\n",
+       "                       9.05025379e+00, -4.30659495e+01,  8.85516755e+00,  3.01189585e+01,\n",
+       "                       2.57928372e+01,  1.59861088e+01,  4.91211632e+01, -2.40666192e+01,\n",
+       "                      -1.67117985e+01,  1.47550242e+01, -5.89057231e+01, -4.47158929e+01,\n",
+       "                      -1.43230018e+01, -9.79574058e+00,  6.29032148e+01,  4.48199068e+01,\n",
+       "                       8.06561057e+00, -6.62015860e+01,  2.92422881e+01, -6.03717490e+01,\n",
+       "                      -4.50202048e+01,  5.90818440e+01, -3.63180741e+01,  1.27008139e+01,\n",
+       "                      -7.79168263e+00,  8.27972868e+01,  3.57895477e+00,  4.29341294e+01,\n",
+       "                      -1.89566672e+01, -3.75412205e+01, -6.12630088e+01,  1.46870409e+01,\n",
+       "                      -2.29083148e+01,  3.60315554e+00, -7.01722278e+01, -8.19396768e+00,\n",
+       "                      -3.36302391e+01, -3.77555190e+01,  1.70697800e+01])]),\n",
+       "             ('pop_fluxes',\n",
+       "              [array([[7.18104390e-12, 5.43555668e-11, 5.83680632e-11, 8.87119730e-11,\n",
+       "                       5.41326133e-11, 7.81903869e-12, 1.07969962e-10, 1.03511540e-11,\n",
+       "                       1.20567145e-11, 3.43778629e-12, 7.43205801e-10, 6.37432499e-11,\n",
+       "                       3.55335560e-11, 4.09011063e-11, 1.76585354e-11, 5.51102052e-11,\n",
+       "                       3.29180213e-10, 1.31483238e-10, 5.33571617e-10, 1.87598476e-09,\n",
+       "                       4.13517839e-11, 1.79350689e-09, 5.23830301e-12, 8.69494388e-12,\n",
+       "                       4.50307105e-12, 1.80085252e-10, 3.27947234e-10, 2.39824353e-10,\n",
+       "                       4.35157493e-11, 2.40284651e-11, 1.92499465e-11, 6.49171380e-11,\n",
+       "                       9.80582388e-12, 6.01733998e-12, 2.50150470e-12, 2.59566740e-11,\n",
+       "                       2.39669506e-12, 4.46174729e-10, 2.56693531e-12, 3.15806623e-12,\n",
+       "                       2.23383112e-10, 6.91532264e-12, 8.82717808e-11, 1.52926661e-11,\n",
+       "                       4.46513952e-11, 1.23799549e-11, 2.49258245e-12, 4.44524659e-12,\n",
+       "                       4.85752817e-12, 7.88222890e-11, 1.33792102e-11, 3.09560922e-10,\n",
+       "                       3.88421026e-08, 3.83836600e-10, 4.01662522e-12, 5.28172050e-12,\n",
+       "                       1.67944244e-11, 2.33159576e-12, 2.42143746e-12, 5.99933988e-11,\n",
+       "                       4.02745268e-12, 3.35840636e-12, 9.21872758e-11, 1.93487943e-10,\n",
+       "                       8.70160555e-11, 1.04045032e-09, 5.24353104e-12, 6.80121781e-12,\n",
+       "                       1.76642506e-11, 5.74050842e-12, 7.15595308e-10, 6.45969843e-11,\n",
+       "                       2.82042980e-12, 3.34975409e-09, 8.77103297e-12, 2.62094295e-11,\n",
+       "                       6.32110622e-12, 2.65286071e-10, 5.13193557e-11, 5.30731364e-12,\n",
+       "                       7.22000626e-10, 8.91209022e-11, 1.71045268e-10, 2.98071521e-11,\n",
+       "                       1.02149662e-09, 8.48771535e-10, 2.73611736e-12, 1.69316510e-12,\n",
+       "                       3.58561607e-10, 3.10160349e-12, 1.38948989e-11, 4.35706411e-10,\n",
+       "                       5.94410108e-11, 4.20287032e-11, 1.02848346e-11, 4.15374754e-11,\n",
+       "                       4.87877282e-11, 2.43106260e-12, 1.35237814e-11, 3.96981838e-12,\n",
+       "                       7.56820837e-11, 1.06890115e-10, 3.01486407e-12, 3.27708315e-11,\n",
+       "                       3.38013040e-12, 6.56338256e-10, 1.30124841e-11, 2.33840625e-12,\n",
+       "                       2.70629988e-10, 1.60028696e-11, 2.07682249e-10, 8.37829324e-12,\n",
+       "                       7.18007904e-11, 4.59946394e-12, 2.96392865e-09, 1.12542687e-08,\n",
+       "                       4.72918051e-12, 2.95326469e-11, 2.76528090e-11, 2.57552318e-11,\n",
+       "                       3.98727668e-11, 1.03238174e-09, 6.41448655e-11, 3.11479638e-12,\n",
+       "                       1.18538656e-11, 4.26667098e-12, 6.24131835e-11, 9.37638437e-12,\n",
+       "                       1.14006076e-09, 2.68996997e-10, 1.83118808e-12, 1.28700132e-10,\n",
+       "                       2.61587574e-11, 3.56207602e-11, 7.59536413e-12, 2.83719074e-11,\n",
+       "                       6.76067040e-11, 1.61663352e-10, 2.16151955e-12, 7.73499364e-11,\n",
+       "                       8.97420045e-12, 9.86435256e-12, 4.27668011e-10, 2.61457192e-11,\n",
+       "                       3.75973831e-12, 4.28858175e-10, 7.55481389e-12, 5.12706486e-12,\n",
+       "                       4.03732155e-12, 1.37589197e-11, 7.45110303e-11, 4.90306304e-12,\n",
+       "                       1.37891588e-10, 4.44884225e-11, 4.21835058e-12, 2.85106377e-11,\n",
+       "                       2.45522880e-11, 1.40399576e-10, 1.36476955e-10, 1.59667051e-10,\n",
+       "                       6.56584840e-10, 7.93941126e-12, 6.44151014e-11, 1.43589229e-11,\n",
+       "                       1.28632883e-10, 2.73963904e-12, 4.24239107e-12, 3.35375721e-12,\n",
+       "                       3.89443222e-12, 1.20389687e-10, 3.14865211e-11, 2.77199251e-11,\n",
+       "                       2.36970155e-12, 4.44714221e-10, 8.98216002e-11, 2.87499232e-11,\n",
+       "                       5.74799232e-12, 3.11657352e-12, 1.38519177e-10, 1.24017437e-11,\n",
+       "                       4.86055133e-12, 7.75481265e-11, 6.54770178e-12, 1.19378182e-11,\n",
+       "                       1.46042249e-10, 9.96016699e-12, 8.56154440e-12, 3.87623469e-12,\n",
+       "                       1.35391884e-10, 1.19015890e-11, 2.45555058e-12, 1.38407153e-11,\n",
+       "                       2.26002053e-11, 8.55722380e-12, 1.66699798e-11, 3.04391679e-11,\n",
+       "                       2.54557440e-12, 2.15173617e-12, 6.20353679e-11, 2.38680590e-12,\n",
+       "                       9.58130366e-12, 1.77437649e-11, 4.02661259e-12, 8.54707048e-12,\n",
+       "                       2.86599346e-12, 9.64649951e-12, 1.89699834e-12, 1.90534649e-11,\n",
+       "                       2.14555964e-11, 9.51836840e-12, 3.38647521e-09, 2.67714938e-11,\n",
+       "                       2.08715863e-10, 2.41537980e-12, 3.80506956e-10, 2.24852187e-12,\n",
+       "                       3.99242445e-11, 3.90932286e-12, 3.14037084e-10, 1.53133049e-11,\n",
+       "                       3.91322445e-12, 2.81375670e-10, 3.79043536e-10, 2.05899316e-12,\n",
+       "                       3.63650452e-12, 2.06559049e-10, 5.89257213e-11, 1.11738548e-11,\n",
+       "                       2.92316958e-12, 2.14245058e-10, 7.35711231e-12, 6.07380172e-12,\n",
+       "                       2.27069206e-10, 1.69797040e-09, 1.71215832e-11, 4.49338848e-12,\n",
+       "                       7.16642504e-12, 8.49048249e-11, 1.18572220e-10, 3.66961683e-11,\n",
+       "                       2.82686269e-11, 5.15749964e-11, 8.01497937e-12, 3.30181275e-10,\n",
+       "                       4.60138394e-11, 1.82090200e-10, 3.19284263e-12, 7.75120860e-12,\n",
+       "                       4.83336903e-09, 8.42353912e-12, 4.91175294e-11, 1.07551110e-11,\n",
+       "                       1.13261235e-11, 2.51919750e-11, 1.98980900e-10, 9.86870291e-11,\n",
+       "                       3.35164423e-11, 1.18860643e-10, 8.37812066e-10, 3.91373293e-12,\n",
+       "                       3.64357667e-12, 1.78010087e-09, 1.25653507e-11, 2.66394090e-12,\n",
+       "                       1.69198821e-11, 1.55290705e-11, 5.40348145e-12, 2.68607470e-11,\n",
+       "                       5.87624905e-12, 2.63918072e-12, 4.41305256e-10, 2.20748696e-12,\n",
+       "                       1.20714310e-10, 3.90916968e-09, 1.09758042e-09, 1.08749566e-10,\n",
+       "                       6.14355069e-11, 1.73082643e-08, 3.49216441e-12, 2.11768913e-12,\n",
+       "                       1.89029474e-11, 4.26887117e-12, 2.34476474e-12, 1.40092892e-11,\n",
+       "                       2.63984656e-11, 7.84511089e-12, 1.17850193e-10, 7.66718795e-10,\n",
+       "                       2.67615365e-12, 1.38898615e-11, 1.07786762e-10, 4.76116100e-12,\n",
+       "                       1.31707504e-11, 3.09522695e-10, 8.19970088e-12, 2.24293756e-12,\n",
+       "                       4.15901370e-10, 6.08436102e-12, 8.40011899e-12, 2.72807112e-11,\n",
+       "                       3.65085487e-12, 1.53082297e-11, 8.94756865e-11, 1.24479356e-09,\n",
+       "                       1.12157450e-10, 3.31531596e-12, 2.75718356e-11, 1.32088128e-11,\n",
+       "                       2.85989236e-11, 2.94599078e-10, 7.99622382e-12, 1.57168870e-11,\n",
+       "                       4.43460912e-12, 2.59091460e-11, 2.47917220e-09, 2.06681228e-11,\n",
+       "                       1.00021536e-11, 8.11999255e-11, 2.77031516e-11, 1.95660880e-11,\n",
+       "                       5.22707919e-11, 2.52935410e-12, 3.02266750e-11, 7.26067919e-12,\n",
+       "                       3.08388829e-11, 2.35828602e-10, 6.67354784e-11, 2.51641335e-10,\n",
+       "                       4.06159649e-09, 4.50622300e-11, 4.28520297e-11, 3.07797467e-10,\n",
+       "                       4.34579868e-12, 3.72027324e-10, 7.83927523e-12, 5.26140048e-12,\n",
+       "                       2.30379433e-12, 2.54623018e-12, 7.47292738e-12, 1.25529270e-11,\n",
+       "                       1.15634648e-10, 9.63287338e-12, 3.93795737e-12, 6.04738764e-12,\n",
+       "                       1.11609615e-10, 1.44675732e-11, 4.24693050e-11, 1.72132897e-09,\n",
+       "                       2.96811234e-08, 5.64144232e-12, 9.42469401e-12, 3.40103578e-12,\n",
+       "                       1.71128008e-12, 4.65609960e-10, 2.60778201e-12, 1.99159778e-11,\n",
+       "                       1.76305872e-12, 7.85048499e-12, 5.39255431e-11, 1.18522125e-11,\n",
+       "                       7.70976782e-12, 4.05162642e-10, 1.02874890e-11, 1.63260748e-11,\n",
+       "                       1.96419540e-11, 1.06395762e-11, 7.64543712e-12, 1.46972588e-11,\n",
+       "                       1.42288793e-11, 5.46749823e-10, 1.25988890e-11, 2.88719370e-12,\n",
+       "                       3.33202333e-11, 2.76421249e-12, 2.36616057e-12, 2.68580337e-11,\n",
+       "                       3.93693809e-12, 2.09460350e-11, 1.31652068e-11, 3.76288829e-12,\n",
+       "                       5.07047100e-12, 5.05497085e-11, 2.69423250e-12, 3.11303853e-12,\n",
+       "                       5.76229406e-12, 6.08817348e-11, 3.39171099e-11, 6.21193692e-11,\n",
+       "                       3.80589704e-11, 3.29931384e-12, 3.77624489e-10, 7.94632059e-10,\n",
+       "                       3.21808350e-11, 6.61748022e-12, 3.26530353e-11, 1.82605757e-10,\n",
+       "                       2.23897347e-12, 1.19417335e-10, 1.65425639e-11, 5.87431767e-11,\n",
+       "                       1.75268481e-11, 4.36635644e-12, 1.46696131e-11, 1.04838716e-11,\n",
+       "                       3.76588953e-11, 3.42043147e-12, 1.16556368e-09, 2.91739905e-12,\n",
+       "                       3.13921803e-10, 1.20279831e-11, 4.46512528e-11, 2.20559002e-12,\n",
+       "                       3.44624716e-11, 6.44152081e-11, 1.83359778e-11, 1.52075253e-11,\n",
+       "                       2.50453135e-11, 4.79807547e-12, 6.63077818e-12, 2.38568318e-10,\n",
+       "                       4.76353977e-11, 2.38931904e-12, 7.71440599e-11, 2.30404612e-10,\n",
+       "                       2.01601087e-10, 2.86095494e-12, 2.30739616e-11, 4.76647458e-12,\n",
+       "                       1.01491679e-11, 1.66296872e-11, 2.00100814e-11, 6.56512386e-12,\n",
+       "                       2.05123652e-12, 6.68768975e-11, 3.18517082e-12, 3.40339586e-11,\n",
+       "                       3.03595851e-11, 1.66532938e-10, 9.72368184e-11, 4.33258704e-12,\n",
+       "                       7.21283109e-12, 7.16860844e-11, 1.20917551e-09, 6.21899720e-12,\n",
+       "                       8.09051133e-11, 1.86152632e-10, 5.75519631e-12, 4.72226191e-12,\n",
+       "                       1.69652747e-11, 4.97466101e-11, 5.19768935e-11, 3.27868476e-11,\n",
+       "                       8.20042281e-12, 3.22521187e-11, 2.50735975e-12, 2.18353682e-11,\n",
+       "                       4.00950283e-12, 3.10335531e-12, 4.53637740e-11, 1.53654264e-11,\n",
+       "                       2.13366452e-11, 1.26306066e-11, 1.14454962e-11, 2.06099994e-10,\n",
+       "                       3.31805258e-12, 1.08378061e-11, 5.99736258e-12, 6.38732713e-11,\n",
+       "                       2.55633764e-11, 7.47089385e-11, 1.88181475e-11, 2.47693116e-10,\n",
+       "                       4.26044426e-12, 3.91025663e-12, 1.19243407e-11, 2.78295877e-12,\n",
+       "                       5.42330919e-11, 8.20100624e-10, 1.01877931e-10, 4.43718411e-11,\n",
+       "                       1.49326073e-09, 1.88910314e-11, 4.42595774e-12, 5.87950807e-12,\n",
+       "                       7.30426252e-11, 2.15674148e-12, 3.29697465e-11, 4.60220165e-10,\n",
+       "                       4.51103048e-12, 1.56077161e-10, 5.32554846e-10, 4.35073566e-12,\n",
+       "                       1.66124633e-10, 1.32984629e-10, 5.92698334e-11, 1.47152800e-11,\n",
+       "                       2.57651476e-10, 7.87632707e-11, 4.21988973e-12, 1.19142195e-11,\n",
+       "                       1.02712510e-09, 1.25693905e-11, 3.68243905e-12, 4.82426369e-12,\n",
+       "                       7.93445649e-11, 1.88855138e-12, 1.90859445e-10, 3.08843096e-12,\n",
+       "                       3.92036255e-12, 3.87831748e-12, 9.05241453e-12, 1.38701718e-10,\n",
+       "                       5.86853519e-11, 1.44004452e-10, 3.52832888e-11, 1.55337232e-11,\n",
+       "                       1.63749351e-11, 6.57499209e-11, 3.74148649e-12, 6.31947401e-12,\n",
+       "                       3.74877191e-11, 1.31351846e-10, 3.88468997e-12, 1.20712534e-10,\n",
+       "                       7.55746840e-12, 3.95254499e-11, 3.15645067e-12, 6.56193005e-12,\n",
+       "                       2.40453595e-12, 4.87247663e-12, 5.32730157e-10, 6.63758657e-11,\n",
+       "                       2.12871454e-11, 1.41949152e-10, 6.37770469e-12, 5.56628031e-10,\n",
+       "                       7.14256686e-12, 3.21362223e-12, 5.91132742e-11, 2.88557561e-11,\n",
+       "                       1.86179597e-12, 2.63972126e-11, 2.62378577e-09, 2.41653794e-09,\n",
+       "                       6.55337885e-12, 3.14891326e-12, 2.37337210e-11, 1.11383369e-11,\n",
+       "                       4.13062946e-12, 1.67825217e-11, 3.80894049e-12, 9.50000779e-11,\n",
+       "                       9.35976822e-12, 1.99150707e-10, 3.43209705e-12, 2.89761557e-10,\n",
+       "                       7.92863059e-12, 3.14842927e-12, 7.67017611e-12, 2.70269110e-12,\n",
+       "                       3.56661602e-12, 1.18994399e-11, 7.93587605e-12, 8.71883491e-11,\n",
+       "                       7.04687793e-12, 1.84190999e-11, 1.87794393e-11, 2.28297047e-10,\n",
+       "                       1.10656581e-11, 5.03241157e-10, 4.70006351e-12, 2.46658742e-12,\n",
+       "                       4.82030475e-12, 2.67105428e-10, 2.87639230e-12, 7.39164529e-11,\n",
+       "                       5.68929728e-11, 2.36225026e-12, 1.75736792e-11, 4.85240291e-11,\n",
+       "                       9.28818966e-12, 7.27252166e-11, 4.57443402e-12, 6.89797751e-12,\n",
+       "                       2.32334604e-10, 9.71435445e-12, 1.94761597e-11, 3.03317973e-10,\n",
+       "                       5.92722755e-11, 5.67044003e-12, 1.64395742e-10, 4.27319728e-12,\n",
+       "                       4.74994477e-11, 6.16349690e-12, 1.60893114e-10, 5.65298683e-12,\n",
+       "                       1.05504604e-11, 2.50599706e-12, 7.65262480e-11, 2.95111360e-11,\n",
+       "                       4.02825818e-12, 6.70709008e-11, 7.35412088e-11, 3.49450235e-11,\n",
+       "                       1.90734868e-11, 1.37021039e-11, 1.76105644e-11, 4.20913596e-11,\n",
+       "                       3.27176061e-11, 1.49449461e-10, 2.71798201e-09, 2.83277273e-12,\n",
+       "                       4.14775488e-11, 1.40165325e-10, 3.79034945e-10, 9.63003859e-12,\n",
+       "                       1.76289033e-11, 1.74701047e-11, 2.59768884e-12, 5.37920838e-11,\n",
+       "                       2.79472302e-10, 2.38826429e-11, 1.00351801e-10, 2.50940160e-12,\n",
+       "                       3.16352237e-11, 1.78609728e-10, 2.82645663e-11, 6.23747453e-11,\n",
+       "                       2.76386598e-12, 5.58708746e-11, 8.91881789e-10, 6.84458047e-11,\n",
+       "                       3.33840323e-09, 3.39292600e-12, 3.03800435e-12, 1.31725141e-11,\n",
+       "                       2.14115819e-11, 3.50851352e-10, 1.69070065e-10, 2.48790444e-12,\n",
+       "                       8.11390349e-12, 1.89859375e-11, 3.24838796e-11, 5.97468757e-11,\n",
+       "                       4.53977620e-12, 4.64944693e-10, 3.24029211e-12, 8.66826024e-12,\n",
+       "                       1.54108862e-11, 1.40829115e-10, 3.04105374e-12, 7.75196682e-11,\n",
+       "                       7.54545967e-12, 1.72995725e-10, 6.80731681e-11, 2.72949036e-12,\n",
+       "                       3.02168328e-11, 6.30656734e-12, 3.23742385e-12, 1.62711911e-11,\n",
+       "                       2.17491056e-12, 2.12870094e-11, 3.04547026e-10, 8.35617201e-11,\n",
+       "                       3.49476807e-12, 1.36598040e-11, 2.59713273e-12, 1.18448346e-11,\n",
+       "                       4.46466666e-12, 2.19421712e-11, 1.32885650e-11, 3.89566989e-12,\n",
+       "                       1.27930943e-11, 4.40912950e-09, 2.78337023e-10, 1.09722562e-11,\n",
+       "                       8.16039799e-10, 5.96939923e-12, 2.59451817e-10, 3.88316373e-12,\n",
+       "                       4.22758461e-11, 5.16605603e-12, 1.83784710e-11, 4.23907179e-10,\n",
+       "                       5.23773269e-11, 4.99620109e-12, 1.87273813e-11, 2.02491424e-10,\n",
+       "                       4.09955424e-11, 2.23992508e-12, 3.60445550e-09, 1.78090693e-11,\n",
+       "                       6.56409900e-11, 7.42785555e-12, 8.14755371e-10, 1.73093011e-09,\n",
+       "                       7.18793979e-12, 1.19831609e-11, 3.86683997e-12, 1.20158240e-11,\n",
+       "                       3.63781965e-12, 3.62051396e-12, 2.61465223e-11, 8.04762400e-11,\n",
+       "                       4.51100983e-12, 4.59785899e-12, 5.99809696e-12, 1.41740394e-11,\n",
+       "                       5.49398977e-11, 7.39437759e-12, 2.44016916e-10, 1.20577185e-11,\n",
+       "                       1.51478021e-10, 7.06919824e-11, 1.63370425e-10, 3.76881082e-12,\n",
+       "                       8.16981360e-11, 6.01874137e-12, 2.51000847e-12, 2.56595488e-11,\n",
+       "                       2.12204560e-12, 8.33001477e-10, 9.11435408e-12, 2.02524889e-12,\n",
+       "                       4.96970458e-10, 4.93794138e-12, 1.61028069e-11, 8.61997305e-12,\n",
+       "                       1.97529614e-11, 5.12659326e-12, 4.40408005e-12, 9.01184027e-12,\n",
+       "                       1.08899753e-10, 2.72008391e-12, 4.04569102e-10, 2.36065511e-12,\n",
+       "                       1.14952004e-11, 2.33890132e-12, 3.95052849e-11, 4.19777480e-12,\n",
+       "                       2.04226202e-10, 4.07628728e-12, 4.80905887e-12, 4.22707032e-12,\n",
+       "                       1.42647307e-11, 8.50572396e-11, 2.79754691e-11, 7.12520325e-11,\n",
+       "                       1.10396236e-11, 1.84122528e-11, 9.88846287e-12, 1.47175269e-11,\n",
+       "                       4.36317880e-11, 5.55537434e-12, 2.43131752e-11, 5.22380585e-11,\n",
+       "                       3.02808526e-11, 7.68229874e-12, 7.17750975e-11, 4.16989688e-12,\n",
+       "                       1.88568865e-11, 4.48239947e-12, 1.21025452e-11, 6.67157961e-12,\n",
+       "                       4.41135031e-12, 3.00781028e-12, 2.21261607e-11, 3.58801029e-08,\n",
+       "                       2.02541706e-10, 1.54554599e-11, 8.06370795e-12, 3.32078658e-12,\n",
+       "                       5.29648482e-12, 2.56425614e-10, 1.56797493e-11, 1.41310080e-11,\n",
+       "                       2.20346023e-11, 3.56320023e-12, 3.71276733e-12, 1.02074558e-11,\n",
+       "                       2.53162738e-11, 7.00579654e-12, 4.23017075e-12, 2.71764848e-11,\n",
+       "                       8.56070917e-12, 1.78302052e-10, 6.45658834e-12, 1.82615302e-11,\n",
+       "                       2.32421180e-10, 1.66585693e-11, 1.07098828e-11, 7.41798011e-11,\n",
+       "                       4.83839784e-12, 3.74574305e-12, 3.78454211e-11]])])])"
       ]
      },
      "execution_count": 8,
@@ -961,7 +1340,7 @@
   "widgets": {
    "application/vnd.jupyter.widget-state+json": {
     "state": {
-     "12b587f743394f758f31621911296532": {
+     "3c797014c76448d7b370bcfa5153c83a": {
       "model_module": "jupyter-vuetify",
       "model_module_version": "^1.8.2",
       "model_name": "ThemeColorsModel",
@@ -984,23 +1363,45 @@
        "warning": "#FB8C00"
       }
      },
-     "252e24d24ee84925815b1c9e520de607": {
-      "model_module": "jupyter-vue",
-      "model_module_version": "^1.7.0",
-      "model_name": "ForceLoadModel",
+     "6c6174b80d4b451bbcc1c6fffb821e9c": {
+      "model_module": "jupyter-vuetify",
+      "model_module_version": "^1.8.2",
+      "model_name": "ThemeModel",
       "state": {
-       "_dom_classes": [],
-       "_model_module": "jupyter-vue",
-       "_model_module_version": "^1.7.0",
-       "_model_name": "ForceLoadModel",
+       "_model_module": "jupyter-vuetify",
+       "_model_module_version": "^1.8.2",
+       "_model_name": "ThemeModel",
        "_view_count": null,
        "_view_module": null,
-       "_view_module_version": "",
+       "_view_module_version": "^1.8.2",
        "_view_name": null,
-       "layout": "IPY_MODEL_36f2e4b716e8452ea39023da43c7eebc"
+       "dark": null
       }
      },
-     "36f2e4b716e8452ea39023da43c7eebc": {
+     "8bdd2e37cad54cbf9a08e9feb706a4a9": {
+      "model_module": "jupyter-vuetify",
+      "model_module_version": "^1.8.2",
+      "model_name": "ThemeColorsModel",
+      "state": {
+       "_model_module": "jupyter-vuetify",
+       "_model_module_version": "^1.8.2",
+       "_model_name": "ThemeColorsModel",
+       "_theme_name": "light",
+       "_view_count": null,
+       "_view_module": null,
+       "_view_module_version": "^1.8.2",
+       "_view_name": null,
+       "accent": "#82B1FF",
+       "anchor": null,
+       "error": "#FF5252",
+       "info": "#2196F3",
+       "primary": "#1976D2",
+       "secondary": "#424242",
+       "success": "#4CAF50",
+       "warning": "#FB8C00"
+      }
+     },
+     "a21496d178b54f2baa75b6680dda4fd7": {
       "model_module": "@jupyter-widgets/base",
       "model_module_version": "1.2.0",
       "model_name": "LayoutModel",
@@ -1052,42 +1453,20 @@
        "width": null
       }
      },
-     "878d0a545fca4adfb6c2adaabd8a5813": {
-      "model_module": "jupyter-vuetify",
-      "model_module_version": "^1.8.2",
-      "model_name": "ThemeColorsModel",
+     "ba433ea227bd4113ac94cfbce81677ec": {
+      "model_module": "jupyter-vue",
+      "model_module_version": "^1.7.0",
+      "model_name": "ForceLoadModel",
       "state": {
-       "_model_module": "jupyter-vuetify",
-       "_model_module_version": "^1.8.2",
-       "_model_name": "ThemeColorsModel",
-       "_theme_name": "light",
+       "_dom_classes": [],
+       "_model_module": "jupyter-vue",
+       "_model_module_version": "^1.7.0",
+       "_model_name": "ForceLoadModel",
        "_view_count": null,
        "_view_module": null,
-       "_view_module_version": "^1.8.2",
+       "_view_module_version": "",
        "_view_name": null,
-       "accent": "#82B1FF",
-       "anchor": null,
-       "error": "#FF5252",
-       "info": "#2196F3",
-       "primary": "#1976D2",
-       "secondary": "#424242",
-       "success": "#4CAF50",
-       "warning": "#FB8C00"
-      }
-     },
-     "f80e21859a6b4020990ffdd0ca3bfc00": {
-      "model_module": "jupyter-vuetify",
-      "model_module_version": "^1.8.2",
-      "model_name": "ThemeModel",
-      "state": {
-       "_model_module": "jupyter-vuetify",
-       "_model_module_version": "^1.8.2",
-       "_model_name": "ThemeModel",
-       "_view_count": null,
-       "_view_module": null,
-       "_view_module_version": "^1.8.2",
-       "_view_name": null,
-       "dark": null
+       "layout": "IPY_MODEL_a21496d178b54f2baa75b6680dda4fd7"
       }
      }
     },
