@@ -240,7 +240,10 @@ class BlazarNuConnection(BlazarNuAction):
             ra = np.deg2rad(survey.ra[i])
             dec = np.deg2rad(survey.dec[i])
             z = survey.distances[i]
-            spectral_index = survey.spectral_index[i]
+            spectral_index_pop = survey.spectral_index[i]
+
+            # Fixed by likelihood assumptions
+            spectral_index_nu = 2.13
 
             # Overwrite flux_factor if necessary
             if self._use_pop_flux_factors:
@@ -259,7 +262,7 @@ class BlazarNuConnection(BlazarNuAction):
 
             source = _get_point_source(
                 L_steady,
-                spectral_index,
+                spectral_index_nu,
                 z,
                 ra,
                 dec,
@@ -301,7 +304,7 @@ class BlazarNuConnection(BlazarNuAction):
 
                 sim = _run_sim_for(
                     connection["Nnu_steady"][i],
-                    spectral_index,
+                    spectral_index_nu,
                     z,
                     ra,
                     dec,
@@ -346,9 +349,9 @@ class BlazarNuConnection(BlazarNuAction):
                         survey.luminosities_latent[i] * amp
                     )  # erg s^-1 [0.1 - 100 GeV]
 
-                    # alternate energy range
+                    # Alternate energy range
                     # L_flare = _convert_energy_range(
-                    #   L_flare, spectral_index, 0.1, 100, 1, 100
+                    #     L_flare, spectral_index_pop, 0.1, 100, 1, 100
                     # )  # erg s^-1 [1 - 100 GeV]
 
                     L_flare = L_flare * erg_to_GeV  # GeV s^-1
@@ -356,7 +359,7 @@ class BlazarNuConnection(BlazarNuAction):
 
                     source = _get_point_source(
                         L_flare_nu,
-                        spectral_index,
+                        spectral_index_nu,
                         z,
                         ra,
                         dec,
@@ -388,7 +391,7 @@ class BlazarNuConnection(BlazarNuAction):
 
                 sim = _run_sim_for(
                     connection["Nnu_flare"][i],
-                    spectral_index,
+                    spectral_index_nu,
                     z,
                     ra,
                     dec,
