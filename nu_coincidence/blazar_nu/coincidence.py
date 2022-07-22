@@ -305,7 +305,7 @@ class BlazarNuCoincidence(BlazarNuAction):
             # Convert to energy range of 1 - 100 GeV
             pop_spectral_indices = survey.spectral_index[survey.selection]
             pop_fluxes = [
-                _convert_energy_range(pf, 0.1, 100, 1, 100)
+                _convert_energy_range(pf, index, 0.1, 100, 1, 100)
                 for pf, index in zip(pop_fluxes, pop_spectral_indices)
             ]
 
@@ -346,7 +346,7 @@ class BlazarNuCoincidence(BlazarNuAction):
             # Convert to energy range of 1 - 100 GeV
             pop_spectral_indices = survey.spectral_index[survey.selection]
             pop_fluxes = [
-                _convert_energy_range(pf, 0.1, 100, 1, 100)
+                _convert_energy_range(pf, index, 0.1, 100, 1, 100)
                 for pf, index in zip(pop_fluxes, pop_spectral_indices)
             ]
 
