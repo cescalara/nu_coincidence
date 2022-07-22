@@ -11,6 +11,7 @@ from nu_coincidence.coincidence import (
     check_temporal_coincidence,
 )
 from nu_coincidence.blazar_nu.base import BlazarNuSim, BlazarNuAction
+from nu_coincidence.blazar_nu.connected import _convert_energy_range
 
 
 class BlazarNuCoincidenceSim(BlazarNuSim):
@@ -301,6 +302,13 @@ class BlazarNuCoincidence(BlazarNuAction):
 
                     pop_fluxes.append(fluxes)
 
+            # Convert to energy range of 1 - 100 GeV
+            pop_spectral_indices = survey.spectral_index[survey.selection]
+            pop_fluxes = [
+                _convert_energy_range(pf, 0.1, 100, 1, 100)
+                for pf, index in zip(pop_fluxes, pop_spectral_indices)
+            ]
+
             self.bllac_coincidence["pop_fluxes"] = pop_fluxes
 
             # Similarly for FSRQs
@@ -334,6 +342,13 @@ class BlazarNuCoincidence(BlazarNuAction):
                             fluxes[i] *= flare_amplitudes[selection][0]
 
                     pop_fluxes.append(fluxes)
+
+            # Convert to energy range of 1 - 100 GeV
+            pop_spectral_indices = survey.spectral_index[survey.selection]
+            pop_fluxes = [
+                _convert_energy_range(pf, 0.1, 100, 1, 100)
+                for pf, index in zip(pop_fluxes, pop_spectral_indices)
+            ]
 
             self.fsrq_coincidence["pop_fluxes"] = pop_fluxes
 
